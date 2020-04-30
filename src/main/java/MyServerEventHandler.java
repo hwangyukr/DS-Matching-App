@@ -1,6 +1,5 @@
 
 import Board.BoardHandller;
-import Post.PostHandler;
 import Team.TeamHandler;
 import User.UserHandler;
 import kr.ac.konkuk.ccslab.cm.event.CMEvent;
@@ -15,14 +14,12 @@ import kr.ac.konkuk.ccslab.cm.stub.CMServerStub;
 public class MyServerEventHandler implements CMAppEventHandler {
 
     private CMServerStub cmServerStub;
-    private PostHandler postHandler;
     private UserHandler userHandler;
     private TeamHandler teamHandler;
     private BoardHandller boardHandler;
 
     public MyServerEventHandler(CMServerStub cmServerStub) {
         this.cmServerStub = cmServerStub;
-        this.postHandler = new PostHandler(cmServerStub);
         this.userHandler = new UserHandler(cmServerStub);
         this.teamHandler = new TeamHandler(cmServerStub);
         this.boardHandler = new BoardHandller(cmServerStub);
