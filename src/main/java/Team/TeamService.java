@@ -1,5 +1,6 @@
 package Team;
 
+import Common.Result;
 import Config.TokenProvider;
 import User.User;
 import User.UserRepository;
@@ -39,15 +40,15 @@ public class TeamService {
 //        return teamRepository.saveApplication(application, cmInfo);
     }
 
-    public Team getTeam(TokenProvider.TokenResult result) {
-        Long userId = result.getId();
-        return teamRepository.getTeamById(userId, cmInfo);
+    public Team getTeam(TokenProvider.TokenResult validResult, Result result) {
+        Long userId = validResult.getId();
+        return teamRepository.getTeamById(userId, result, cmInfo);
     }
 
-    public Team createTeam(TokenProvider.TokenResult result, String teamName) {
+    public Team createTeam(TokenProvider.TokenResult validResult, Result result, String teamName) {
 
         User user = new User.Builder()
-                .id(result.getId())
+                .id(validResult.getId())
                 .build();
 
         Team team = new Team.Builder()
@@ -56,8 +57,7 @@ public class TeamService {
                 .teamRoles(null)
                 .build();
 
-        int ret = teamRepository.saveTeam(team, cmInfo);
-
+        teamRepository.saveTeam(team, result, cmInfo);
         return team;
     }
 

@@ -33,7 +33,7 @@ public class UserHandler {
 
         if(user == null) {
             ue.setEventField(CMInfo.CM_INT, "success", "0");
-            ue.setEventField(CMInfo.CM_STR, "msg", "실패하였습니");
+            ue.setEventField(CMInfo.CM_STR, "msg", "실패하였습니다");
             ue.setEventField(CMInfo.CM_STR, "user_id", null);
         }
         else {

@@ -1,12 +1,13 @@
 package Team;
 
+import Common.Result;
 import User.User;
 import kr.ac.konkuk.ccslab.cm.info.CMInfo;
 import kr.ac.konkuk.ccslab.cm.manager.CMDBManager;
 
-import javax.xml.transform.Result;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 
 public class TeamRepository extends CMDBManager {
@@ -20,7 +21,11 @@ public class TeamRepository extends CMDBManager {
 
     }
 
-    public Team getTeamById(Long userId, CMInfo cmInfo) {
+    public Team getTeamById(Long userId, Result result, CMInfo cmInfo) {
+
+        /*
+        먼저 팀을 가져
+         */
         String query = "select * from user " +
                 " left outer join team on user.team_id = team.id and user.id = '"
                 + userId + "';";
@@ -44,6 +49,17 @@ public class TeamRepository extends CMDBManager {
                         .build();
             }
         } catch (SQLException e) {
+            result.setMsg("실패하였습니다");
+            result.setSuccess(false);
+            return null;
+        }
+
+        /*
+       쿼리를 날렸는데 teamid가 안변한 건 팀이 없는거임 그래서 result를 false로 세팅 후 리턴
+         */
+        if(teamId == 0l) {
+            result.setMsg("속한 팀이 없습니");
+            result.setSuccess(false);
             return null;
         }
 
@@ -73,23 +89,24 @@ public class TeamRepository extends CMDBManager {
                 teams.add(user1);
             }
         } catch (SQLException e) {
+            result.setMsg("실패하였습니다");
+            result.setSuccess(false);
             return null;
         }
 
         return team;
     }
 
-    public int saveTeam(Team team, CMInfo cmInfo) {
+    public long saveTeam(Team team, Result result, CMInfo cmInfo) {
 
         String query =
                 "insert into team(team_name, team_leader) values (" +
                         " '" + team.getName() + "'," +
                         " '" + team.getTeamLeader().getId() + "');";
-        System.out.println("쿼리 이거임 !!!");
-        System.out.println(query);
+
         int ret = CMDBManager.sendUpdateQuery(query, cmInfo);
 
-        if(ret == -1) return ret;
+        if(ret == -1) return -1l;
 
         String getQuery = "select * from team where team_leader = '" + team.getTeamLeader().getId() + "';";
         ResultSet resultSet = CMDBManager.sendSelectQuery(getQuery, cmInfo);
@@ -98,14 +115,17 @@ public class TeamRepository extends CMDBManager {
             while(resultSet.next()) {
                 id = resultSet.getLong("team_id");
             }
+        } catch (SQLIntegrityConstraintViolationException e) {
+            result.setMsg("이미 존재하는 팀명입니다");
+            result.setSuccess(false);
+            return -1l;
         } catch (SQLException e) {
-            return -1;
+            result.setMsg("실패하였습니다");
+            result.setSuccess(false);
+            return -1l;
         }
         team.setId(id);
-        return ret;
-
-
-
+        return id;
     }
 
     public List<Application> getApplicationsByTeamId(Long teamId, CMInfo cmInfo) {

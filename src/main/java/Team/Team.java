@@ -16,7 +16,6 @@ public class Team {
     private List<TeamRole> teamRoles = new ArrayList<>();
 
     public Team() {
-
     }
 
     public Team(Builder builder) {
