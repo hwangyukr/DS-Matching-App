@@ -1,9 +1,8 @@
 package User;
 
+import Config.TokenProvider;
 import kr.ac.konkuk.ccslab.cm.event.CMUserEvent;
 import kr.ac.konkuk.ccslab.cm.info.CMInfo;
-
-// 서비스에서는 프로세스 로직 예) 이미 존재하는 이메일인지 확인
 
 public class UserService {
     private CMInfo cmInfo;
@@ -36,18 +35,15 @@ public class UserService {
         return profile;
     }
 
-    public User login(CMUserEvent ue) {
+    public String login(UserDTO.LoginReq dto) {
 
-        String email = ue.getEventField(CMInfo.CM_STR, "email");
-        String password = ue.getEventField(CMInfo.CM_STR, "password");
+        User user = userRepository.findByEmail(dto.getEmail(), cmInfo);
 
-        User user = userRepository.findByEmail(email, cmInfo);
+        if(user == null) return null;
+        if(!dto.getPassword().equals(user.getPassword())) return null;
 
-        if(user == null) return null; // TODO : Exception 처리
+        return TokenProvider.createToken(user.getEmail(), user.getPassword());
 
-        if(!password.equals(user.getPassword())) return null; // TODO : Exception 처리
-
-        return user;
     }
 
 

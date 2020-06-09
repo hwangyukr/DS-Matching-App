@@ -33,7 +33,7 @@ public class UserHandler {
 
         if(user == null) {
             ue.setEventField(CMInfo.CM_INT, "success", "0");
-            ue.setEventField(CMInfo.CM_STR, "msg", "실패하였습니다");
+            ue.setEventField(CMInfo.CM_STR, "msg", "실패하였습니");
             ue.setEventField(CMInfo.CM_STR, "user_id", null);
         }
         else {
@@ -41,13 +41,29 @@ public class UserHandler {
             ue.setEventField(CMInfo.CM_STR, "msg", "성공하였습니다");
             ue.setEventField(CMInfo.CM_STR, "user_id", String.valueOf(user.getId()));
         }
-        System.out.println("일단 보내볼게...");
         System.out.println(ue.getSender());
         cmServerStub.send(ue, ue.getSender());
     }
 
     public void login(CMUserEvent ue) {
-        User user = userService.login(ue);
+
+        String email = ue.getEventField(CMInfo.CM_STR, "email");
+        String password = ue.getEventField(CMInfo.CM_STR, "password");
+        UserDTO.LoginReq dto = new UserDTO.LoginReq(email, password);
+
+        String token = userService.login(dto);
+
+        if(token == null) {
+            ue.setEventField(CMInfo.CM_INT, "success", "0");
+            ue.setEventField(CMInfo.CM_STR, "msg", "실패하였습니다");
+            ue.setEventField(CMInfo.CM_STR, "token", null);
+        }
+        else {
+            ue.setEventField(CMInfo.CM_INT,"success", "1");
+            ue.setEventField(CMInfo.CM_STR, "msg", "성공하였습니다");
+            ue.setEventField(CMInfo.CM_STR, "token", token);
+        }
+        cmServerStub.send(ue, ue.getSender());
     }
 
     public void getProfile(CMUserEvent ue) {

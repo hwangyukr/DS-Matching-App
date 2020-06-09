@@ -29,6 +29,9 @@ public class TeamHandler {
     }
 
     public void createTeam(CMUserEvent ue) {
+
+        // TODO : 로그인 되있는놈인지 확인
+
         Team team = teamService.createTeam(ue);
     }
 

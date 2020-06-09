@@ -34,7 +34,7 @@ public class Client {
         CMUser myself = cmClientStub.getCMInfo().getInteractionInfo().getMyself();
 
         cmClientStub.loginCM("jonghyun", "0000");
-        ue.setStringID("SIGN-UP");
+        ue.setStringID("SIGN-IN");
         ue.setEventField(CMInfo.CM_STR, "email", "jongjong1994@gmail.com");
         ue.setEventField(CMInfo.CM_STR, "password", "0000");
         ue.setEventField(CMInfo.CM_STR, "name", "jonghyun");

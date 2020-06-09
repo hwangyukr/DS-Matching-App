@@ -35,7 +35,23 @@ public class UserRepository extends CMDBManager {
     }
 
     public User findByEmail(String email, CMInfo cmInfo) {
-        return null;
+        String getQuery = "select * from user_table where email = '" + email + "';";
+        ResultSet resultSet = CMDBManager.sendSelectQuery(getQuery, cmInfo);
+        User user = null;
+        try {
+            while(resultSet.next()) {
+                Long id = resultSet.getLong("id");
+                String password = resultSet.getString("password");
+                user = new User.Builder()
+                        .id(id)
+                        .password(password)
+                        .email(email)
+                        .build();
+            }
+        } catch (SQLException e) {
+            return null;
+        }
+        return user;
     }
 
     public Profile getProfileByUserId(Long id, CMInfo cmInfo) {

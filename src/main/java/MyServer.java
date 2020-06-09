@@ -26,7 +26,6 @@ public class MyServer {
         cmServerStub.setAppEventHandler(myServer.getCmServerEventHandler());
 
         CMInteractionInfo interInfo = cmServerStub.getCMInfo().getInteractionInfo();
-
         cmServerStub.startCM();
 
     }

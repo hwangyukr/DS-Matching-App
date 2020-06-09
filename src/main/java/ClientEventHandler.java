@@ -19,7 +19,7 @@ public class ClientEventHandler implements CMAppEventHandler {
             case CMInfo.CM_USER_EVENT:
                 CMUserEvent ue = (CMUserEvent) cmEvent;
                 System.out.println("Woohah~");
-                System.out.println(ue.getEventField(CMInfo.CM_STR, "id"));
+                System.out.println(ue.getEventField(CMInfo.CM_STR, "token"));
                 break;
             default:
                 return;
