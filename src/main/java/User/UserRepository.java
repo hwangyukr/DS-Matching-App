@@ -1,5 +1,6 @@
 package User;
 
+import Common.Result;
 import kr.ac.konkuk.ccslab.cm.event.CMUserEvent;
 import kr.ac.konkuk.ccslab.cm.info.CMInfo;
 import kr.ac.konkuk.ccslab.cm.manager.CMDBManager;
@@ -9,7 +10,7 @@ import java.sql.SQLException;
 
 public class UserRepository extends CMDBManager {
 
-    public int saveUser(User user, CMInfo cmInfo)  {
+    public int saveUser(User user, Result result, CMInfo cmInfo)  {
 
         String strQuery = "insert into user (user_name, password, user_email) values (" +
                 " '"+ user.getName() + "'," +
@@ -18,7 +19,11 @@ public class UserRepository extends CMDBManager {
 
         int ret = CMDBManager.sendUpdateQuery(strQuery, cmInfo);
 
-        if(ret == -1) return ret;
+        if(ret == -1) {
+            result.setSuccess(false);
+            result.setMsg("실패하였습니");
+            return ret;
+        }
 
         String getQuery = "select * from user where user_email = '" + user.getEmail() + "';";
         ResultSet resultSet = CMDBManager.sendSelectQuery(getQuery, cmInfo);
@@ -28,8 +33,12 @@ public class UserRepository extends CMDBManager {
                 id = resultSet.getLong("user_id");
             }
         } catch (SQLException e) {
-            return -1;
+            result.setSuccess(false);
+            result.setMsg("실패하였습니다");
+            return ret;
         }
+        result.setSuccess(true);
+        result.setMsg("성공하였습니다");
         user.setId(id);
         return ret;
     }
