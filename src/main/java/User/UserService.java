@@ -1,5 +1,6 @@
 package User;
 
+import Common.Result;
 import Config.TokenProvider;
 import kr.ac.konkuk.ccslab.cm.event.CMUserEvent;
 import kr.ac.konkuk.ccslab.cm.info.CMInfo;
@@ -18,11 +19,13 @@ public class UserService {
         return userRepository.findByEmail(email, cmInfo) != null;
     }
 
-    public User createUser(User user) {
-        if(isExistedEmail(user.getEmail()))
+    public User createUser(User user, Result result) {
+        if(isExistedEmail(user.getEmail())) {
+            result.setSuccess(false);
+            result.setMsg("이미 존재하는 이메일입니다");
             return null;
-        int ret = userRepository.saveUser(user, cmInfo);
-        if(ret == -1) return null;
+        }
+        userRepository.saveUser(user, result, cmInfo);
         return user;
     }
 
@@ -35,13 +38,23 @@ public class UserService {
         return profile;
     }
 
-    public String login(UserDTO.LoginReq dto) {
+    public String login(UserDTO.LoginReq dto, Result result) {
 
         User user = userRepository.findByEmail(dto.getEmail(), cmInfo);
 
-        if(user == null) return null;
-        if(!dto.getPassword().equals(user.getPassword())) return null;
+        if(user == null) {
+            result.setMsg("존재하지 않는 이메일입니다");
+            result.setSuccess(false);
+            return null;
+        }
+        if(!dto.getPassword().equals(user.getPassword())) {
+            result.setMsg("비밀번호가 일치 하지 않습니다");
+            result.setSuccess(false);
+            return null;
+        }
 
+        result.setMsg("성공하였습니다");
+        result.setSuccess(true);
         return TokenProvider.createToken(user.getEmail(), user.getId());
 
     }
