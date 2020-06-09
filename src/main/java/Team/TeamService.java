@@ -1,5 +1,6 @@
 package Team;
 
+import Config.TokenProvider;
 import User.User;
 import User.UserRepository;
 import kr.ac.konkuk.ccslab.cm.event.CMUserEvent;
@@ -25,41 +26,39 @@ public class TeamService {
     }
 
     public Application applyTeam(CMUserEvent ue) {
+        return null;
+//        Long userId = Long.valueOf(ue.getEventField(CMInfo.CM_LONG, "userId"));
+//        User user = userRepository.findById(userId, cmInfo);
+//        Team team = getTeam(ue);
+//
+//        Application application = new Application.Builder()
+//                .team(team)
+//                .user(user)
+//                .build();
+//
+//        return teamRepository.saveApplication(application, cmInfo);
+    }
 
-        Long userId = Long.valueOf(ue.getEventField(CMInfo.CM_LONG, "userId"));
-        User user = userRepository.findById(userId, cmInfo);
-        Team team = getTeam(ue);
+    public Team getTeam(TokenProvider.TokenResult result) {
+        Long userId = result.getId();
+        return teamRepository.getTeamById(userId, cmInfo);
+    }
 
-        Application application = new Application.Builder()
-                .team(team)
-                .user(user)
+    public Team createTeam(TokenProvider.TokenResult result, String teamName) {
+
+        User user = new User.Builder()
+                .id(result.getId())
                 .build();
 
-        return teamRepository.saveApplication(application, cmInfo);
-    }
-
-    public Team getTeam(CMUserEvent ue) {
-        Long teamId = Long.valueOf(ue.getEventField(CMInfo.CM_LONG, "teamId"));
-        return teamRepository.getTeamById(teamId, cmInfo);
-    }
-
-    public Team createTeam(CMUserEvent ue) {
-
-        String name = ue.getEventField(CMInfo.CM_STR, "name");
-        Long userId = Long.valueOf(ue.getEventField(CMInfo.CM_LONG, "userId"));
-
-        // TODO 이미 있는놈인지 확인
-
-        User teamLeader = userRepository.findById(userId, cmInfo);
-        //private final List<TeamRole> teamRoles; //TODO 리스트형식의 데이터는 어떻게 주고 받을지 결
-
         Team team = new Team.Builder()
-                .name(name)
-                .teamLeader(teamLeader)
+                .name(teamName)
+                .teamLeader(user)
                 .teamRoles(null)
                 .build();
 
-        return teamRepository.saveTeam(team, cmInfo);
+        int ret = teamRepository.saveTeam(team, cmInfo);
+
+        return team;
     }
 
     public List<Application> getApplications(CMUserEvent ue) {

@@ -18,8 +18,12 @@ public class ClientEventHandler implements CMAppEventHandler {
         switch (cmEvent.getType()) {
             case CMInfo.CM_USER_EVENT:
                 CMUserEvent ue = (CMUserEvent) cmEvent;
+                clientStub.send(ue, "SERVER");
                 System.out.println("Woohah~");
                 System.out.println(ue.getEventField(CMInfo.CM_STR, "token"));
+                ue.setEventField(CMInfo.CM_STR, "team_name", "종현이");
+                ue.setStringID("CREATE-TEAM");
+                clientStub.send(ue, "SERVER");
                 break;
             default:
                 return;

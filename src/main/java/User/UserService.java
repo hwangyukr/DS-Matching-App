@@ -42,7 +42,7 @@ public class UserService {
         if(user == null) return null;
         if(!dto.getPassword().equals(user.getPassword())) return null;
 
-        return TokenProvider.createToken(user.getEmail(), user.getPassword());
+        return TokenProvider.createToken(user.getEmail(), user.getId());
 
     }
 

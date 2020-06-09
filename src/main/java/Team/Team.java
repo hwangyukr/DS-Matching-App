@@ -83,4 +83,31 @@ public class Team {
         return teamRoles;
     }
 
+    public User getTeamLeader() {
+        return teamLeader;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setUsers(List<User> users) {
+        this.users = users;
+    }
+
+    public void setTeamLeader(User teamLeader) {
+        this.teamLeader = teamLeader;
+    }
+
+    public void setApplications(List<Application> applications) {
+        this.applications = applications;
+    }
+
+    public void setTeamRoles(List<TeamRole> teamRoles) {
+        this.teamRoles = teamRoles;
+    }
 }

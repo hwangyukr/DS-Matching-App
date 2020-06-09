@@ -46,6 +46,15 @@ public class TokenProvider {
         public void setSuccess(String success) {
             this.success = success;
         }
+
+        @Override
+        public String toString() {
+            return "TokenResult{" +
+                    "id=" + id +
+                    ", email='" + email + '\'' +
+                    ", success='" + success + '\'' +
+                    '}';
+        }
     }
 
     public static String createToken(String email, Long id) {

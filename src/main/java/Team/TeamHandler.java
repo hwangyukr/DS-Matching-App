@@ -1,6 +1,8 @@
 package Team;
 
+import Config.TokenProvider;
 import kr.ac.konkuk.ccslab.cm.event.CMUserEvent;
+import kr.ac.konkuk.ccslab.cm.info.CMInfo;
 import kr.ac.konkuk.ccslab.cm.stub.CMServerStub;
 
 import java.util.List;
@@ -16,23 +18,36 @@ public class TeamHandler {
 
     public void getTeams(CMUserEvent ue) {
 
-        List<Team> teams = teamService.getTeams(ue);
-
     }
 
     public void applyTeam(CMUserEvent ue) {
         Application application = teamService.applyTeam(ue);
     }
 
+    public TokenProvider.TokenResult getUserInfo(CMUserEvent ue) {
+        String token = ue.getEventField(CMInfo.CM_STR, "token");
+        return TokenProvider.validateToken(token);
+    }
+
     public void getTeam(CMUserEvent ue) {
-        Team team = teamService.getTeam(ue);
+
+        TokenProvider.TokenResult result
+                = getUserInfo(ue);
+
+        if(result.getSuccess() != "성공하였습니다") {
+            ue.setEventField(CMInfo.CM_INT, "success", "1");
+            ue.setEventField(CMInfo.CM_STR, "msg", result.getSuccess());
+        }
+        else {
+            Team team = teamService.getTeam(result);
+        }
+        cmServerStub.send(ue, ue.getSender());
     }
 
     public void createTeam(CMUserEvent ue) {
-
-        // TODO : 로그인 되있는놈인지 확인
-
-        Team team = teamService.createTeam(ue);
+        TokenProvider.TokenResult result = getUserInfo(ue);
+        String teamName = ue.getEventField(CMInfo.CM_STR, "team_name");
+        Team team = teamService.createTeam(result, teamName);
     }
 
     public void getApplications(CMUserEvent ue) {

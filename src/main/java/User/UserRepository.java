@@ -11,7 +11,7 @@ public class UserRepository extends CMDBManager {
 
     public int saveUser(User user, CMInfo cmInfo)  {
 
-        String strQuery = "insert into user_table (username, password, email) values (" +
+        String strQuery = "insert into user (user_name, password, user_email) values (" +
                 " '"+ user.getName() + "'," +
                 " '" + user.getPassword() + "'," +
                 " '" + user.getEmail() + "');";
@@ -20,12 +20,12 @@ public class UserRepository extends CMDBManager {
 
         if(ret == -1) return ret;
 
-        String getQuery = "select * from user_table where email = '" + user.getEmail() + "';";
+        String getQuery = "select * from user where user_email = '" + user.getEmail() + "';";
         ResultSet resultSet = CMDBManager.sendSelectQuery(getQuery, cmInfo);
         Long id = -9999l;
         try {
             while(resultSet.next()) {
-                id = resultSet.getLong("id");
+                id = resultSet.getLong("user_id");
             }
         } catch (SQLException e) {
             return -1;
@@ -35,12 +35,12 @@ public class UserRepository extends CMDBManager {
     }
 
     public User findByEmail(String email, CMInfo cmInfo) {
-        String getQuery = "select * from user_table where email = '" + email + "';";
+        String getQuery = "select * from user where user_email = '" + email + "';";
         ResultSet resultSet = CMDBManager.sendSelectQuery(getQuery, cmInfo);
         User user = null;
         try {
             while(resultSet.next()) {
-                Long id = resultSet.getLong("id");
+                Long id = resultSet.getLong("user_id");
                 String password = resultSet.getString("password");
                 user = new User.Builder()
                         .id(id)

@@ -41,7 +41,6 @@ public class UserHandler {
             ue.setEventField(CMInfo.CM_STR, "msg", "성공하였습니다");
             ue.setEventField(CMInfo.CM_STR, "user_id", String.valueOf(user.getId()));
         }
-        System.out.println(ue.getSender());
         cmServerStub.send(ue, ue.getSender());
     }
 
