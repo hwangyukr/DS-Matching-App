@@ -27,6 +27,7 @@ public class TeamHandler {
 
     public TokenProvider.TokenResult getUserInfo(CMUserEvent ue) {
         String token = ue.getEventField(CMInfo.CM_STR, "token");
+        if(token == null) return new TokenProvider.TokenResult(null, null, "입력값을 확인하세요.");
         return TokenProvider.validateToken(token);
     }
 
