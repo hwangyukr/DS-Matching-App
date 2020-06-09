@@ -53,12 +53,12 @@ public class UserHandler {
         ue.setStringID("login-reply");
 
         if(token == null) {
-            ue.setEventField(CMInfo.CM_STR, "success", "0");
+            ue.setEventField(CMInfo.CM_INT, "success", "0");
             ue.setEventField(CMInfo.CM_STR, "msg", "실패하였습니다");
             ue.setEventField(CMInfo.CM_STR, "token", null);
         }
         else {
-            ue.setEventField(CMInfo.CM_STR,"success", "1");
+            ue.setEventField(CMInfo.CM_INT,"success", "1");
             ue.setEventField(CMInfo.CM_STR, "msg", "성공하였습니다");
             ue.setEventField(CMInfo.CM_STR, "token", token);
         }
