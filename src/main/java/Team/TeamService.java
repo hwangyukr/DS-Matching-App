@@ -21,9 +21,8 @@ public class TeamService {
         this.userRepository = new UserRepository();
     }
 
-    public List<Team> getTeams(CMUserEvent ue) {
-        Boolean flag = Boolean.valueOf(ue.getEventField(CMInfo.CM_INT, "flag"));
-        return teamRepository.getTeams(flag, cmInfo);
+    public List<Team> getTeams(Result result) {
+        return teamRepository.getTeams(result, cmInfo);
     }
 
     public Application applyTeam(CMUserEvent ue) {

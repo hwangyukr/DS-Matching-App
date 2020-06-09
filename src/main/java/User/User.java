@@ -1,14 +1,21 @@
 package User;
 
 import Team.Team;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import Team.Role;
+
+import java.util.Objects;
 
 public class User {
 
     private Long id;
+
+    @JsonIgnore
     private Team team;
     private String email;
     private String name;
     private String password;
+    private Role role;
 
     public User() {
 
@@ -21,12 +28,17 @@ public class User {
         private String password;
         private Long id;
         private Team team;
+        private Role role;
 
         public Builder() {
         }
 
         public Builder email(String val) {
             email = val;
+            return this;
+        }
+        public Builder role(Role val) {
+            role = val;
             return this;
         }
         public Builder name(String val) {
@@ -59,6 +71,7 @@ public class User {
         this.email = builder.email;
         this.name = builder.name;
         this.password = builder.password;
+        this.role = builder.role;
     }
 
     public void setId(Long id) {
@@ -85,6 +98,14 @@ public class User {
         return password;
     }
 
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
     @Override
     public String toString() {
         return "User{" +
@@ -93,6 +114,20 @@ public class User {
                 ", email='" + email + '\'' +
                 ", name='" + name + '\'' +
                 ", password='" + password + '\'' +
+                ", role=" + role +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return Objects.equals(id, user.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

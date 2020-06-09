@@ -33,11 +33,10 @@ public class Client {
         CMUserEvent ue = new CMUserEvent();
         CMUser myself = cmClientStub.getCMInfo().getInteractionInfo().getMyself();
 
-        cmClientStub.loginCM("jonghyun", "0000");
+        cmClientStub.loginCM("kongee", "0000");
         ue.setStringID("SIGN-IN");
-        ue.setEventField(CMInfo.CM_STR, "email", "jongjong1994@gmail.com");
+        ue.setEventField(CMInfo.CM_STR, "email", "kong@gmail.com");
         ue.setEventField(CMInfo.CM_STR, "password", "0000");
-        ue.setEventField(CMInfo.CM_STR, "name", "jonghyun");
         ue.setSender(myself.getName());
         ue.setHandlerGroup(myself.getCurrentGroup());
         ue.setHandlerSession(myself.getCurrentSession());
