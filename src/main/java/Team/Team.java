@@ -3,8 +3,7 @@ package Team;
 import User.User;
 
 import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class Team {
 
@@ -13,8 +12,7 @@ public class Team {
     private List<User> users = new ArrayList<>();
     private User teamLeader;
     private List<Application> applications = new ArrayList<>();
-    private List<TeamRole> teamRoles = new ArrayList<>();
-
+    private Map<Role, Integer> currentRoles = new HashMap<>();
     public Team() {
     }
 
@@ -24,7 +22,7 @@ public class Team {
         this.users = builder.users;
         this.teamLeader = builder.teamLeader;
         this.applications = builder.applications;
-        this.teamRoles = builder.teamRoles;
+        this.currentRoles = builder.currentRoles;
     }
 
 
@@ -32,7 +30,7 @@ public class Team {
 
         private String name;
         private User teamLeader;
-        private List<TeamRole> teamRoles;
+        private Map<Role, Integer> currentRoles = new HashMap<>();
         private Long id;
         private List<User> users = new ArrayList<>();
         private List<Application> applications = new ArrayList<>();
@@ -48,8 +46,8 @@ public class Team {
             teamLeader = val;
             return this;
         }
-        public Builder teamRoles(List<TeamRole> val) {
-            teamRoles = val;
+        public Builder teamRoles(Map<Role, Integer> val) {
+            currentRoles = val;
             return this;
         }
         public Builder id(Long val) {
@@ -60,6 +58,18 @@ public class Team {
         public Team build() {
             return new Team(this);
         }
+    }
+
+    @Override
+    public String toString() {
+        return "Team{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", users=" + users +
+                ", teamLeader=" + teamLeader +
+                ", applications=" + applications +
+                ", currentRoles=" + currentRoles +
+                '}';
     }
 
     public Long getId() {
@@ -76,10 +86,6 @@ public class Team {
 
     public List<Application> getApplications() {
         return applications;
-    }
-
-    public List<TeamRole> getTeamRoles() {
-        return teamRoles;
     }
 
     public User getTeamLeader() {
@@ -106,7 +112,20 @@ public class Team {
         this.applications = applications;
     }
 
-    public void setTeamRoles(List<TeamRole> teamRoles) {
-        this.teamRoles = teamRoles;
+    public Map<Role, Integer> getCurrentRoles() {
+        return currentRoles;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Team team = (Team) o;
+        return Objects.equals(id, team.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

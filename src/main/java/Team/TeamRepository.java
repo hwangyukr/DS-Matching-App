@@ -8,45 +8,114 @@ import kr.ac.konkuk.ccslab.cm.manager.CMDBManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
-import java.util.List;
+import java.util.*;
 
 public class TeamRepository extends CMDBManager {
 
-    public List<Team> getTeams(Boolean flag, CMInfo cmInfo) {
-        return null;
+    public List<Team> getTeams(Result result, CMInfo cmInfo) {
+
+        String query =
+                "select u.user_id, u.user_name, u.user_email, r.role, t.team_id, t.team_name " +
+                "from user u, team t, role r " +
+                "where u.team_id = t.team_id and u.role_id = r.role_id;";
+        ResultSet resultSet = CMDBManager.sendSelectQuery(query, cmInfo);
+        HashMap<Long, Team> teams = new HashMap<>();
+
+        try {
+            while(resultSet.next()) {
+
+                Team team;
+                Long teamId = resultSet.getLong("team_id");
+                if(teams.get(teamId) == null) {
+                    String teamName = resultSet.getString("team_name");
+                    team = new Team.Builder()
+                            .id(teamId)
+                            .name(teamName)
+                            .build();
+                }
+                else team = teams.get(teamId);
+
+                Map<Role, Integer> roles = team.getCurrentRoles();
+                List<User> members = team.getUsers();
+
+                Role role = Role.valueOf(resultSet.getString("role"));
+                if(roles.get(role) == null) roles.put(role, 1);
+                else roles.put(role, roles.get(role) + 1);
+
+                Long id = resultSet.getLong("user_id");
+                String email = resultSet.getString("user_email");
+                String userName = resultSet.getString("user_name");
+                User user = new User.Builder()
+                        .id(id)
+                        .email(email)
+                        .name(userName)
+                        .role(role)
+                        .build();
+
+                members.add(user);
+                teams.put(teamId, team);
+
+            }
+        } catch (SQLException e) {
+            result.setMsg("실패하였습니다");
+            result.setSuccess(false);
+            return null;
+        }
+
+        result.setMsg("성공하였습니다");
+        result.setSuccess(true);
+        return new ArrayList<Team>(teams.values());
     }
 
     public Application saveApplication(Application application, CMInfo cmInfo) {
-        return null;
 
+        return null;
     }
+
 
     public Team getTeamById(Long userId, Result result, CMInfo cmInfo) {
 
         /*
-        먼저 팀을 가져
+        팀 가져오기
          */
-        String query = "select * from user " +
-                " left outer join team on user.team_id = team.id and user.id = '"
-                + userId + "';";
+        String query = "select u.user_id, u.user_name, u.user_email, r.role, sq.team_id, sq.team_name " +
+                "from user u, role r, (" +
+                "select team.team_id, team.team_name " +
+                "from user, team " +
+                "where user.team_id = team.team_id " +
+                "and user.user_id = '" + userId + "' " +
+                ") sq " +
+                "where sq.team_id = u.team_id and u.role_id = r.role_id;";
 
         ResultSet resultSet = CMDBManager.sendSelectQuery(query, cmInfo);
-        User user = null;
-        Long teamId = 0l;
+        Team team = new Team();
+        List<User> members = team.getUsers();
+        Map<Role, Integer> roles = team.getCurrentRoles();
 
         try {
             while(resultSet.next()) {
-                Long id = resultSet.getLong("id");
-                String email = resultSet.getString("email");
-                String password = resultSet.getString("password");
-                String userName = resultSet.getString("username");
-                teamId = resultSet.getLong("team_id");
 
-                user = new User.Builder()
+                Long id = resultSet.getLong("user_id");
+                String email = resultSet.getString("user_email");
+                String userName = resultSet.getString("user_name");
+
+                Role role = Role.valueOf(resultSet.getString("role"));
+                if(roles.get(role) == null) roles.put(role, 1);
+                else roles.put(role, roles.get(role) + 1);
+
+                User user = new User.Builder()
                         .id(id)
-                        .password(password)
                         .email(email)
+                        .name(userName)
+                        .role(role)
                         .build();
+
+                members.add(user);
+
+                Long teamId = resultSet.getLong("team_id");
+                String teamName = resultSet.getString("team_name");
+                team.setName(teamName);
+                team.setId(teamId);
             }
         } catch (SQLException e) {
             result.setMsg("실패하였습니다");
@@ -55,45 +124,40 @@ public class TeamRepository extends CMDBManager {
         }
 
         /*
-       쿼리를 날렸는데 teamid가 안변한 건 팀이 없는거임 그래서 result를 false로 세팅 후 리턴
+        Application들 가져오는 쿼리
          */
-        if(teamId == 0l) {
-            result.setMsg("속한 팀이 없습니");
-            result.setSuccess(false);
-            return null;
-        }
-
-        Team team = new Team.Builder()
-                .id(teamId)
-                .build();
-        List<User> teams = team.getUsers();
-
-        query = "select * from user, team " +
-                " where user.team_id = team.id and team.id = '"
-                + teamId + "';";
-
+        query = "select * from user, application where " +
+                "user.user_id = application.user_id and application.team_id = '" +
+                team.getId() + "' and application.didRead = '0';";
         resultSet = CMDBManager.sendSelectQuery(query, cmInfo);
-
+        List<Application> applications = team.getApplications();
         try {
             while(resultSet.next()) {
-                Long id = resultSet.getLong("user_id");
+                int id = resultSet.getInt("application_id");
+                Long uid = resultSet.getLong("user_id");
                 String userName = resultSet.getString("user_name");
                 String email = resultSet.getString("user_email");
-                Long leader = resultSet.getLong("team_leader");
+
                 User user1 = new User.Builder()
-                        .email(email)
-                        .id(id)
-                        .email(email)
+                        .id(uid)
                         .name(userName)
+                        .email(email)
                         .build();
-                teams.add(user1);
+
+                Application application = new Application.Builder()
+                        .user(user1)
+                        .team(team)
+                        .id(Long.valueOf(id))
+                        .build();
+                applications.add(application);
             }
         } catch (SQLException e) {
             result.setMsg("실패하였습니다");
             result.setSuccess(false);
             return null;
         }
-
+        result.setMsg("성공하였습니다");
+        result.setSuccess(true);
         return team;
     }
 
@@ -128,6 +192,19 @@ public class TeamRepository extends CMDBManager {
             result.setSuccess(false);
             return -1l;
         }
+
+        /*
+            팀 리더의 유저의 팀도 업데이트 해줘야됨
+         */
+        query = "update user set team_id = '" + id + "' where user_id = '" + team.getTeamLeader().getId() + "';";
+        ret = CMDBManager.sendUpdateQuery(query, cmInfo);
+
+        if(ret == -1) {
+            result.setMsg("실패하였습니다");
+            result.setSuccess(false);
+            return -1l;
+        }
+
         result.setMsg("성공하였습니다");
         result.setSuccess(true);
         team.setId(id);

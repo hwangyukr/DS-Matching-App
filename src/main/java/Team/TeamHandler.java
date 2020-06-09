@@ -2,6 +2,8 @@ package Team;
 
 import Common.Result;
 import Config.TokenProvider;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.ac.konkuk.ccslab.cm.event.CMUserEvent;
 import kr.ac.konkuk.ccslab.cm.event.CMUserEventField;
 import kr.ac.konkuk.ccslab.cm.info.CMInfo;
@@ -10,60 +12,111 @@ import kr.ac.konkuk.ccslab.cm.stub.CMServerStub;
 import java.util.List;
 import java.util.Vector;
 
-public class TeamHandler {
+public class TeamHandler<T> {
     private CMServerStub cmServerStub;
     private TeamService teamService;
+    private ObjectMapper objectMapper;
 
     public TeamHandler(CMServerStub cmServerStub) {
         this.cmServerStub = cmServerStub;
         this.teamService = new TeamService(cmServerStub.getCMInfo());
+        this.objectMapper = new ObjectMapper();
     }
+
+    public TokenProvider.TokenResult getUserInfo(CMUserEvent ue) {
+        String token = ue.getEventField(CMInfo.CM_STR, "token");
+        if(token == null){
+            ue.setEventField(CMInfo.CM_INT, "success", "0");
+            ue.setEventField(CMInfo.CM_STR, "msg", "NOT AUTHORIZED");
+            cmServerStub.send(ue, ue.getSender());
+            return null;
+        }
+
+        return TokenProvider.validateToken(token);
+    }
+
+    public void handleError(Result result, CMUserEvent ue) {
+        ue.setEventField(CMInfo.CM_INT, "success", "0");
+        ue.setEventField(CMInfo.CM_STR, "msg", result.getMsg());
+        cmServerStub.send(ue, ue.getSender());
+    }
+
 
     public void getTeams(CMUserEvent ue) {
 
+        ue.setStringID("GET-TEAMS-REPLY");
+        TokenProvider.TokenResult validResult = getUserInfo(ue);
+        if(validResult == null) return;
+
+        Result result = new Result();
+        List<Team> teams = teamService.getTeams(result);
+
+        /*
+            result값이 false이면 그에 대한 에러 메시지 처리
+         */
+        if(!result.isSuccess()) {
+            handleError(result, ue);
+            return;
+        }
+
+        try {
+            String ret = objectMapper.writeValueAsString(teams);
+            ue.setEventField(CMInfo.CM_INT, "success", "1");
+            ue.setEventField(CMInfo.CM_STR, "msg", validResult.getSuccess());
+            ue.setEventField(CMInfo.CM_STR, "team", ret);
+            cmServerStub.send(ue, ue.getSender());
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        System.out.println(teams);
     }
 
     public void applyTeam(CMUserEvent ue) {
         Application application = teamService.applyTeam(ue);
     }
 
-    public TokenProvider.TokenResult getUserInfo(CMUserEvent ue) {
-        String token = ue.getEventField(CMInfo.CM_STR, "token");
-        if(token == null) return new TokenProvider.TokenResult(null, null, "입력값을 확인하세.");
-        return TokenProvider.validateToken(token);
-    }
-
     public void getTeam(CMUserEvent ue) {
 
+        ue.setStringID("GET-TEAM-REPLY");
         TokenProvider.TokenResult validResult = getUserInfo(ue);
-
-        if(validResult.getSuccess() != "성공하였습니다") {
-            ue.setEventField(CMInfo.CM_INT, "success", "0");
-            ue.setEventField(CMInfo.CM_STR, "msg", validResult.getSuccess());
-            cmServerStub.send(ue, ue.getSender());
-        }
+        if(validResult == null) return;
 
         Result result = new Result();
         Team team = teamService.getTeam(validResult, result);
 
-        cmServerStub.send(ue, ue.getSender());
+        /*
+            result값이 false이면 그에 대한 에러 메시지 처리
+         */
+        if(!result.isSuccess()) {
+            handleError(result, ue);
+            return;
+        }
+
+        /*
+            올바른 값인 경우에 제대로 처리해줌
+         */
+        try {
+            String ret = objectMapper.writeValueAsString(team);
+            ue.setEventField(CMInfo.CM_INT, "success", "1");
+            ue.setEventField(CMInfo.CM_STR, "msg", validResult.getSuccess());
+            ue.setEventField(CMInfo.CM_STR, "team", ret);
+            cmServerStub.send(ue, ue.getSender());
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
     }
 
     public void createTeam(CMUserEvent ue) {
 
+        ue.setStringID("CREATE-TEAM-REPLY");
         TokenProvider.TokenResult validResult = getUserInfo(ue);
-        String teamName = ue.getEventField(CMInfo.CM_STR, "team_name");
-        ue.setStringID("team-make-reply");
-        /*
-            토큰 validation 실패시 바로 reply
-         */
-        if(!validResult.getSuccess().equals("성공하였습니다")) {
-            ue.setEventField(CMInfo.CM_INT, "success", "0");
-            ue.setEventField(CMInfo.CM_STR, "msg", validResult.getSuccess());
-            cmServerStub.send(ue, ue.getSender());
-            return;
-        }
+        if(validResult == null) return;
 
+        String teamName = ue.getEventField(CMInfo.CM_STR, "team_name");
+        if(teamName == null) {
+            handleError(new Result("입력값을 확인하세요", false), ue);
+            return;;
+        }
         Result result = new Result();
         Team team = teamService.createTeam(validResult, result, teamName);
 
@@ -72,21 +125,18 @@ public class TeamHandler {
             result의 success를 false로 만들어주고 그 사유를 msg에 담아줌
             그래서 그렇게 리턴하면
          */
-        System.out.println(result.getMsg());
         if(!result.isSuccess()) {
-            ue.setEventField(CMInfo.CM_INT, "success", "0");
-            ue.setEventField(CMInfo.CM_STR, "msg", result.getMsg());
-            cmServerStub.send(ue, ue.getSender());
+            handleError(result, ue);
+            return;
         }
+
          /*
             성공시에는 좋게좋게 ㅇㅋ?
          */
-        else {
-            ue.setEventField(CMInfo.CM_INT,"success", "1");
-            ue.setEventField(CMInfo.CM_STR, "msg", "성공하였습니다");
-            ue.setEventField(CMInfo.CM_STR, "team_id", String.valueOf(team.getId()));
-            cmServerStub.send(ue, ue.getSender());
-        }
+        ue.setEventField(CMInfo.CM_INT,"success", "1");
+        ue.setEventField(CMInfo.CM_STR, "msg", "성공하였습니다");
+        ue.setEventField(CMInfo.CM_STR, "team_id", String.valueOf(team.getId()));
+        cmServerStub.send(ue, ue.getSender());
 
     }
 
