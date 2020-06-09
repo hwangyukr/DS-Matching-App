@@ -33,7 +33,6 @@ public class MyServerEventHandler implements CMAppEventHandler {
                 CMUserEvent ue = (CMUserEvent) cmEvent;
 
                 switch (ue.getStringID()) {
-
                     case "SIGN-UP":
                         userHandler.signUp(ue);
                         break;

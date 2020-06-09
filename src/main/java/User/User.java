@@ -3,6 +3,7 @@ package User;
 import Team.Team;
 
 public class User {
+
     private Long id;
     private Team team;
     private String email;
@@ -56,6 +57,10 @@ public class User {
         this.password = builder.password;
     }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public Long getId() {
         return id;
     }
@@ -74,5 +79,16 @@ public class User {
 
     public String getPassword() {
         return password;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", team=" + team +
+                ", email='" + email + '\'' +
+                ", name='" + name + '\'' +
+                ", password='" + password + '\'' +
+                '}';
     }
 }

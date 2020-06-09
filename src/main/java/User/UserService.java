@@ -18,23 +18,13 @@ public class UserService {
         return userRepository.findByEmail(email, cmInfo) != null;
     }
 
-    public User createUser(CMUserEvent ue) {
+    public User createUser(User user) {
+        if(isExistedEmail(user.getEmail()))
+            return null;
 
-        String email = ue.getEventField(CMInfo.CM_STR, "email");
-        String password = ue.getEventField(CMInfo.CM_STR, "password");
-        String name = ue.getEventField(CMInfo.CM_STR, "name");
-
-        if(isExistedEmail(email))
-            return null; //TODO : Exception 처리
-
-        User user = new User.Builder()
-                .email(email)
-                .password(password)
-                .name(name)
-                .build();
-
-        return userRepository.saveUser(user, cmInfo);
-
+        int ret = userRepository.saveUser(user, cmInfo);
+        if(ret == -1) return null;
+        return user;
     }
 
     public Profile findProfile(CMUserEvent ue) {
