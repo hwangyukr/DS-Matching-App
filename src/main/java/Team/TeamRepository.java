@@ -106,7 +106,11 @@ public class TeamRepository extends CMDBManager {
 
         int ret = CMDBManager.sendUpdateQuery(query, cmInfo);
 
-        if(ret == -1) return -1l;
+        if(ret == -1) {
+            result.setMsg("실패하였습니다");
+            result.setSuccess(false);
+            return -1l;
+        }
 
         String getQuery = "select * from team where team_leader = '" + team.getTeamLeader().getId() + "';";
         ResultSet resultSet = CMDBManager.sendSelectQuery(getQuery, cmInfo);
@@ -124,6 +128,8 @@ public class TeamRepository extends CMDBManager {
             result.setSuccess(false);
             return -1l;
         }
+        result.setMsg("성공하였습니다");
+        result.setSuccess(true);
         team.setId(id);
         return id;
     }

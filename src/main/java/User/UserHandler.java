@@ -18,7 +18,6 @@ public class UserHandler {
 
     public void signUp(CMUserEvent ue) {
 
-        // TODO : 에러 처리
         String email = ue.getEventField(CMInfo.CM_STR, "email");
         String password = ue.getEventField(CMInfo.CM_STR, "password");
         String name = ue.getEventField(CMInfo.CM_STR, "name");
@@ -51,14 +50,15 @@ public class UserHandler {
         UserDTO.LoginReq dto = new UserDTO.LoginReq(email, password);
 
         String token = userService.login(dto);
+        ue.setStringID("login-reply");
 
         if(token == null) {
-            ue.setEventField(CMInfo.CM_INT, "success", "0");
+            ue.setEventField(CMInfo.CM_STR, "success", "0");
             ue.setEventField(CMInfo.CM_STR, "msg", "실패하였습니다");
             ue.setEventField(CMInfo.CM_STR, "token", null);
         }
         else {
-            ue.setEventField(CMInfo.CM_INT,"success", "1");
+            ue.setEventField(CMInfo.CM_STR,"success", "1");
             ue.setEventField(CMInfo.CM_STR, "msg", "성공하였습니다");
             ue.setEventField(CMInfo.CM_STR, "token", token);
         }

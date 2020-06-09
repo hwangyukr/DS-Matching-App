@@ -3,10 +3,12 @@ package Team;
 import Common.Result;
 import Config.TokenProvider;
 import kr.ac.konkuk.ccslab.cm.event.CMUserEvent;
+import kr.ac.konkuk.ccslab.cm.event.CMUserEventField;
 import kr.ac.konkuk.ccslab.cm.info.CMInfo;
 import kr.ac.konkuk.ccslab.cm.stub.CMServerStub;
 
 import java.util.List;
+import java.util.Vector;
 
 public class TeamHandler {
     private CMServerStub cmServerStub;
@@ -27,7 +29,7 @@ public class TeamHandler {
 
     public TokenProvider.TokenResult getUserInfo(CMUserEvent ue) {
         String token = ue.getEventField(CMInfo.CM_STR, "token");
-        if(token == null) return new TokenProvider.TokenResult(null, null, "입력값을 확인하세요.");
+        if(token == null) return new TokenProvider.TokenResult(null, null, "입력값을 확인하세.");
         return TokenProvider.validateToken(token);
     }
 
@@ -51,14 +53,15 @@ public class TeamHandler {
 
         TokenProvider.TokenResult validResult = getUserInfo(ue);
         String teamName = ue.getEventField(CMInfo.CM_STR, "team_name");
-
+        ue.setStringID("team-make-reply");
         /*
             토큰 validation 실패시 바로 reply
          */
-        if(validResult.getSuccess() != "성공하였습니다") {
+        if(!validResult.getSuccess().equals("성공하였습니다")) {
             ue.setEventField(CMInfo.CM_INT, "success", "0");
             ue.setEventField(CMInfo.CM_STR, "msg", validResult.getSuccess());
             cmServerStub.send(ue, ue.getSender());
+            return;
         }
 
         Result result = new Result();
@@ -69,18 +72,22 @@ public class TeamHandler {
             result의 success를 false로 만들어주고 그 사유를 msg에 담아줌
             그래서 그렇게 리턴하면
          */
-        if(result.isSuccess() == false) {
+        System.out.println(result.getMsg());
+        if(!result.isSuccess()) {
             ue.setEventField(CMInfo.CM_INT, "success", "0");
             ue.setEventField(CMInfo.CM_STR, "msg", result.getMsg());
             cmServerStub.send(ue, ue.getSender());
         }
-        /*
+         /*
             성공시에는 좋게좋게 ㅇㅋ?
          */
-        ue.setEventField(CMInfo.CM_INT,"success", "1");
-        ue.setEventField(CMInfo.CM_STR, "msg", "성공하였습니다");
-        ue.setEventField(CMInfo.CM_STR, "team_id", String.valueOf(team.getId()));
-        cmServerStub.send(ue, ue.getSender());
+        else {
+            ue.setEventField(CMInfo.CM_INT,"success", "1");
+            ue.setEventField(CMInfo.CM_STR, "msg", "성공하였습니다");
+            ue.setEventField(CMInfo.CM_STR, "team_id", String.valueOf(team.getId()));
+            cmServerStub.send(ue, ue.getSender());
+        }
+
     }
 
     public void getApplications(CMUserEvent ue) {
