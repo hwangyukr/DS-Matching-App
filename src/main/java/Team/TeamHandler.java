@@ -72,7 +72,27 @@ public class TeamHandler<T> {
     }
 
     public void applyTeam(CMUserEvent ue) {
-        Application application = teamService.applyTeam(ue);
+
+        ue.setStringID("APPLY-TEAM-REPLY");
+        TokenProvider.TokenResult validResult = getUserInfo(ue);
+        if(validResult == null) return;
+
+        Result result = new Result();
+        String teamName = ue.getEventField(CMInfo.CM_STR, "team_name");
+        if(teamName == null) {
+            handleError(new Result("입력값을 확인하세요", false), ue);
+            return;
+        }
+        Long id = teamService.applyTeam(validResult, result, teamName);
+
+        if(!result.isSuccess()) {
+            handleError(result, ue);
+            return;
+        }
+        ue.setEventField(CMInfo.CM_INT, "success", "1");
+        ue.setEventField(CMInfo.CM_STR, "msg", validResult.getSuccess());
+        ue.setEventField(CMInfo.CM_LONG, "application_id", String.valueOf(id));
+        cmServerStub.send(ue, ue.getSender());
     }
 
     public void getTeam(CMUserEvent ue) {
@@ -81,8 +101,14 @@ public class TeamHandler<T> {
         TokenProvider.TokenResult validResult = getUserInfo(ue);
         if(validResult == null) return;
 
+        String teamName = ue.getEventField(CMInfo.CM_STR, "team_name");
+        if(teamName == null) {
+            handleError(new Result("입력값을 확인하세요", false), ue);
+            return;
+        }
+
         Result result = new Result();
-        Team team = teamService.getTeam(validResult, result);
+        Team team = teamService.getTeam(teamName, result);
 
         /*
             result값이 false이면 그에 대한 에러 메시지 처리
@@ -115,7 +141,7 @@ public class TeamHandler<T> {
         String teamName = ue.getEventField(CMInfo.CM_STR, "team_name");
         if(teamName == null) {
             handleError(new Result("입력값을 확인하세요", false), ue);
-            return;;
+            return;
         }
         Result result = new Result();
         Team team = teamService.createTeam(validResult, result, teamName);
@@ -141,10 +167,53 @@ public class TeamHandler<T> {
     }
 
     public void getApplications(CMUserEvent ue) {
-        List<Application> applications = teamService.getApplications(ue);
+
+        ue.setStringID("GET-APPLICATIONS-REPLY");
+        TokenProvider.TokenResult validResult = getUserInfo(ue);
+        if(validResult == null) return;
+
+        Result result = new Result();
+        List<Application> applications = teamService.getApplications(validResult,result);
+
+        if(!result.isSuccess()) {
+            handleError(result, ue);
+            return;
+        }
+
+        try {
+            String ret = objectMapper.writeValueAsString(applications);
+            ue.setEventField(CMInfo.CM_INT, "success", "1");
+            ue.setEventField(CMInfo.CM_STR, "msg", validResult.getSuccess());
+            ue.setEventField(CMInfo.CM_STR, "applications", ret);
+            cmServerStub.send(ue, ue.getSender());
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+
     }
 
     public void processApplications(CMUserEvent ue) {
         Application application = teamService.processApplications(ue);
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
