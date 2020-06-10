@@ -26,7 +26,8 @@ public class TeamService {
     }
 
     public Team getTeam(String teamName, Result result) {
-        return teamRepository.getTeamByName(teamName, result, cmInfo);
+        String query = teamRepository.getTeamQueryTeamName(teamName);
+        return teamRepository.getTeamByName(query, result, cmInfo);
     }
 
     public Team createTeam(TokenProvider.TokenResult validResult, Result result, String teamName) {
@@ -50,11 +51,6 @@ public class TeamService {
         return teamRepository.getApplicationsByTeamId(userId, result, cmInfo);
     }
 
-    public Application processApplications(CMUserEvent ue) {
-        Long applicationId = Long.valueOf(ue.getEventField(CMInfo.CM_LONG, "applicationId"));
-        return teamRepository.processsApplication(applicationId, cmInfo);
-    }
-
     public Long applyTeam(TokenProvider.TokenResult validResult, Result result, String teamName) {
 
         Long uesrId = validResult.getId();
@@ -67,5 +63,52 @@ public class TeamService {
         Long applicationId = teamRepository.applyTeam(result, uesrId, teamId, cmInfo);
         return applicationId;
 
+    }
+
+    public void processApplications(TokenProvider.TokenResult validResult, Result result, Long userId, Long teamId, Integer yesTeam) {
+
+        String query = teamRepository.getTeamQueryTeamId(teamId);
+        Team team = teamRepository.getTeamByName(query, result, cmInfo);
+
+        if(team.getTeamLeader().getId() != validResult.getId()) {
+            result.setMsg("지원서 수정 권한이 없습니다");
+            result.setSuccess(false);
+            return;
+        }
+
+        List<Application> applications = team.getApplications();
+        Application app = null;
+
+        for(Application application : applications) {
+            if(application.getUser().getId() == userId) {
+                if(yesTeam == 1) application.setDidRead(true);
+                else application.setDidRead(false);
+                app = application;
+                break;
+            }
+        }
+
+        /*
+            Appplication update query
+         */
+        teamRepository.processApplication(app, result, cmInfo);
+        if(!result.isSuccess()) {
+            result.setMsg("실패하였습니다");
+            result.setSuccess(false);
+            return;
+        }
+
+        /*
+            User Update Query
+         */
+        teamRepository.updateUser(app.getUser(), app.getTeam().getId(), result, cmInfo);
+        if(!result.isSuccess()) {
+            result.setMsg("실패하였습니다");
+            result.setSuccess(false);
+            return;
+        }
+
+        result.setMsg("성공하였습니다");
+        result.setSuccess(true);
     }
 }
