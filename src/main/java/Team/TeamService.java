@@ -88,26 +88,13 @@ public class TeamService {
             }
         }
 
-        /*
-            Appplication update query
-         */
-        teamRepository.processApplication(app, result, cmInfo);
+        teamRepository.updateApplicationandUser(app, result, cmInfo);
+
         if(!result.isSuccess()) {
             result.setMsg("실패하였습니다");
             result.setSuccess(false);
             return;
         }
-
-        /*
-            User Update Query
-         */
-        teamRepository.updateUser(app.getUser(), app.getTeam().getId(), result, cmInfo);
-        if(!result.isSuccess()) {
-            result.setMsg("실패하였습니다");
-            result.setSuccess(false);
-            return;
-        }
-
         result.setMsg("성공하였습니다");
         result.setSuccess(true);
     }
