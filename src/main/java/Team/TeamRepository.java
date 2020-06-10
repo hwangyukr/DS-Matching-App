@@ -1,16 +1,16 @@
 package Team;
 
+import Common.DBManager;
 import Common.Result;
+import Config.Transactional;
 import User.User;
 import kr.ac.konkuk.ccslab.cm.info.CMInfo;
 import kr.ac.konkuk.ccslab.cm.manager.CMDBManager;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.SQLIntegrityConstraintViolationException;
+import java.sql.*;
 import java.util.*;
 
-public class TeamRepository extends CMDBManager {
+public class TeamRepository {
 
     public List<Team> getTeams(Result result, CMInfo cmInfo) {
 
@@ -166,45 +166,63 @@ public class TeamRepository extends CMDBManager {
                 "where sq.team_id = u.team_id and u.role_id = r.role_id;";
         return query;
     }
+
+    @Transactional
     public long saveTeam(Team team, Result result, CMInfo cmInfo) {
 
-        String query =
-                "insert into team(team_name, team_leader) values (" +
-                        " '" + team.getName() + "'," +
-                        " '" + team.getTeamLeader().getId() + "');";
+        Connection connection = null;
+        Statement statement = null;
 
-        int ret = CMDBManager.sendUpdateQuery(query, cmInfo);
-
-        if(ret == -1) {
-            result.setMsg("실패하였습니다");
-            result.setSuccess(false);
-            return -1l;
-        }
-
-        String getQuery = "select * from team where team_leader = '" + team.getTeamLeader().getId() + "';";
-        ResultSet resultSet = CMDBManager.sendSelectQuery(getQuery, cmInfo);
-        Long id = -9999l;
         try {
+
+            DBManager dbManager = DBManager.getConnection(cmInfo);
+            connection = dbManager.getConnection();
+            statement = dbManager.getStatement();
+            connection.setAutoCommit(false);
+
+            String query =
+                    "insert into team(team_name, team_leader) values (" +
+                            " '" + team.getName() + "'," +
+                            " '" + team.getTeamLeader().getId() + "');";
+
+            /*
+                에러가 나면 에러처리
+             */
+            int ret = statement.executeUpdate(query);
+            if(ret != 1) throw new SQLException();
+
+            String getQuery = "select * from team where team_leader = '" + team.getTeamLeader().getId() + "';";
+            ResultSet resultSet = CMDBManager.sendSelectQuery(getQuery, cmInfo);
+            Long id = -9999l;
             while(resultSet.next()) {
                 id = resultSet.getLong("team_id");
             }
+
+            /*
+                팀 리더의 유저의 팀도 업데이트 해줘야됨
+             */
+            query = "update user set team_id = '" + id + "' where user_id = '" + team.getTeamLeader().getId() + "';";
+            ret = statement.executeUpdate(query);
+            if(ret != 2) throw new SQLException();
+
+            team.setId(id);
+            connection.commit();
+
         } catch (SQLIntegrityConstraintViolationException e) {
+            try {
+                connection.rollback();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
             result.setMsg("이미 존재하는 팀명입니다");
             result.setSuccess(false);
             return -1l;
         } catch (SQLException e) {
-            result.setMsg("실패하였습니다");
-            result.setSuccess(false);
-            return -1l;
-        }
-
-        /*
-            팀 리더의 유저의 팀도 업데이트 해줘야됨
-         */
-        query = "update user set team_id = '" + id + "' where user_id = '" + team.getTeamLeader().getId() + "';";
-        ret = CMDBManager.sendUpdateQuery(query, cmInfo);
-
-        if(ret == -1) {
+            try {
+                connection.rollback();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
             result.setMsg("실패하였습니다");
             result.setSuccess(false);
             return -1l;
@@ -212,9 +230,9 @@ public class TeamRepository extends CMDBManager {
 
         result.setMsg("성공하였습니다");
         result.setSuccess(true);
-        team.setId(id);
-        return id;
+        return team.getId();
     }
+
     public List<Application> getApplicationsByTeamId(Long userId, Result result, CMInfo cmInfo) {
 
         String query =
@@ -271,28 +289,44 @@ public class TeamRepository extends CMDBManager {
         return applications;
     }
 
+    @Transactional
     public void processApplication(Application application, Result result, CMInfo cmInfo) {
+        Connection connection = null;
+        Statement statement = null;
 
-        Long id = application.getId();
+        try {
 
-        String query =
-                "update application set didRead = 1 where " +
-                "application_id = '" + id + "';";
+            DBManager dbManager = DBManager.getConnection(cmInfo);
+            connection = dbManager.getConnection();
+            statement = dbManager.getStatement();
+            connection.setAutoCommit(false);
 
-        int ret = CMDBManager.sendUpdateQuery(query, cmInfo);
+            Long id = application.getId();
 
-        if(ret == -1) {
-            result.setMsg("실패하였습니다");
+            String query =
+                    "update application set didRead = 1 where " +
+                            "application_id = '" + id + "';";
+
+            int ret = statement.executeUpdate(query);
+            if(ret != 1) throw new SQLException();
+
+            connection.commit();
+
+        } catch (SQLException e) {
+            try {
+                connection.rollback();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
             result.setSuccess(false);
-            return;
+            result.setMsg("실패하였습니다");
         }
-
         result.setSuccess(true);
         result.setMsg("성공하였습니다");
-
     }
 
     public Long getTeamIdByName(Result result, String teamName, CMInfo cmInfo) {
+
         String query = "select * from team where team_name = '" + teamName + "';";
         ResultSet resultSet = CMDBManager.sendSelectQuery(query, cmInfo);
         Long teamId = null;
@@ -310,25 +344,40 @@ public class TeamRepository extends CMDBManager {
         return teamId;
     }
 
+    @Transactional
     public Long applyTeam(Result result, Long userId, Long teamId, CMInfo cmInfo) {
-        String query = "insert into application (user_id, team_id) values ('"
-                + userId + "', '" + teamId + "');";
-        int ret = CMDBManager.sendUpdateQuery(query, cmInfo);
 
-        if(ret == -1) {
-            result.setMsg("실패하였습니다");
-            result.setSuccess(false);
-            return null;
-        }
-
-        query = "select * from application where user_id = '" + userId + "' and team_id = '" + teamId + "';";
-        ResultSet resultSet = CMDBManager.sendSelectQuery(query, cmInfo);
+        Connection connection = null;
+        Statement statement = null;
         Long applicationId = null;
+
         try {
+
+            DBManager dbManager = DBManager.getConnection(cmInfo);
+            connection = dbManager.getConnection();
+            statement = dbManager.getStatement();
+            connection.setAutoCommit(false);
+
+            String query = "insert into application (user_id, team_id) values ('"
+                    + userId + "', '" + teamId + "');";
+            int ret = statement.executeUpdate(query);
+            if(ret != 1) throw new SQLException();
+
+            query = "select * from application where user_id = '" + userId + "' and team_id = '" + teamId + "';";
+            ResultSet resultSet = CMDBManager.sendSelectQuery(query, cmInfo);
+
             while(resultSet.next()) {
-                 applicationId = resultSet.getLong("application_id");
+                applicationId = resultSet.getLong("application_id");
             }
+
+            connection.commit();
+
         } catch (SQLException e) {
+            try {
+                connection.rollback();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
             result.setMsg("실패하였습니다");
             result.setSuccess(false);
             return null;
@@ -338,15 +387,36 @@ public class TeamRepository extends CMDBManager {
         return applicationId;
     }
 
+    @Transactional
     public void updateUser(User user, Long teamId, Result result, CMInfo cmInfo) {
 
-        Long userId = user.getId();
-        String query =
-                "update user set teamId = '" + teamId + "' where " +
-                        "user_id = '" + userId + "';";
-        int ret = CMDBManager.sendUpdateQuery(query, cmInfo);
+        Connection connection = null;
+        Statement statement = null;
+        Long applicationId = null;
 
-        if(ret == -1) {
+        try {
+
+            DBManager dbManager = DBManager.getConnection(cmInfo);
+            connection = dbManager.getConnection();
+            statement = dbManager.getStatement();
+            connection.setAutoCommit(false);
+
+            Long userId = user.getId();
+            String query =
+                    "update user set teamId = '" + teamId + "' where " +
+                            "user_id = '" + userId + "';";
+
+            int ret = statement.executeUpdate(query);
+            if(ret != 1) throw new SQLException();
+
+            connection.commit();
+
+        } catch (SQLException e) {
+            try {
+                connection.rollback();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
             result.setMsg("실패하였습니다");
             result.setSuccess(false);
             return;
