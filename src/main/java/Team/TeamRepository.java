@@ -289,42 +289,6 @@ public class TeamRepository {
         return applications;
     }
 
-    @Transactional
-    public void processApplication(Application application, Result result, CMInfo cmInfo) {
-        Connection connection = null;
-        Statement statement = null;
-
-        try {
-
-            DBManager dbManager = DBManager.getConnection(cmInfo);
-            connection = dbManager.getConnection();
-            statement = dbManager.getStatement();
-            connection.setAutoCommit(false);
-
-            Long id = application.getId();
-
-            String query =
-                    "update application set didRead = 1 where " +
-                            "application_id = '" + id + "';";
-
-            int ret = statement.executeUpdate(query);
-            if(ret != 1) throw new SQLException();
-
-            connection.commit();
-
-        } catch (SQLException e) {
-            try {
-                connection.rollback();
-            } catch (SQLException ex) {
-                ex.printStackTrace();
-            }
-            result.setSuccess(false);
-            result.setMsg("실패하였습니다");
-        }
-        result.setSuccess(true);
-        result.setMsg("성공하였습니다");
-    }
-
     public Long getTeamIdByName(Result result, String teamName, CMInfo cmInfo) {
 
         String query = "select * from team where team_name = '" + teamName + "';";
@@ -387,12 +351,12 @@ public class TeamRepository {
         return applicationId;
     }
 
+
     @Transactional
-    public void updateUser(User user, Long teamId, Result result, CMInfo cmInfo) {
+    public void updateApplicationandUser(Application app, Result result, CMInfo cmInfo) {
 
         Connection connection = null;
         Statement statement = null;
-        Long applicationId = null;
 
         try {
 
@@ -401,12 +365,20 @@ public class TeamRepository {
             statement = dbManager.getStatement();
             connection.setAutoCommit(false);
 
-            Long userId = user.getId();
-            String query =
-                    "update user set teamId = '" + teamId + "' where " +
-                            "user_id = '" + userId + "';";
+            Long id = app.getId();
+            Long userId = app.getUser().getId();
+            Long teamId = app.getTeam().getId();
+
+            String query = "update application set didRead = 1 where " +
+                            "application_id = '" + id + "';";
 
             int ret = statement.executeUpdate(query);
+            if(ret != 1) throw new SQLException();
+
+            query = "update user set teamId = '" + teamId + "' where " +
+                            "user_id = '" + userId + "';";
+
+            ret = statement.executeUpdate(query);
             if(ret != 1) throw new SQLException();
 
             connection.commit();
@@ -417,13 +389,10 @@ public class TeamRepository {
             } catch (SQLException ex) {
                 ex.printStackTrace();
             }
-            result.setMsg("실패하였습니다");
             result.setSuccess(false);
-            return;
+            result.setMsg("실패하였습니다");
         }
 
-        result.setSuccess(true);
-        result.setMsg("성공하였습니다");
     }
 }
 
