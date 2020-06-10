@@ -23,6 +23,9 @@ public class TeamHandler<T> {
         this.objectMapper = new ObjectMapper();
     }
 
+    /*
+        토큰 validation 확인 후 오류 시 에러 처리
+     */
     public TokenProvider.TokenResult getUserInfo(CMUserEvent ue) {
         String token = ue.getEventField(CMInfo.CM_STR, "token");
         if(token == null){
@@ -31,7 +34,6 @@ public class TeamHandler<T> {
             cmServerStub.send(ue, ue.getSender());
             return null;
         }
-
         return TokenProvider.validateToken(token);
     }
 
@@ -40,7 +42,6 @@ public class TeamHandler<T> {
         ue.setEventField(CMInfo.CM_STR, "msg", result.getMsg());
         cmServerStub.send(ue, ue.getSender());
     }
-
 
     public void getTeams(CMUserEvent ue) {
 
@@ -68,7 +69,6 @@ public class TeamHandler<T> {
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
-        System.out.println(teams);
     }
 
     public void applyTeam(CMUserEvent ue) {
