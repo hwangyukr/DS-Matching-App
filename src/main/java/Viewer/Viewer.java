@@ -1,15 +1,11 @@
 package Viewer;
 
-import java.awt.Dimension;
 import java.awt.event.ActionListener;
 
-import javax.swing.JFrame;
+import javax.swing.JPanel;
 
-public abstract class Viewer extends JFrame implements ActionListener {
-	protected Viewer(String txt) {
-		super(txt);
-		this.setMinimumSize (new Dimension (540, 960));
-		this.setResizable(false);
-	}
+public abstract class Viewer extends JPanel implements ActionListener {
+	private static final long serialVersionUID = 1L;
+
 	public abstract void init();
 }

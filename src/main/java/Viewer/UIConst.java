@@ -2,12 +2,15 @@ package Viewer;
 
 import java.awt.Color;
 import javax.swing.JButton;
-import javax.swing.border.Border;
-import javax.swing.border.LineBorder;
 
-import mdlaf.MaterialUIMovement;
+import mdlaf.animation.MaterialUIMovement;
+import mdlaf.utils.MaterialColors;
 
 public class UIConst {
+	
+	static final int WIDTH = 540;
+	static final int HEIGHT = 960;
+	
 	static final int BUTTON_LOGIN = 0x66;
 	static final int BUTTON_SIGNUP = 0x65;
 	static final int BUTTON_EXIT = 0x67;
@@ -41,8 +44,8 @@ public class UIConst {
 		
 		button.setForeground (fg);
 		button.setBackground (bg);
-		MaterialUIMovement animateButton = new MaterialUIMovement (hover, 5, 1000 / 30);
-		animateButton.add (button);
+		MaterialUIMovement.add (button, hover, 5, 1000 / 30);
+		
 		return button;
 	}
 }

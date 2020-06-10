@@ -1,30 +1,55 @@
 package Viewer;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
+
+import java.awt.Font;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextArea;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
+import com.sun.tools.javac.launcher.Main;
+
 import mdlaf.MaterialLookAndFeel;
+import mdlaf.utils.MaterialColors;
 
 public class LoginView extends Viewer {
 
+	private static final long serialVersionUID = 1L;
+
+	private JTextField idtxt = null;
+	private JTextField pwtxt = null;
+	private JButton login_btn = null;
+	private JButton join_btn = null;
+	private JButton exit_btn = null;
+	
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
 		
+		if(e.getSource() == login_btn) {
+			String id = idtxt.getText();
+			String pw = pwtxt.getText();
+			System.out.println("ID : " + id);
+			System.out.println("PW : " + pw);
+		}
+		
+		if(e.getSource() == join_btn) {
+			
+		}
+		
+		if(e.getSource() == exit_btn) {
+			System.exit(0);
+		}
 	}
 
 	public LoginView() {
-		super("Team No.3  Matching App");
-
+		super();
 		init();
 	}
 	
@@ -39,40 +64,46 @@ public class LoginView extends Viewer {
 			e.printStackTrace ();
 		}
 		
-		JPanel row1 = new JPanel ();
-		row1.setLayout(null);
-		
+		this.setLayout(null);
+
+		JLabel title = new JLabel("<html><div style='color: #336644;'> Team Matching App </div></html>", SwingConstants.CENTER);
+		Font font = new Font("µ¸¿ò", Font.PLAIN, 30);
+		title.setFont(font);
+		this.setSize(1000, 40);
+		title.setBounds(0, 300, UIConst.WIDTH, 40);
+		this.add(title);
+
 		JLabel labelid = new JLabel("ID");
-		labelid.setBounds(90, 365, 300, 30);
-		row1.add (labelid);
+		labelid.setBounds(90, 365, 30, 30);
+		this.add (labelid);
 		
 		JLabel labelpw = new JLabel("PW");
-		labelpw.setBounds(90, 395, 300, 30);
-		row1.add (labelpw);
+		labelpw.setBounds(90, 395, 30, 30);
+		this.add (labelpw);
 		
-		JTextArea idtxt = new JTextArea();
+		idtxt = new JTextField("dummy");
+		idtxt.grabFocus();
 		idtxt.setBounds(125, 365, 300, 30);
-		row1.add (idtxt);
+		this.add (idtxt);
 		
-		JTextArea pwtxt = new JTextArea();
+		pwtxt = new JPasswordField("0000");
 		pwtxt.setBounds(125, 400, 300, 30);
-		row1.add (pwtxt);
+		this.add (pwtxt);
 		
-		JButton login_btn = UIConst.BUTTON("Sign In", UIConst.BUTTON_LOGIN);
+		login_btn = UIConst.BUTTON("Sign In", UIConst.BUTTON_LOGIN);
 		login_btn.setBounds(100, 465, 100, 50);
-		row1.add (login_btn);
+		login_btn.addActionListener(this);
 		
-		JButton join_btn = UIConst.BUTTON("Sign Up", UIConst.BUTTON_SIGNUP);
+		this.add (login_btn);
+		
+		join_btn = UIConst.BUTTON("Sign Up", UIConst.BUTTON_SIGNUP);
 		join_btn.setBounds(210, 465, 100, 50);
-		row1.add (join_btn);
+		join_btn.addActionListener(this);
+		this.add (join_btn);
 		
-		JButton exit_btn = UIConst.BUTTON("Exit", UIConst.BUTTON_EXIT);
+		exit_btn = UIConst.BUTTON("Exit", UIConst.BUTTON_EXIT);
 		exit_btn.setBounds(320, 465, 100, 50);
-		row1.add (exit_btn);
-		
-		this.add (row1, BorderLayout.CENTER);
-		this.pack ();
-		this.setVisible (true);
+		exit_btn.addActionListener(this);
+		this.add (exit_btn);
 	}
-
 }
