@@ -5,6 +5,8 @@ import java.awt.Dimension;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -16,9 +18,10 @@ import mdlaf.themes.MaterialLiteTheme;
 public class ClientApp extends JFrame {
 	private static final long serialVersionUID = 1L;
 
-	private CMClientStub clientStub;
+	public CMClientStub clientStub;
     private ClientEventHandler clientEventHandler;
-	
+	public JLabel message = new JLabel("message will print here");
+    
 	public ClientApp() {
 		super("Team No3 - Matching System");
 		setMinimumSize (new Dimension (UIConst.WIDTH, UIConst.HEIGHT));
@@ -26,19 +29,35 @@ public class ClientApp extends JFrame {
 		setVisible (true);
 
 		clientStub = new CMClientStub();
-		clientEventHandler = new ClientEventHandler(clientStub);
+		clientEventHandler = new ClientEventHandler(this);
 		clientStub.setAppEventHandler(clientEventHandler);
-		clientStub.startCM();
 		
-		ChangeView(new LoginView());
+		this.addWindowListener(new java.awt.event.WindowAdapter() {
+		    @Override
+		    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+		        clientStub.terminateCM();
+		        System.out.println("CM Terminated");
+		    }
+		});
+		
+		clientStub.startCM();
+		ChangeView(new LoginView(this));
+		
+		message.setBounds(30, 0, 500, 30);
 	}
 	
-	public void requestLogin() {
-		
+	public void print(String txt) {
+		message.setText(txt);
+	}
+	
+	public void requestLogin(String id, String pw) {
+		clientStub.loginCM(id, pw);
 	}
 	
 	public void ChangeView(JPanel view) {
-		add(view, BorderLayout.CENTER);
+		this.getContentPane().removeAll();
+		view.add(message);
+		this.getContentPane().add(view, BorderLayout.CENTER);
 		pack ();
 	}
 	

@@ -29,6 +29,13 @@ public class LoginView extends Viewer {
 	private JButton join_btn = null;
 	private JButton exit_btn = null;
 	
+	private ClientApp client = null;
+	public LoginView(ClientApp client) {
+		super();
+		this.client = client;
+		init();
+	}
+	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		
@@ -37,33 +44,23 @@ public class LoginView extends Viewer {
 			String pw = pwtxt.getText();
 			System.out.println("ID : " + id);
 			System.out.println("PW : " + pw);
+			client.requestLogin(id, pw);
+			client.print("Trying Login ...");
 		}
 		
 		if(e.getSource() == join_btn) {
-			
+			client.ChangeView(new SignUpView(client));
 		}
 		
 		if(e.getSource() == exit_btn) {
+			client.clientStub.disconnectFromServer();
 			System.exit(0);
 		}
-	}
-
-	public LoginView() {
-		super();
-		init();
 	}
 	
 	@Override
 	public void init() {
-		// TODO Auto-generated method stub
-		try {
-			UIManager.setLookAndFeel (new MaterialLookAndFeel ());
-		}
-		catch (UnsupportedLookAndFeelException e) {
-			System.out.println("Theme Failed");
-			e.printStackTrace ();
-		}
-		
+		System.out.println("Login View Init ...");
 		this.setLayout(null);
 
 		JLabel title = new JLabel("<html><div style='color: #336644;'> Team Matching App </div></html>", SwingConstants.CENTER);
