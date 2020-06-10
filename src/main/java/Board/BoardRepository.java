@@ -56,7 +56,7 @@ public class BoardRepository {
     	String query =
     			"select b.title, b.content, u.user_id, u.user_name, t.team_id, t.team_name" +
     			"from board b, user u, team t" +
-    			"where b.board_id = '" + boardId + "' and b.author_id = u.user_id and b.team_id = t.team_id";
+    			"where b.board_id = '" + boardId + "'and b.valid = 1 and b.author_id = u.user_id and b.team_id = t.team_id";
     	ResultSet res = CMDBManager.sendSelectQuery(query, cmInfo);
     	Board board = null;
 		try {
