@@ -2,11 +2,15 @@ package Board;
 
 import Common.DBManager;
 import Common.Result;
+import Config.Transactional;
 import Team.Team;
 import User.User;
 
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -92,7 +96,65 @@ public class BoardRepository {
     	return board;
     }
     
-    public Board save(Board board, CMInfo cmInfo) {
-        return null;
+    @Transactional
+    public long postBoard(Board board, Result result, CMInfo cmInfo) {
+        Connection connection = null;
+        Statement statement = null;
+        
+        try {
+            DBManager dbManager = DBManager.getConnection(cmInfo);
+            connection = dbManager.getConnection();
+            statement = dbManager.getStatement();
+            connection.setAutoCommit(false);
+
+            String query =
+            		"insert into board(author_id, team_id, title, content) values (" +
+            				"'" + board.getUser().getId() + "', " +
+            				"'" + board.getTeam().getId() + "', " +
+            				"'" + board.getTitle() + "', " +
+            				"'" + board.getContent() + "');";
+
+            int ret = statement.executeUpdate(query);
+            if(ret != 1) throw new SQLException();
+
+            String getQuery = 
+            		"select board_id" + 
+            		"from board" +
+            		"where author_id = '" + board.getUser().getId() + "'" +
+            			"and team_id = '" + board.getTeam().getId() + "'" +
+            		"order by last_modified desc";
+            
+            ResultSet res = CMDBManager.sendSelectQuery(getQuery, cmInfo);
+            Long id = -9999l;
+            if (res.first()) {
+            	id = res.getLong("board_id");
+            }
+            
+            board.setId(id);
+            connection.commit();
+
+        } catch (SQLIntegrityConstraintViolationException e) {
+            try {
+                connection.rollback();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+            result.setMsg("알 수 없는 오류");
+            result.setSuccess(false);
+            return -1l;
+        } catch (SQLException e) {
+            try {
+                connection.rollback();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+            result.setMsg("실패하였습니다");
+            result.setSuccess(false);
+            return -1l;
+        }
+
+        result.setMsg("성공하였습니다");
+        result.setSuccess(true);
+        return board.getId();
     }
 }
