@@ -1,7 +1,5 @@
 package Team;
 
-import User.User;
-
 public enum Role {
 
     서비스UI, 광고디자인, 아이콘,
