@@ -60,7 +60,7 @@ public class MyServerEventHandler implements CMAppEventHandler {
                     case "GET-APPLICATIONS":
                         teamHandler.getApplications(ue);
                         break;
-                    case "PROCESS-APPLICATIONS":
+                    case "PROCESS-APPLICATION":
                         teamHandler.processApplications(ue);
                         break;
                     case "GET-PROFILE":

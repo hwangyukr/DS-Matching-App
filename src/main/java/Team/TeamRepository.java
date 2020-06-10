@@ -67,25 +67,7 @@ public class TeamRepository extends CMDBManager {
         return new ArrayList<Team>(teams.values());
     }
 
-    public Application saveApplication(Application application, CMInfo cmInfo) {
-
-        return null;
-    }
-
-
-    public Team getTeamByName(String teamName, Result result, CMInfo cmInfo) {
-
-        /*
-        팀 가져오기
-         */
-        String query = "select u.user_id, u.user_name, u.user_email, r.role, sq.team_id, sq.team_name " +
-                "from user u, role r, (" +
-                "select team.team_id, team.team_name " +
-                "from user, team " +
-                "where user.team_id = team.team_id " +
-                "and team.team_id = '" + teamName + "' " +
-                ") sq " +
-                "where sq.team_id = u.team_id and u.role_id = r.role_id;";
+    public Team getTeamByName(String query, Result result, CMInfo cmInfo) {
 
         ResultSet resultSet = CMDBManager.sendSelectQuery(query, cmInfo);
         Team team = new Team();
@@ -161,6 +143,29 @@ public class TeamRepository extends CMDBManager {
         return team;
     }
 
+    public String getTeamQueryTeamName(String teamName) {
+        String query = "select u.user_id, u.user_name, u.user_email, r.role, sq.team_id, sq.team_name " +
+                "from user u, role r, (" +
+                "select team.team_id, team.team_name " +
+                "from user, team " +
+                "where user.team_id = team.team_id " +
+                "and team.team_name = '" + teamName + "' " +
+                ") sq " +
+                "where sq.team_id = u.team_id and u.role_id = r.role_id;";
+        return query;
+    }
+
+    public String getTeamQueryTeamId(Long id) {
+        String query = "select u.user_id, u.user_name, u.user_email, r.role, sq.team_id, sq.team_name " +
+                "from user u, role r, (" +
+                "select team.team_id, team.team_name " +
+                "from user, team " +
+                "where user.team_id = team.team_id " +
+                "and team.team_id = '" + id + "' " +
+                ") sq " +
+                "where sq.team_id = u.team_id and u.role_id = r.role_id;";
+        return query;
+    }
     public long saveTeam(Team team, Result result, CMInfo cmInfo) {
 
         String query =
@@ -266,8 +271,24 @@ public class TeamRepository extends CMDBManager {
         return applications;
     }
 
-    public Application processsApplication(Long applicationId, CMInfo cmInfo) {
-        return null;
+    public void processApplication(Application application, Result result, CMInfo cmInfo) {
+
+        Long id = application.getId();
+
+        String query =
+                "update application set didRead = 1 where " +
+                "application_id = '" + id + "';";
+
+        int ret = CMDBManager.sendUpdateQuery(query, cmInfo);
+
+        if(ret == -1) {
+            result.setMsg("실패하였습니다");
+            result.setSuccess(false);
+            return;
+        }
+
+        result.setSuccess(true);
+        result.setMsg("성공하였습니다");
 
     }
 
@@ -315,6 +336,24 @@ public class TeamRepository extends CMDBManager {
         result.setMsg("성공하였습니다");
         result.setSuccess(true);
         return applicationId;
+    }
+
+    public void updateUser(User user, Long teamId, Result result, CMInfo cmInfo) {
+
+        Long userId = user.getId();
+        String query =
+                "update user set teamId = '" + teamId + "' where " +
+                        "user_id = '" + userId + "';";
+        int ret = CMDBManager.sendUpdateQuery(query, cmInfo);
+
+        if(ret == -1) {
+            result.setMsg("실패하였습니다");
+            result.setSuccess(false);
+            return;
+        }
+
+        result.setSuccess(true);
+        result.setMsg("성공하였습니다");
     }
 }
 

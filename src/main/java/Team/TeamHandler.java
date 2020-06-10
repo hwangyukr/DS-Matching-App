@@ -193,7 +193,28 @@ public class TeamHandler<T> {
     }
 
     public void processApplications(CMUserEvent ue) {
-        Application application = teamService.processApplications(ue);
+        ue.setStringID("PROCESS-APPLICATION-REPLY");
+        TokenProvider.TokenResult validResult = getUserInfo(ue);
+        if(validResult == null) return;
+
+        Long userId = Long.valueOf(ue.getEventField(CMInfo.CM_LONG, "user_id"));
+        Long teamId = Long.valueOf(ue.getEventField(CMInfo.CM_LONG, "team_id"));
+        Integer yesTeam = Integer.valueOf(ue.getEventField(CMInfo.CM_INT, "yesTeam"));
+
+        if(userId == null || teamId == null || yesTeam == null) {
+            handleError(new Result("입력값을 확인하세요", false), ue);
+            return;
+        }
+        Result result = new Result();
+        teamService.processApplications(validResult, result, userId, teamId, yesTeam);
+
+        if(!result.isSuccess()) {
+            handleError(result, ue);
+            return;
+        }
+        ue.setEventField(CMInfo.CM_INT, "success", "1");
+        ue.setEventField(CMInfo.CM_STR, "msg", validResult.getSuccess());
+        cmServerStub.send(ue, ue.getSender());
     }
 }
 
