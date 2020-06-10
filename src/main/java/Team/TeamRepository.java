@@ -73,7 +73,7 @@ public class TeamRepository extends CMDBManager {
     }
 
 
-    public Team getTeamById(Long userId, Result result, CMInfo cmInfo) {
+    public Team getTeamByName(String teamName, Result result, CMInfo cmInfo) {
 
         /*
         팀 가져오기
@@ -83,7 +83,7 @@ public class TeamRepository extends CMDBManager {
                 "select team.team_id, team.team_name " +
                 "from user, team " +
                 "where user.team_id = team.team_id " +
-                "and user.user_id = '" + userId + "' " +
+                "and team.team_id = '" + teamName + "' " +
                 ") sq " +
                 "where sq.team_id = u.team_id and u.role_id = r.role_id;";
 
@@ -113,8 +113,8 @@ public class TeamRepository extends CMDBManager {
                 members.add(user);
 
                 Long teamId = resultSet.getLong("team_id");
-                String teamName = resultSet.getString("team_name");
-                team.setName(teamName);
+                String teamName1 = resultSet.getString("team_name");
+                team.setName(teamName1);
                 team.setId(teamId);
             }
         } catch (SQLException e) {
@@ -210,14 +210,124 @@ public class TeamRepository extends CMDBManager {
         team.setId(id);
         return id;
     }
+    public List<Application> getApplicationsByTeamId(Long userId, Result result, CMInfo cmInfo) {
 
-    public List<Application> getApplicationsByTeamId(Long teamId, CMInfo cmInfo) {
-        return null;
+        String query =
+                "select u.user_name, u.user_email, r.role, a.user_id, a.team_id, a.didRead " +
+                        "from user u, application a, role r, ( " +
+                        "select t.team_id " +
+                        "    from user u, team t " +
+                        "    where u.team_id = t.team_id " +
+                        "    and u.user_id = '" + userId + "' " +
+                        ") t" +
+                        "where t.team_id = a.team_id " +
+                        "and u.user_id = a.user_id " +
+                        "and r.role_id = u.role_id " +
+                        "and a.didRead = 0;";
 
+        ResultSet resultSet = CMDBManager.sendSelectQuery(query, cmInfo);
+        Team team = new Team();
+        List<Application> applications = team.getApplications();
+        try {
+            while(resultSet.next()) {
+
+                Long teamId = resultSet.getLong("team_id");
+                Long id = resultSet.getLong("user_id");
+                String email = resultSet.getString("user_email");
+                String userName = resultSet.getString("user_name");
+                Role role = Role.valueOf(resultSet.getString("role"));
+                Long applicationId = resultSet.getLong("application_id");
+
+                team.setId(id);
+
+                User user = new User.Builder()
+                        .id(id)
+                        .email(email)
+                        .name(userName)
+                        .role(role)
+                        .build();
+
+                Application application = new Application.Builder()
+                        .user(user)
+                        .team(team)
+                        .id(applicationId)
+                        .build();
+
+                applications.add(application);
+
+            }
+        } catch (SQLException e) {
+            result.setMsg("실패하였습니다");
+            result.setSuccess(false);
+            return null;
+        }
+        result.setSuccess(true);
+        result.setMsg("성공하였습니다");
+        return applications;
     }
 
     public Application processsApplication(Long applicationId, CMInfo cmInfo) {
         return null;
 
     }
+
+    public Long getTeamIdByName(Result result, String teamName, CMInfo cmInfo) {
+        String query = "select * from team where team_name = '" + teamName + "';";
+        ResultSet resultSet = CMDBManager.sendSelectQuery(query, cmInfo);
+        Long teamId = null;
+        try {
+            while(resultSet.next()) {
+                teamId = resultSet.getLong("team_id");
+            }
+        } catch (SQLException e) {
+            result.setMsg("실패하였습니다");
+            result.setSuccess(false);
+            return null;
+        }
+        result.setMsg("성공하였습니다");
+        result.setSuccess(true);
+        return teamId;
+    }
+
+    public Long applyTeam(Result result, Long userId, Long teamId, CMInfo cmInfo) {
+        String query = "insert into application (user_id, team_id) values ('"
+                + userId + "', '" + teamId + "');";
+        int ret = CMDBManager.sendUpdateQuery(query, cmInfo);
+
+        if(ret == -1) {
+            result.setMsg("실패하였습니다");
+            result.setSuccess(false);
+            return null;
+        }
+
+        query = "select * from application where user_id = '" + userId + "' and team_id = '" + teamId + "';";
+        ResultSet resultSet = CMDBManager.sendSelectQuery(query, cmInfo);
+        Long applicationId = null;
+        try {
+            while(resultSet.next()) {
+                 applicationId = resultSet.getLong("application_id");
+            }
+        } catch (SQLException e) {
+            result.setMsg("실패하였습니다");
+            result.setSuccess(false);
+            return null;
+        }
+        result.setMsg("성공하였습니다");
+        result.setSuccess(true);
+        return applicationId;
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+

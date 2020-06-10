@@ -25,23 +25,8 @@ public class TeamService {
         return teamRepository.getTeams(result, cmInfo);
     }
 
-    public Application applyTeam(CMUserEvent ue) {
-        return null;
-//        Long userId = Long.valueOf(ue.getEventField(CMInfo.CM_LONG, "userId"));
-//        User user = userRepository.findById(userId, cmInfo);
-//        Team team = getTeam(ue);
-//
-//        Application application = new Application.Builder()
-//                .team(team)
-//                .user(user)
-//                .build();
-//
-//        return teamRepository.saveApplication(application, cmInfo);
-    }
-
-    public Team getTeam(TokenProvider.TokenResult validResult, Result result) {
-        Long userId = validResult.getId();
-        return teamRepository.getTeamById(userId, result, cmInfo);
+    public Team getTeam(String teamName, Result result) {
+        return teamRepository.getTeamByName(teamName, result, cmInfo);
     }
 
     public Team createTeam(TokenProvider.TokenResult validResult, Result result, String teamName) {
@@ -60,13 +45,27 @@ public class TeamService {
         return team;
     }
 
-    public List<Application> getApplications(CMUserEvent ue) {
-        Long teamId = Long.valueOf(ue.getEventField(CMInfo.CM_LONG, "teamId"));
-        return teamRepository.getApplicationsByTeamId(teamId, cmInfo);
+    public List<Application> getApplications(TokenProvider.TokenResult validResult, Result result) {
+        Long userId = validResult.getId();
+        return teamRepository.getApplicationsByTeamId(userId, result, cmInfo);
     }
 
     public Application processApplications(CMUserEvent ue) {
         Long applicationId = Long.valueOf(ue.getEventField(CMInfo.CM_LONG, "applicationId"));
         return teamRepository.processsApplication(applicationId, cmInfo);
+    }
+
+    public Long applyTeam(TokenProvider.TokenResult validResult, Result result, String teamName) {
+
+        Long uesrId = validResult.getId();
+        /*
+            먼저 팀가져오기
+         */
+        Long teamId = teamRepository.getTeamIdByName(result, teamName, cmInfo);
+        if(!result.isSuccess()) return null;
+
+        Long applicationId = teamRepository.applyTeam(result, uesrId, teamId, cmInfo);
+        return applicationId;
+
     }
 }
