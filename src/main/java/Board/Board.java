@@ -1,5 +1,8 @@
 package Board;
 
+import java.util.List;
+
+import Team.Application;
 import Team.Team;
 import User.User;
 
@@ -74,5 +77,25 @@ public class Board {
 
     public String getContent() {
         return content;
+    }
+    
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+    
+    public void setTeam(Team team) {
+    	this.team = team;
+    }
+    
+    public void setTitle(String title) {
+    	this.title = title;
+    }
+    
+    public void setContent(String content) {
+    	this.content = content;
     }
 }

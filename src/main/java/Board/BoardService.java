@@ -1,46 +1,56 @@
 package Board;
 
+import java.util.List;
+import Common.Result;
+import Config.TokenProvider;
 import Team.Team;
-import Team.TeamRepository;
 import User.User;
-import User.UserRepository;
 import kr.ac.konkuk.ccslab.cm.event.CMUserEvent;
 import kr.ac.konkuk.ccslab.cm.info.CMInfo;
 
 public class BoardService {
-
     private CMInfo cmInfo;
     private BoardRepository boardRepository;
-    private UserRepository userRepository;
-    private TeamRepository teamRepository;
 
     public BoardService(CMInfo cmInfo) {
         this.cmInfo = cmInfo;
         this.boardRepository = new BoardRepository();
     }
 
-    public Board getBoards(CMUserEvent ue) {
-        Long teamId = Long.valueOf(ue.getEventField(CMInfo.CM_LONG, "teamId"));
-        return boardRepository.getAllBoards(teamId, cmInfo);
+    public List<Board> getBoards(Long teamId, Result result) {
+        return boardRepository.getBoards(teamId, result, cmInfo);
     }
+    
+    public Board getBoard(Long boardId, Result result) {
+    	return boardRepository.getBoardById(boardId, result, cmInfo);
+    }
+    
+   public Board postBoard(TokenProvider.TokenResult validResult, Result result, String title, String content, long teamId) {
+       User user = new User.Builder()
+               .id(validResult.getId())
+               .build();
 
-    public Board createBoard(CMUserEvent ue) {
-        return null;
-//        Long teamId = Long.valueOf(ue.getEventField(CMInfo.CM_LONG, "teamId"));
-//        Long userId = Long.valueOf(ue.getEventField(CMInfo.CM_LONG, "userId"));
-//        String title = ue.getEventField(CMInfo.CM_STR, "title");
-//        String content = ue.getEventField(CMInfo.CM_STR, "content");
-//
-//        User user = userRepository.findById(userId, cmInfo);
-//        //Team team = teamRepository.getTeamById(teamId, cmInfo);
-//
-//        Board board = new Board.Builder()
-//                .team(team)
-//                .user(user)
-//                .title(title)
-//                .content(content)
-//                .build();
-//
-//        return boardRepository.save(board, cmInfo);
-    }
+       Team team = new Team.Builder()
+    		   .id(teamId)
+               .build();
+
+       Board board = new Board.Builder()
+    		   .user(user)
+    		   .team(team)
+    		   .title(title)
+    		   .content(content)
+    		   .build();
+       boardRepository.postBoard(board, result, cmInfo);
+       return board;
+   }
+   
+   public Long putBoard(Board board, Result result, String title, String content) {
+	   board.setTitle(title);
+	   board.setContent(content);
+	   return boardRepository.putBoard(board, result, cmInfo);
+   }
+   
+   public Long deleteBoard(Board board, Result result) {
+	   return boardRepository.deleteBoard(board, result, cmInfo);
+   }
 }

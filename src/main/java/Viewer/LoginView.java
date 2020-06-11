@@ -11,6 +11,7 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
+
 public class LoginView extends Viewer {
 
 	private static final long serialVersionUID = 1L;
@@ -21,10 +22,9 @@ public class LoginView extends Viewer {
 	private JButton join_btn = null;
 	private JButton exit_btn = null;
 	
-	private ClientApp client = null;
+	
 	public LoginView(ClientApp client) {
-		super();
-		this.client = client;
+		super(client);
 		init();
 	}
 	
@@ -34,19 +34,17 @@ public class LoginView extends Viewer {
 		if(e.getSource() == login_btn) {
 			String id = idtxt.getText();
 			String pw = pwtxt.getText();
-			System.out.println("ID : " + id);
-			System.out.println("PW : " + pw);
-			client.requestLogin(id, pw);
+			System.out.println(id);
+			client.requestConnection(id, pw);
 			client.print("Trying Login ...");
 		}
 		
 		if(e.getSource() == join_btn) {
-			client.ChangeView(new SignUpView(client));
+			client.ChangeView(new JoinView(client));
 		}
 		
 		if(e.getSource() == exit_btn) {
-			client.clientStub.disconnectFromServer();
-			System.exit(0);
+			client.exit();
 		}
 	}
 	
@@ -70,7 +68,8 @@ public class LoginView extends Viewer {
 		labelpw.setBounds(90, 395, 30, 30);
 		this.add (labelpw);
 		
-		idtxt = new JTextField("dummy");
+		idtxt = new JTextField();
+		idtxt.setText("email");
 		idtxt.grabFocus();
 		idtxt.setBounds(125, 365, 300, 30);
 		this.add (idtxt);
