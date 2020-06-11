@@ -75,4 +75,37 @@ public class BoardHandller {
             e.printStackTrace();
         }
     }
+
+	public void getBoard(CMUserEvent ue) {
+		ue.setStringID("GET-BOARD-REPLY");
+        TokenProvider.TokenResult validResult = getUserInfo(ue);
+        if(validResult == null) return;
+
+        Long boardId = Long.valueOf(ue.getEventField(CMInfo.CM_LONG, "board_id"));
+        if(boardId == null) {
+            handleError(new Result("입력값을 확인하세요", false), ue);
+            return;
+        }
+        
+        Result result = new Result();
+        Board board = boardService.getBoard(boardId, result);
+
+        /*
+            result값이 false이면 그에 대한 에러 메시지 처리
+         */
+        if(!result.isSuccess()) {
+            handleError(result, ue);
+            return;
+        }
+
+        try {
+            String ret = objectMapper.writeValueAsString(board);
+            ue.setEventField(CMInfo.CM_INT, "success", "1");
+            ue.setEventField(CMInfo.CM_STR, "msg", validResult.getSuccess());
+            ue.setEventField(CMInfo.CM_STR, "board", ret);
+            cmServerStub.send(ue, ue.getSender());
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+    }
 }
