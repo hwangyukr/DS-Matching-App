@@ -17,8 +17,7 @@ public class BoardService {
         this.boardRepository = new BoardRepository();
     }
 
-    public List<Board> getBoards(CMUserEvent ue, Result result) {
-        Long teamId = Long.valueOf(ue.getEventField(CMInfo.CM_LONG, "teamId"));
+    public List<Board> getBoards(Long teamId, Result result) {
         return boardRepository.getBoards(teamId, result, cmInfo);
     }
     
