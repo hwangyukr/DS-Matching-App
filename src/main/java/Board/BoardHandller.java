@@ -117,7 +117,7 @@ public class BoardHandller {
         String title = ue.getEventField(CMInfo.CM_STR, "title");
         String content = ue.getEventField(CMInfo.CM_STR, "content");
         Long teamId = Long.valueOf(ue.getEventField(CMInfo.CM_LONG, "team_id"));
-        if(teamId == null) {
+        if(teamId == null || title == null || content == null) {
             handleError(new Result("입력값을 확인하세요", false), ue);
             return;
         }
