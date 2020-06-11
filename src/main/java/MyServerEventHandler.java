@@ -26,6 +26,7 @@ public class MyServerEventHandler implements CMAppEventHandler {
     }
 
     public void processEvent(CMEvent cmEvent) {
+
         switch (cmEvent.getType()) {
 
             case CMInfo.CM_USER_EVENT:

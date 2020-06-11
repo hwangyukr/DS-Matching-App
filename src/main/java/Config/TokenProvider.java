@@ -80,6 +80,7 @@ public class TokenProvider {
 
     public static TokenResult validateToken(String token) {
 
+        if(token.equals("")) return new TokenResult(null, null, "UNAUTHORIZED");
         Claims claims = Jwts.parser()
                 .setSigningKey(key.getBytes())
                 .parseClaimsJws(token)

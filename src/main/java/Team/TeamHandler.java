@@ -28,7 +28,7 @@ public class TeamHandler<T> {
      */
     public TokenProvider.TokenResult getUserInfo(CMUserEvent ue) {
         String token = ue.getEventField(CMInfo.CM_STR, "token");
-        if(token == null){
+        if(token == null || token.equals("")){
             ue.setEventField(CMInfo.CM_INT, "success", "0");
             ue.setEventField(CMInfo.CM_STR, "msg", "NOT AUTHORIZED");
             cmServerStub.send(ue, ue.getSender());

@@ -21,6 +21,14 @@ public class User {
 
     }
 
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public static class Builder {
 
         private String email;
@@ -63,6 +71,8 @@ public class User {
         public User build() {
             return new User(this);
         }
+
+
     }
 
     public User(Builder builder) {
