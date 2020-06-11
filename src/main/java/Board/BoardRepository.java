@@ -204,4 +204,47 @@ public class BoardRepository {
         result.setSuccess(true);
         return board.getId();
     }
+    
+    @Transactional
+    public long deleteBoard(Board board, Result result, CMInfo cmInfo) {
+        Connection connection = null;
+        Statement statement = null;
+        
+        try {
+            DBManager dbManager = DBManager.getConnection(cmInfo);
+            connection = dbManager.getConnection();
+            statement = dbManager.getStatement();
+            connection.setAutoCommit(false);
+            
+            String query = "update board set valid = 0 where board_id = '" + board.getId() + "';";
+
+            int ret = statement.executeUpdate(query);
+            if(ret != 1) throw new SQLException();
+            
+            connection.commit();
+
+        } catch (SQLIntegrityConstraintViolationException e) {
+            try {
+                connection.rollback();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+            result.setMsg("알 수 없는 오류");
+            result.setSuccess(false);
+            return -1l;
+        } catch (SQLException e) {
+            try {
+                connection.rollback();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+            result.setMsg("실패하였습니다");
+            result.setSuccess(false);
+            return -1l;
+        }
+
+        result.setMsg("성공하였습니다");
+        result.setSuccess(true);
+        return board.getId();
+    }
 }
