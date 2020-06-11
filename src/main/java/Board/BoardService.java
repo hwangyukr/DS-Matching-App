@@ -50,4 +50,8 @@ public class BoardService {
 	   board.setContent(content);
 	   return boardRepository.putBoard(board, result, cmInfo);
    }
+   
+   public long deleteBoard(Board board, Result result) {
+	   return boardRepository.deleteBoard(board, result, cmInfo);
+   }
 }
