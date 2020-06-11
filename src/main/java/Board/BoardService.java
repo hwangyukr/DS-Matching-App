@@ -44,13 +44,13 @@ public class BoardService {
        return board;
    }
    
-   public long putBoard(Board board, Result result, String title, String content) {
+   public Long putBoard(Board board, Result result, String title, String content) {
 	   board.setTitle(title);
 	   board.setContent(content);
 	   return boardRepository.putBoard(board, result, cmInfo);
    }
    
-   public long deleteBoard(Board board, Result result) {
+   public Long deleteBoard(Board board, Result result) {
 	   return boardRepository.deleteBoard(board, result, cmInfo);
    }
 }

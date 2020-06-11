@@ -97,7 +97,7 @@ public class BoardRepository {
     }
     
     @Transactional
-    public long postBoard(Board board, Result result, CMInfo cmInfo) {
+    public Long postBoard(Board board, Result result, CMInfo cmInfo) {
         Connection connection = null;
         Statement statement = null;
         
@@ -159,7 +159,7 @@ public class BoardRepository {
     }
     
     @Transactional
-    public long putBoard(Board board, Result result, CMInfo cmInfo) {
+    public Long putBoard(Board board, Result result, CMInfo cmInfo) {
         Connection connection = null;
         Statement statement = null;
         
@@ -206,7 +206,7 @@ public class BoardRepository {
     }
     
     @Transactional
-    public long deleteBoard(Board board, Result result, CMInfo cmInfo) {
+    public Long deleteBoard(Board board, Result result, CMInfo cmInfo) {
         Connection connection = null;
         Statement statement = null;
         
