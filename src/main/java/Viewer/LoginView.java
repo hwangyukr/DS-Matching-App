@@ -41,9 +41,8 @@ public class LoginView extends Viewer {
 		if(e.getSource() == login_btn) {
 			String id = idtxt.getText();
 			String pw = pwtxt.getText();
-			System.out.println("ID : " + id);
-			System.out.println("PW : " + pw);
-			client.requestLogin(id, pw);
+			System.out.println(id);
+			client.requestConnection(id, pw);
 			client.print("Trying Login ...");
 		}
 		
@@ -56,14 +55,13 @@ public class LoginView extends Viewer {
 		}
 	}
 	
-
 	@Override
 	public void init() {
 		System.out.println("Login View Init ...");
 		this.setLayout(null);
 
 		JLabel title = new JLabel("<html><div style='color: #336644;'> Team Matching App </div></html>", SwingConstants.CENTER);
-		Font font = new Font("µ¸¿ò", Font.PLAIN, 30);
+		Font font = new Font("ï¿½ï¿½ï¿½ï¿½", Font.PLAIN, 30);
 		title.setFont(font);
 		this.setSize(1000, 40);
 		title.setBounds(0, 300, UIConst.WIDTH, 40);
@@ -77,7 +75,8 @@ public class LoginView extends Viewer {
 		labelpw.setBounds(90, 395, 30, 30);
 		this.add (labelpw);
 		
-		idtxt = new JTextField("dummy");
+		idtxt = new JTextField();
+		idtxt.setText("email");
 		idtxt.grabFocus();
 		idtxt.setBounds(125, 365, 300, 30);
 		this.add (idtxt);

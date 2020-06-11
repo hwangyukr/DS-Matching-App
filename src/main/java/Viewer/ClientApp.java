@@ -11,6 +11,10 @@ import javax.swing.JPanel;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
+import kr.ac.konkuk.ccslab.cm.entity.CMUser;
+import kr.ac.konkuk.ccslab.cm.event.CMUserEvent;
+import kr.ac.konkuk.ccslab.cm.info.CMInfo;
+import kr.ac.konkuk.ccslab.cm.info.CMInteractionInfo;
 import kr.ac.konkuk.ccslab.cm.stub.CMClientStub;
 import mdlaf.MaterialLookAndFeel;
 import mdlaf.themes.MaterialLiteTheme;
@@ -21,6 +25,10 @@ public class ClientApp extends JFrame {
 	public CMClientStub clientStub;
     private ClientEventHandler clientEventHandler;
 	public JLabel message = new JLabel("message will print here");
+    public String token = null;
+	
+    private String email = null;
+    private String pw = null;
     
 	public ClientApp() {
 		super("Team No3 - Matching System");
@@ -41,6 +49,7 @@ public class ClientApp extends JFrame {
 		});
 		
 		clientStub.startCM();
+		print("message will print here");
 		ChangeView(new LoginView(this));
 		
 		message.setBounds(30, 0, 500, 30);
@@ -55,8 +64,32 @@ public class ClientApp extends JFrame {
 		System.exit(0);
 	}
 	
-	public void requestLogin(String id, String pw) {
+	public void requestConnection(String id, String pw) {
+		clientStub.logoutCM();
 		clientStub.loginCM(id, pw);
+		System.out.println("requestConnection email : " + email);
+		System.out.println("requestConnection pw : " + pw);
+		this.email = id;
+		this.pw = pw;
+	}
+	
+	public void requestLogin() {
+		CMUserEvent ue = new CMUserEvent();
+		CMInteractionInfo info = clientStub.getCMInfo().getInteractionInfo();
+		CMUser user = info.getMyself();
+		ue.setStringID("SIGN-IN");
+		
+		System.out.println("requestLogin email : " + email);
+		System.out.println("requestLogin pw : " + pw);
+		ue.setEventField(CMInfo.CM_STR, "email", email);
+		ue.setEventField(CMInfo.CM_STR, "password", pw);
+		
+		ue.setSender(user.getName());
+		ue.setDistributionGroup(user.getCurrentGroup());
+		ue.setDistributionSession(user.getCurrentSession());
+		
+		clientStub.send(ue, "SERVER");
+		this.print("Request Login ...");
 	}
 	
 	public void ChangeView(JPanel view) {
@@ -64,6 +97,14 @@ public class ClientApp extends JFrame {
 		view.add(message);
 		this.getContentPane().add(view, BorderLayout.CENTER);
 		pack ();
+	}
+	
+	public void requestSignUp(String name, String id, String pw, String role, String introduce) {
+		
+	}
+	
+	public void reqeustMyTeam(String team_name) {
+		
 	}
 	
 	public static void main (String[] args) {
@@ -75,4 +116,6 @@ public class ClientApp extends JFrame {
 		}
 		new ClientApp();
 	}
+
+
 }

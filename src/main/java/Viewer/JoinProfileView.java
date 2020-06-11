@@ -43,7 +43,7 @@ public class JoinProfileView extends Viewer {
 				}
 			}
 			client.print("yout Role : " + role);
-			//name, id, pw, role, introduce
+			client.requestSignUp(name, id, pw, role, introduce);
 			
 		}
 		if(e.getSource() == exit_btn) {

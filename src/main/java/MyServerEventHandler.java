@@ -55,7 +55,7 @@ public class MyServerEventHandler implements CMAppEventHandler {
                         boardHandler.getBoards(ue);
                         break;
                     case "MAKE-BOARD":
-                        boardHandler.createBoard(ue);
+                        //boardHandler.createBoard(ue);
                         break;
                     case "GET-APPLICATIONS":
                         teamHandler.getApplications(ue);

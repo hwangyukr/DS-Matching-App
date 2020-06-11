@@ -25,7 +25,7 @@ public class UserHandler {
         if(email == null || password == null || name == null) {
             ue.setEventField(CMInfo.CM_INT, "success", "0");
             ue.setEventField(CMInfo.CM_STR, "msg", "입력값을 확인하세요");
-            ue.setEventField(CMInfo.CM_STR, "user_id", null);
+            ue.setEventField(CMInfo.CM_STR, "user_id", "null");
             cmServerStub.send(ue, ue.getSender());
             return;
         }
@@ -42,7 +42,7 @@ public class UserHandler {
         if(!result.isSuccess()) {
             ue.setEventField(CMInfo.CM_INT, "success", "0");
             ue.setEventField(CMInfo.CM_STR, "msg", result.getMsg());
-            ue.setEventField(CMInfo.CM_STR, "user_id", null);
+            ue.setEventField(CMInfo.CM_STR, "user_id", "null");
         }
         else {
             ue.setEventField(CMInfo.CM_INT,"success", "1");
@@ -56,10 +56,11 @@ public class UserHandler {
 
         String email = ue.getEventField(CMInfo.CM_STR, "email");
         String password = ue.getEventField(CMInfo.CM_STR, "password");
+        
         if(email == null || password == null) {
             ue.setEventField(CMInfo.CM_INT, "success", "0");
-            ue.setEventField(CMInfo.CM_STR, "msg", "입력값을 확인하세요");
-            ue.setEventField(CMInfo.CM_STR, "user_id", null);
+            ue.setEventField(CMInfo.CM_STR, "msg", "Please Check Your E-mail");
+            ue.setEventField(CMInfo.CM_STR, "user_id", "null");
             cmServerStub.send(ue, ue.getSender());
             return;
         }
@@ -72,13 +73,14 @@ public class UserHandler {
         if(!result.isSuccess()) {
             ue.setEventField(CMInfo.CM_INT, "success", "0");
             ue.setEventField(CMInfo.CM_STR, "msg", result.getMsg());
-            ue.setEventField(CMInfo.CM_STR, "token", null);
+            ue.setEventField(CMInfo.CM_STR, "token", "null");
         }
         else {
             ue.setEventField(CMInfo.CM_INT,"success", "1");
             ue.setEventField(CMInfo.CM_STR, "msg", result.getMsg());
             ue.setEventField(CMInfo.CM_STR, "token", token);
         }
+        
         cmServerStub.send(ue, ue.getSender());
     }
 

@@ -33,13 +33,13 @@ public class ClientEventHandler implements CMAppEventHandler {
     	switch(id) {
 		case CMSessionEvent.LOGIN_ACK:
 			if(event.isValidUser() > 0) {
-				client.print("Login Succeeded!");
-				JOptionPane.showMessageDialog(null, "Login Succeeded!");
-				client.ChangeView(new MainView(client));
+				client.print("Server Connected !");
+				JOptionPane.showMessageDialog(null, "Server Connected Successfully");
+				client.requestLogin();
 			}
 			else {
-				client.print("Login Failed");
-				JOptionPane.showMessageDialog(null, "Login Failed ..");
+				client.print("Connection Refused");
+				JOptionPane.showMessageDialog(null, "Connection Failed ..");
 			}
 			break;
 		}
@@ -58,9 +58,13 @@ public class ClientEventHandler implements CMAppEventHandler {
             CMUserEvent ue = (CMUserEvent) cmEvent;
 
             if(ue.getStringID().equals("SIGN-IN-REPLY")) {
-                ue.setEventField(CMInfo.CM_STR, "team_name", "�븯�씠猷�~");
-                ue.setStringID("GET-TEAMS");
-                clientStub.send(ue, "SERVER");
+            	System.out.println("!SIGN-IN-REPLY !");
+            	String success = ue.getEventField(CMInfo.CM_INT, "success");
+            	client.print("Login Success? : " + success);
+            	
+                //ue.setEventField(CMInfo.CM_STR, "team_name", "�븯�씠猷�~");
+                //ue.setStringID("GET-TEAMS");
+                //clientStub.send(ue, "SERVER");
             }
 
             if(ue.getStringID().equals("team-make-reply")) {
