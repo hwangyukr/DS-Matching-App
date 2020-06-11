@@ -29,10 +29,9 @@ public class LoginView extends Viewer {
 	private JButton join_btn = null;
 	private JButton exit_btn = null;
 	
-	private ClientApp client = null;
+	
 	public LoginView(ClientApp client) {
-		super();
-		this.client = client;
+		super(client);
 		init();
 	}
 	
@@ -49,15 +48,15 @@ public class LoginView extends Viewer {
 		}
 		
 		if(e.getSource() == join_btn) {
-			client.ChangeView(new SignUpView(client));
+			client.ChangeView(new JoinView(client));
 		}
 		
 		if(e.getSource() == exit_btn) {
-			client.clientStub.disconnectFromServer();
-			System.exit(0);
+			client.exit();
 		}
 	}
 	
+
 	@Override
 	public void init() {
 		System.out.println("Login View Init ...");

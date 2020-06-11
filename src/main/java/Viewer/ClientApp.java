@@ -50,6 +50,11 @@ public class ClientApp extends JFrame {
 		message.setText(txt);
 	}
 	
+	public void exit() {
+		clientStub.disconnectFromServer();
+		System.exit(0);
+	}
+	
 	public void requestLogin(String id, String pw) {
 		clientStub.loginCM(id, pw);
 	}
