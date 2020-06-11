@@ -18,4 +18,8 @@ public class BoardService {
         Long teamId = Long.valueOf(ue.getEventField(CMInfo.CM_LONG, "teamId"));
         return boardRepository.getBoards(teamId, result, cmInfo);
     }
+    
+    public Board getBoard(Long boardId, Result result) {
+    	return boardRepository.getBoardById(boardId, result, cmInfo);
+    }
 }
