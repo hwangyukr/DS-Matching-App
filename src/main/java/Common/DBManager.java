@@ -1,4 +1,4 @@
-package Config;
+package Common;
 
 import kr.ac.konkuk.ccslab.cm.info.CMConfigurationInfo;
 import kr.ac.konkuk.ccslab.cm.info.CMDBInfo;
