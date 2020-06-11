@@ -18,7 +18,7 @@ import kr.ac.konkuk.ccslab.cm.info.CMInfo;
 import kr.ac.konkuk.ccslab.cm.manager.CMDBManager;
 
 public class BoardRepository {
-	public List<Board> getAllBoards(Long teamId, Result result, CMInfo cmInfo) {
+	public List<Board> getBoards(Long teamId, Result result, CMInfo cmInfo) {
     	String query = 
     			"select b.board_id, b.title, b.content, u.user_id, u.user_name" +
     			"from user u, board b" +
