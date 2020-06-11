@@ -29,9 +29,13 @@ public class ClientEventHandler implements CMAppEventHandler {
                 CMUserEvent ue = (CMUserEvent) cmEvent;
 
                 if(ue.getStringID().equals("SIGN-IN-REPLY")) {
-                    ue.setEventField(CMInfo.CM_STR, "team_name", "�븯�씠猷�~");
-                    ue.setStringID("GET-TEAMS");
-                    clientStub.send(ue, "SERVER");
+                    System.out.println("=======================");
+                    int success = Integer.valueOf(ue.getEventField(CMInfo.CM_INT, "success"));
+                    String msg = ue.getEventField(CMInfo.CM_STR, "msg");
+
+                    System.out.println("성공 여부 : " + success);
+                    System.out.println("응답 메시지 : "  + msg);
+                    System.out.println("=======================");
                 }
 
                 if(ue.getStringID().equals("team-make-reply")) {

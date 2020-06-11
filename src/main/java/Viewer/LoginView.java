@@ -2,22 +2,14 @@ package Viewer;
 
 
 import java.awt.Font;
-import java.awt.Image;
 import java.awt.event.ActionEvent;
 
-import javax.swing.ImageIcon;
+
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
-
-import com.sun.tools.javac.launcher.Main;
-
-import mdlaf.MaterialLookAndFeel;
-import mdlaf.utils.MaterialColors;
 
 public class LoginView extends Viewer {
 
@@ -64,7 +56,7 @@ public class LoginView extends Viewer {
 		this.setLayout(null);
 
 		JLabel title = new JLabel("<html><div style='color: #336644;'> Team Matching App </div></html>", SwingConstants.CENTER);
-		Font font = new Font("µ¸¿ò", Font.PLAIN, 30);
+		Font font = new Font("ï¿½ï¿½ï¿½ï¿½", Font.PLAIN, 30);
 		title.setFont(font);
 		this.setSize(1000, 40);
 		title.setBounds(0, 300, UIConst.WIDTH, 40);
