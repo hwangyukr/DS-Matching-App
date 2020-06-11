@@ -20,8 +20,6 @@ import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import com.sun.tools.javac.launcher.Main;
-
 import mdlaf.MaterialLookAndFeel;
 import mdlaf.utils.MaterialColors;
 

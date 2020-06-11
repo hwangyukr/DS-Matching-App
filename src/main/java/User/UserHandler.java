@@ -45,6 +45,8 @@ public class UserHandler {
             ue.setEventField(CMInfo.CM_STR, "user_id", "null");
         }
         else {
+        	System.out.println("Resonding Login Success");
+            System.out.println("Token : " + String.valueOf(user.getId()));
             ue.setEventField(CMInfo.CM_INT,"success", "1");
             ue.setEventField(CMInfo.CM_STR, "msg", result.getMsg());
             ue.setEventField(CMInfo.CM_STR, "user_id", String.valueOf(user.getId()));

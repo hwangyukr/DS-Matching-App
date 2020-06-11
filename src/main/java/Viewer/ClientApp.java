@@ -65,12 +65,23 @@ public class ClientApp extends JFrame {
 	}
 	
 	public void requestConnection(String id, String pw) {
-		clientStub.logoutCM();
-		clientStub.loginCM(id, pw);
-		System.out.println("requestConnection email : " + email);
-		System.out.println("requestConnection pw : " + pw);
 		this.email = id;
 		this.pw = pw;
+		
+		if(this.email == null) {
+			this.print("email is null");
+			return;
+		}
+		if(this.pw == null) {
+			this.print("password is null");
+			return;
+		}
+		
+		clientStub.logoutCM();
+		clientStub.loginCM(this.email, this.pw);
+		System.out.println("requestConnection email : " + this.email);
+		System.out.println("requestConnection pw : " + this.pw);
+
 	}
 	
 	public void requestLogin() {

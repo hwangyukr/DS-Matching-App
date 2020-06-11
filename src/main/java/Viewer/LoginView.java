@@ -14,8 +14,6 @@ import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
-import com.sun.tools.javac.launcher.Main;
-
 import mdlaf.MaterialLookAndFeel;
 import mdlaf.utils.MaterialColors;
 
