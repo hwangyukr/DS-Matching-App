@@ -1,49 +1,72 @@
 package User;
 
 import Common.Result;
-import kr.ac.konkuk.ccslab.cm.event.CMUserEvent;
+import Common.DBManager;
+import Config.Transactional;
 import kr.ac.konkuk.ccslab.cm.info.CMInfo;
 import kr.ac.konkuk.ccslab.cm.manager.CMDBManager;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 
-public class UserRepository extends CMDBManager {
+public class UserRepository {
 
-    public int saveUser(User user, Result result, CMInfo cmInfo)  {
+    /*
+        @Transactional은 트랜잭션이 필요하는 마킹 애노테이션
+     */
+    @Transactional
+    public void saveUser(User user, Result result, CMInfo cmInfo)  {
 
-        String strQuery = "insert into user (user_name, password, user_email) values (" +
-                " '"+ user.getName() + "'," +
-                " '" + user.getPassword() + "'," +
-                " '" + user.getEmail() + "');";
+        Connection connection = null;
+        Statement statement = null;
 
-        int ret = CMDBManager.sendUpdateQuery(strQuery, cmInfo);
-
-        if(ret == -1) {
-            result.setSuccess(false);
-            result.setMsg("실패하였습니");
-            return ret;
-        }
-
-        String getQuery = "select * from user where user_email = '" + user.getEmail() + "';";
-        ResultSet resultSet = CMDBManager.sendSelectQuery(getQuery, cmInfo);
-        Long id = -9999l;
         try {
+
+            /*
+                CM에게 트랜잭션을 위임하기 보다는 직접 처리하기 위해 CMDBInfo에서
+                Connection과 Statement를 가져오는 직접 작성한 DBManager 인스턴스 생
+             */
+            DBManager dbManager = DBManager.getConnection(cmInfo);
+            connection = dbManager.getConnection();
+            statement = dbManager.getStatement();
+            connection.setAutoCommit(false);
+
+            String query = "insert into user (user_name, password, user_email) values (" +
+                    " '"+ user.getName() + "'," +
+                    " '" + user.getPassword() + "'," +
+                    " '" + user.getEmail() + "');";
+
+            /*
+                에러가 나면 에러처리
+             */
+            int ret = statement.executeUpdate(query);
+            if(ret != 1) throw new SQLException();
+
+            query = "select * from user where email = '" + user.getEmail() + "';";
+            ResultSet resultSet = CMDBManager.sendSelectQuery(query, cmInfo);
+
             while(resultSet.next()) {
-                id = resultSet.getLong("user_id");
+                user.setId(resultSet.getLong("user_id"));
             }
+            connection.commit();
+
         } catch (SQLException e) {
-            result.setSuccess(false);
-            result.setMsg("실패하였습니다");
-            return ret;
+            try {
+                /*
+                   에러나면 트랜잭션 롤백
+                 */
+                connection.rollback();
+                result.setSuccess(false);
+                result.setMsg("실패하였습니다");
+            } catch (SQLException ex) {
+                return;
+            }
         }
+
         result.setSuccess(true);
         result.setMsg("성공하였습니다");
-        user.setId(id);
-        return ret;
     }
 
-    public User findByEmail(String email, CMInfo cmInfo) {
+    public User findByEmail(String email, Result result, CMInfo cmInfo) {
         String getQuery = "select * from user where user_email = '" + email + "';";
         ResultSet resultSet = CMDBManager.sendSelectQuery(getQuery, cmInfo);
         User user = null;
@@ -58,8 +81,12 @@ public class UserRepository extends CMDBManager {
                         .build();
             }
         } catch (SQLException e) {
+            result.setSuccess(false);
+            result.setMsg("실패하였습니다");
             return null;
         }
+        result.setSuccess(true);
+        result.setMsg("성공하였습니다");
         return user;
     }
 

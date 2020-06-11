@@ -14,10 +14,11 @@ public class ClientEventHandler implements CMAppEventHandler {
 
     public CMClientStub clientStub;
     private ObjectMapper objectMapper;
+    private Client client;
 
-    public ClientEventHandler(CMClientStub clientStub) {
+    public ClientEventHandler(CMClientStub clientStub, Client client) {
         this.clientStub = clientStub;
-        
+        this.client = client;
         this.objectMapper = new ObjectMapper();
     }
 
@@ -29,15 +30,17 @@ public class ClientEventHandler implements CMAppEventHandler {
                 CMUserEvent ue = (CMUserEvent) cmEvent;
 
                 if(ue.getStringID().equals("SIGN-IN-REPLY")) {
-                    ue.setEventField(CMInfo.CM_STR, "team_name", "�븯�씠猷�~");
-                    ue.setStringID("GET-TEAMS");
-                    clientStub.send(ue, "SERVER");
+                    System.out.println("=======================");
+                    int success = Integer.valueOf(ue.getEventField(CMInfo.CM_INT, "success"));
+                    String token = ue.getEventField(CMInfo.CM_STR, "token");
+
+                    if(success == 1) {
+                        client.setToken(token);
+                    }
                 }
 
-                if(ue.getStringID().equals("team-make-reply")) {
-                    System.out.println("諛�");
-                    System.out.println(ue.getEventField(CMInfo.CM_INT, "success"));
-                    System.out.println(ue.getEventField(CMInfo.CM_STR, "msg"));
+                if(ue.getStringID().equals("CREATE-TEAM")) {
+
                 }
 
                 if(ue.getStringID().equals("GET-TEAM-REPLY")) {

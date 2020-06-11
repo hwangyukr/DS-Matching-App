@@ -2,20 +2,15 @@ package Viewer;
 
 
 import java.awt.Font;
-import java.awt.Image;
 import java.awt.event.ActionEvent;
 
-import javax.swing.ImageIcon;
+
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
 
-import mdlaf.MaterialLookAndFeel;
-import mdlaf.utils.MaterialColors;
 
 public class LoginView extends Viewer {
 

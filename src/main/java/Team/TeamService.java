@@ -70,6 +70,9 @@ public class TeamService {
         String query = teamRepository.getTeamQueryTeamId(teamId);
         Team team = teamRepository.getTeamByName(query, result, cmInfo);
 
+        if(!result.isSuccess()) {
+            return;
+        }
         if(team.getTeamLeader().getId() != validResult.getId()) {
             result.setMsg("지원서 수정 권한이 없습니다");
             result.setSuccess(false);
@@ -81,14 +84,13 @@ public class TeamService {
 
         for(Application application : applications) {
             if(application.getUser().getId() == userId) {
-                if(yesTeam == 1) application.setDidRead(true);
-                else application.setDidRead(false);
+                application.setDidRead(true);
                 app = application;
                 break;
             }
         }
 
-        teamRepository.updateApplicationandUser(app, result, cmInfo);
+        teamRepository.updateApplicationandUser(app, result, yesTeam, cmInfo);
 
         if(!result.isSuccess()) {
             result.setMsg("실패하였습니다");

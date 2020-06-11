@@ -69,21 +69,26 @@ public class TeamRepository {
 
     public Team getTeamByName(String query, Result result, CMInfo cmInfo) {
 
+        System.out.println(query);
         ResultSet resultSet = CMDBManager.sendSelectQuery(query, cmInfo);
         Team team = new Team();
         List<User> members = team.getUsers();
         Map<Role, Integer> roles = team.getCurrentRoles();
+        User teamLeader = new User();
 
         try {
             while(resultSet.next()) {
 
                 Long id = resultSet.getLong("user_id");
+                Long teamLeader_id = resultSet.getLong("team_leader");
                 String email = resultSet.getString("user_email");
                 String userName = resultSet.getString("user_name");
 
                 Role role = Role.valueOf(resultSet.getString("role"));
                 if(roles.get(role) == null) roles.put(role, 1);
                 else roles.put(role, roles.get(role) + 1);
+
+                teamLeader.setId(teamLeader_id);
 
                 User user = new User.Builder()
                         .id(id)
@@ -104,7 +109,24 @@ public class TeamRepository {
             result.setSuccess(false);
             return null;
         }
+        /*
+            teamLeader 가져오는 쿼리
+         */
+        query = "select * from user where user_id = '" + teamLeader.getId() + "';";
+        resultSet = CMDBManager.sendSelectQuery(query, cmInfo);
 
+        try {
+            while(resultSet.next()) {
+                String userName = resultSet.getString("user_name");
+                String email = resultSet.getString("user_email");
+                teamLeader.setName(userName);
+                teamLeader.setEmail(email);
+            }
+        } catch (SQLException e) {
+            result.setMsg("실패하였습니다");
+            result.setSuccess(false);
+            return null;
+        }
         /*
         Application들 가져오는 쿼리
          */
@@ -140,13 +162,14 @@ public class TeamRepository {
         }
         result.setMsg("성공하였습니다");
         result.setSuccess(true);
+        team.setTeamLeader(teamLeader);
         return team;
     }
 
     public String getTeamQueryTeamName(String teamName) {
-        String query = "select u.user_id, u.user_name, u.user_email, r.role, sq.team_id, sq.team_name " +
+        String query = "select u.user_id, u.user_name, u.user_email, r.role, sq.team_id, sq.team_name , sq.team_leader " +
                 "from user u, role r, (" +
-                "select team.team_id, team.team_name " +
+                "select team.team_id, team.team_name, team.team_leader " +
                 "from user, team " +
                 "where user.team_id = team.team_id " +
                 "and team.team_name = '" + teamName + "' " +
@@ -156,9 +179,9 @@ public class TeamRepository {
     }
 
     public String getTeamQueryTeamId(Long id) {
-        String query = "select u.user_id, u.user_name, u.user_email, r.role, sq.team_id, sq.team_name " +
+        String query = "select u.user_id, u.user_name, u.user_email, r.role, sq.team_id, sq.team_name , sq.team_leader " +
                 "from user u, role r, (" +
-                "select team.team_id, team.team_name " +
+                "select team.team_id, team.team_name, team.team_leader " +
                 "from user, team " +
                 "where user.team_id = team.team_id " +
                 "and team.team_id = '" + id + "' " +
@@ -196,6 +219,7 @@ public class TeamRepository {
             Long id = -9999l;
             while(resultSet.next()) {
                 id = resultSet.getLong("team_id");
+                team.setId(id);
             }
 
             /*
@@ -203,7 +227,7 @@ public class TeamRepository {
              */
             query = "update user set team_id = '" + id + "' where user_id = '" + team.getTeamLeader().getId() + "';";
             ret = statement.executeUpdate(query);
-            if(ret != 2) throw new SQLException();
+            if(ret != 1) throw new SQLException();
 
             team.setId(id);
             connection.commit();
@@ -236,18 +260,18 @@ public class TeamRepository {
     public List<Application> getApplicationsByTeamId(Long userId, Result result, CMInfo cmInfo) {
 
         String query =
-                "select u.user_name, u.user_email, r.role, a.user_id, a.team_id, a.didRead " +
+                "select u.user_name, u.user_email, r.role, a.user_id, a.team_id, a.didRead, a.application_id " +
                         "from user u, application a, role r, ( " +
                         "select t.team_id " +
                         "    from user u, team t " +
                         "    where u.team_id = t.team_id " +
                         "    and u.user_id = '" + userId + "' " +
-                        ") t" +
+                        ") t " +
                         "where t.team_id = a.team_id " +
                         "and u.user_id = a.user_id " +
                         "and r.role_id = u.role_id " +
                         "and a.didRead = 0;";
-
+        System.out.println(query);
         ResultSet resultSet = CMDBManager.sendSelectQuery(query, cmInfo);
         Team team = new Team();
         List<Application> applications = team.getApplications();
@@ -353,7 +377,7 @@ public class TeamRepository {
 
 
     @Transactional
-    public void updateApplicationandUser(Application app, Result result, CMInfo cmInfo) {
+    public void updateApplicationandUser(Application app, Result result, Integer yesTeam, CMInfo cmInfo) {
 
         Connection connection = null;
         Statement statement = null;
@@ -375,11 +399,13 @@ public class TeamRepository {
             int ret = statement.executeUpdate(query);
             if(ret != 1) throw new SQLException();
 
-            query = "update user set teamId = '" + teamId + "' where " +
-                            "user_id = '" + userId + "';";
+            if(yesTeam == 1) {
+                query = "update user set team_id = '" + teamId + "' where " +
+                        "user_id = '" + userId + "';";
 
-            ret = statement.executeUpdate(query);
-            if(ret != 1) throw new SQLException();
+                ret = statement.executeUpdate(query);
+                if(ret != 1) throw new SQLException();
+            }
 
             connection.commit();
 
