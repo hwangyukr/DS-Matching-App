@@ -177,4 +177,37 @@ public class BoardHandller {
         ue.setEventField(CMInfo.CM_STR, "board", String.valueOf(id));
         cmServerStub.send(ue, ue.getSender());
     }
+    
+    public void deleteBoard(CMUserEvent ue) {
+        ue.setStringID("DELETE-BOARD-REPLY");
+        TokenProvider.TokenResult validResult = getUserInfo(ue);
+        if(validResult == null) return;
+
+        Long boardId = Long.valueOf(ue.getEventField(CMInfo.CM_LONG, "board_id"));
+        
+        if(boardId == null) {
+            handleError(new Result("입력값을 확인하세요", false), ue);
+            return;
+        }
+        
+        Result result = new Result();
+        Board board = boardService.getBoard(boardId, result);
+        
+        if(!result.isSuccess()) {
+            handleError(result, ue);
+            return;
+        }
+        
+        Long id = boardService.deleteBoard(board, result);
+        
+        if(!result.isSuccess()) {
+            handleError(result, ue);
+            return;
+        }
+
+        ue.setEventField(CMInfo.CM_INT,"success", "1");
+        ue.setEventField(CMInfo.CM_STR, "msg", "성공하였습니다");
+        ue.setEventField(CMInfo.CM_STR, "board", String.valueOf(id));
+        cmServerStub.send(ue, ue.getSender());
+    }
 }
