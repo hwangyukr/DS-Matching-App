@@ -108,4 +108,31 @@ public class BoardHandller {
             e.printStackTrace();
         }
     }
+	
+    public void postBoard(CMUserEvent ue) {
+        ue.setStringID("POST-BOARD-REPLY");
+        TokenProvider.TokenResult validResult = getUserInfo(ue);
+        if(validResult == null) return;
+
+        String title = ue.getEventField(CMInfo.CM_STR, "title");
+        String content = ue.getEventField(CMInfo.CM_STR, "content");
+        Long teamId = Long.valueOf(ue.getEventField(CMInfo.CM_LONG, "team_id"));
+        if(teamId == null) {
+            handleError(new Result("입력값을 확인하세요", false), ue);
+            return;
+        }
+        
+        Result result = new Result();
+        Board board = boardService.postBoard(validResult, result, title, content, teamId);
+
+        if(!result.isSuccess()) {
+            handleError(result, ue);
+            return;
+        }
+
+        ue.setEventField(CMInfo.CM_INT,"success", "1");
+        ue.setEventField(CMInfo.CM_STR, "msg", "성공하였습니다");
+        ue.setEventField(CMInfo.CM_STR, "board", String.valueOf(board.getId()));
+        cmServerStub.send(ue, ue.getSender());
+    }
 }
