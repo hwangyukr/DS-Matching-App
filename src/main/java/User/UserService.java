@@ -87,5 +87,8 @@ public class UserService {
 
     }
 
-
+    public User getUser(Result result, Long userId) {
+        User user = userRepository.getUser(result, userId, cmInfo);
+        return user;
+    }
 }
