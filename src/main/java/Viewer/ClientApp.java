@@ -118,6 +118,17 @@ public class ClientApp extends JFrame {
 		
 	}
 	
+	//지우 
+	public void requestApplications() {
+		CMUserEvent ue = new CMUserEvent();
+		CMInteractionInfo info = clientStub.getCMInfo().getInteractionInfo();
+		CMUser user = info.getMyself();
+		ue.setStringID("GET-APPLICATIONS");
+		
+		clientStub.send(ue, "SERVER");
+		this.print("Requesting applications ...");
+	}
+	
 	public static void main (String[] args) {
 		try {
 			UIManager.setLookAndFeel (new MaterialLookAndFeel ());
