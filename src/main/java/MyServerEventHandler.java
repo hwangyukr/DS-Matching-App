@@ -1,6 +1,7 @@
 
 import Board.BoardHandller;
 import Team.TeamHandler;
+import User.ProfileHandler;
 import User.UserHandler;
 import kr.ac.konkuk.ccslab.cm.event.CMEvent;
 import kr.ac.konkuk.ccslab.cm.event.CMSessionEvent;
@@ -17,12 +18,14 @@ public class MyServerEventHandler implements CMAppEventHandler {
     private UserHandler userHandler;
     private TeamHandler teamHandler;
     private BoardHandller boardHandler;
+    private ProfileHandler profileHandler;
 
     public MyServerEventHandler(CMServerStub cmServerStub) {
         this.cmServerStub = cmServerStub;
         this.userHandler = new UserHandler(cmServerStub);
         this.teamHandler = new TeamHandler(cmServerStub);
         this.boardHandler = new BoardHandller(cmServerStub);
+        this.profileHandler = new ProfileHandler(cmServerStub);
     }
 
     public void processEvent(CMEvent cmEvent) {
@@ -52,12 +55,6 @@ public class MyServerEventHandler implements CMAppEventHandler {
                     case "CREATE-TEAM":
                         teamHandler.createTeam(ue);
                         break;
-                    case "GET-BOARDS":
-                        boardHandler.getBoards(ue);
-                        break;
-                    case "MAKE-BOARD":
-                        //boardHandler.createBoard(ue);
-                        break;
                     case "GET-APPLICATIONS":
                         teamHandler.getApplications(ue);
                         break;
@@ -65,8 +62,17 @@ public class MyServerEventHandler implements CMAppEventHandler {
                         teamHandler.processApplications(ue);
                         break;
                     case "GET-PROFILE":
-                        userHandler.getProfile(ue);
+                        profileHandler.getProfile(ue);
                         break;
+                    case "POST-PROFILE":
+                    	profileHandler.postProfile(ue);
+                        break;
+                    case "PUT-PROFILE":
+                    	profileHandler.putProfile(ue);
+                    	break;
+                    case "DELETE-PROFILE":
+                    	profileHandler.deleteProfile(ue);
+                    	break;
                     default:
                         return;
 
