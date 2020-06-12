@@ -58,11 +58,11 @@ public class ProfileRepository {
             connection = dbManager.getConnection();
             statement = dbManager.getStatement();
             connection.setAutoCommit(false);
-
+            int role_id = profile.getRole().ordinal()+1;
             String query =
             		"insert into profile(user_id, role_id, content, photo, portforlio) values (" +
             				"'" + profile.getUser().getId() + "', " +
-            				"'" + (profile.getRole().ordinal()+1)+ "', " +
+            				"'" + role_id + "', " +
             				"'" + profile.getContent() + "', " +
             				"'" + profile.getPhoto() + "', " +
             				"'" + profile.getPortforlio() + "');";
@@ -77,7 +77,7 @@ public class ProfileRepository {
             
             ResultSet res = CMDBManager.sendSelectQuery(getQuery, cmInfo);
             Long id = -9999l;
-            if (res.first()) {
+            while (res.next()) {
             	id = res.getLong("profile_id");
             }
             
