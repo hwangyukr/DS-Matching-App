@@ -12,15 +12,15 @@ import java.sql.*;
 public class ProfileRepository {
     public Profile getProfileByUserId(Long userId, Result result, CMInfo cmInfo) {
     	String query =
-    			"select p.*, r.role" +
-    			"from profile p, role r" +
+    			"select p.*, r.role " +
+    			"from profile p, role r " +
     			"where p.user_id = '" + userId + "' " +
     			"and p.role_id = r.role_id;";
     	ResultSet res = CMDBManager.sendSelectQuery(query, cmInfo);
     	
     	Profile profile = null;
     	try {
-			if(res.first()) {
+			while(res.next()) {
 				Long id = res.getLong("profile_id");
 				User user = new User.Builder()
 						.id(res.getLong("user_id"))
@@ -71,8 +71,8 @@ public class ProfileRepository {
             if(ret != 1) throw new SQLException();
 
             String getQuery = 
-            		"select profile_id" + 
-            		"from profile" +
+            		"select profile_id " + 
+            		"from profile " +
             		"where user_id = '" + profile.getUser().getId() + "';";
             
             ResultSet res = CMDBManager.sendSelectQuery(getQuery, cmInfo);
