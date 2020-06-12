@@ -50,7 +50,63 @@ public class ProfileRepository {
     
     @Transactional
     public Long postProfile(Profile profile, Result result, CMInfo cmInfo) {
-    	return null;
+        Connection connection = null;
+        Statement statement = null;
+        
+        try {
+            DBManager dbManager = DBManager.getConnection(cmInfo);
+            connection = dbManager.getConnection();
+            statement = dbManager.getStatement();
+            connection.setAutoCommit(false);
+
+            String query =
+            		"insert into profile(user_id, role_id, content, photo, portforlio) values (" +
+            				"'" + profile.getUser().getId() + "', " +
+            				"'" + (profile.getRole().ordinal()+1)+ "', " +
+            				"'" + profile.getContent() + "', " +
+            				"'" + profile.getPhoto() + "', " +
+            				"'" + profile.getPortforlio() + "');";
+
+            int ret = statement.executeUpdate(query);
+            if(ret != 1) throw new SQLException();
+
+            String getQuery = 
+            		"select profile_id" + 
+            		"from profile" +
+            		"where user_id = '" + profile.getUser().getId() + "';";
+            
+            ResultSet res = CMDBManager.sendSelectQuery(getQuery, cmInfo);
+            Long id = -9999l;
+            if (res.first()) {
+            	id = res.getLong("profile_id");
+            }
+            
+            profile.setId(id);
+            connection.commit();
+
+        } catch (SQLIntegrityConstraintViolationException e) {
+            try {
+                connection.rollback();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+            result.setMsg("해당 유저는 프로필이 이미 존재합니다.");
+            result.setSuccess(false);
+            return -1l;
+        } catch (SQLException e) {
+            try {
+                connection.rollback();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+            result.setMsg("실패하였습니다");
+            result.setSuccess(false);
+            return -1l;
+        }
+
+        result.setMsg("성공하였습니다");
+        result.setSuccess(true);
+        return profile.getId();
     }
     
     @Transactional
