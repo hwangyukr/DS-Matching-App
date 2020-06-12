@@ -20,7 +20,7 @@ public class ProfileRepository {
     	
     	Profile profile = null;
     	try {
-			if(res.first()) {
+			while(res.next()) {
 				Long id = res.getLong("profile_id");
 				User user = new User.Builder()
 						.id(res.getLong("user_id"))
