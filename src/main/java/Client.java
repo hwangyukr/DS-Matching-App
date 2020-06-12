@@ -4,17 +4,16 @@ import Viewer.MyTeamView;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.ac.konkuk.ccslab.cm.entity.CMUser;
-import kr.ac.konkuk.ccslab.cm.event.CMDummyEvent;
-import kr.ac.konkuk.ccslab.cm.event.CMSessionEvent;
-import kr.ac.konkuk.ccslab.cm.event.CMUserEvent;
+import kr.ac.konkuk.ccslab.cm.event.*;
 import kr.ac.konkuk.ccslab.cm.info.CMInfo;
 import kr.ac.konkuk.ccslab.cm.info.CMInteractionInfo;
+import kr.ac.konkuk.ccslab.cm.manager.CMFileTransferManager;
 import kr.ac.konkuk.ccslab.cm.manager.CMInteractionManager;
 import kr.ac.konkuk.ccslab.cm.stub.CMClientStub;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -88,6 +87,22 @@ public class Client {
             String teamName;
 
             switch (input) {
+                case 10:
+//                    CMFileEvent fe = new CMFileEvent();
+//                    fe.setID(CMFileEvent.REQUEST_DIST_FILE_PROC);
+//                    fe.setFileSender(myself.getName());
+//                    fe.setFileReceiver("SERVER");
+//                    String fileName = "/Users/imac/Desktop/ss.jpg";
+//                    File file = new File(fileName);
+//
+//                    RandomAccessFile f = new RandomAccessFile(fileName, "r");
+//                    byte[] b = new byte[(int)f.length()];
+//                    f.readFully(b);
+//                    fe.setFileBlock(b);
+//                    fe.setFileSize((int)f.length());
+//                    cmClientStub.send(fe, "SERVER");
+                    CMFileTransferManager.pushFile("/Users/imac/Desktop/ss.jpg", "SERVER", cmClientStub.getCMInfo());
+                    break;
                 case 1:
                     System.out.print("이메일 : ");
                     email = sc.next();

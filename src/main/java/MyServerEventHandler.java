@@ -4,6 +4,7 @@ import Team.TeamHandler;
 import User.ProfileHandler;
 import User.UserHandler;
 import kr.ac.konkuk.ccslab.cm.event.CMEvent;
+import kr.ac.konkuk.ccslab.cm.event.CMFileEvent;
 import kr.ac.konkuk.ccslab.cm.event.CMSessionEvent;
 import kr.ac.konkuk.ccslab.cm.event.CMUserEvent;
 import kr.ac.konkuk.ccslab.cm.event.handler.CMAppEventHandler;
@@ -32,6 +33,11 @@ public class MyServerEventHandler implements CMAppEventHandler {
 
         switch (cmEvent.getType()) {
 
+            case CMInfo.CM_FILE_EVENT:
+                CMFileEvent fe = (CMFileEvent) cmEvent;
+                System.out.println(fe.getBlockSize());
+                System.out.println(fe);
+                break;
             case CMInfo.CM_USER_EVENT:
 
                 CMUserEvent ue = (CMUserEvent) cmEvent;
