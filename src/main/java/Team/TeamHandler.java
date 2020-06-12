@@ -3,6 +3,7 @@ package Team;
 import Common.Result;
 import Config.TokenProvider;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.ac.konkuk.ccslab.cm.event.CMUserEvent;
 import kr.ac.konkuk.ccslab.cm.event.CMUserEventField;
@@ -10,6 +11,7 @@ import kr.ac.konkuk.ccslab.cm.info.CMInfo;
 import kr.ac.konkuk.ccslab.cm.stub.CMServerStub;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 public class TeamHandler<T> {
@@ -139,12 +141,22 @@ public class TeamHandler<T> {
         if(validResult == null) return;
 
         String teamName = ue.getEventField(CMInfo.CM_STR, "team_name");
-        if(teamName == null) {
+        String json = ue.getEventField(CMInfo.CM_STR, "teamlimit");
+        if(teamName == null || json == null) {
             handleError(new Result("입력값을 확인하세요", false), ue);
             return;
         }
+
+        Map<Role, Integer> limit = null;
+        try {
+            limit = objectMapper.readValue(json, new TypeReference<Map<Role, Integer>>(){});
+        } catch (JsonProcessingException e) {
+            handleError(new Result("입력값을 확인하세요", false), ue);
+            return;
+        }
+
         Result result = new Result();
-        Team team = teamService.createTeam(validResult, result, teamName);
+        Team team = teamService.createTeam(validResult, result, teamName, limit);
 
         /*
             teamService에 파라미터로 result를 넣어줘서 에러가 나면

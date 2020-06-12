@@ -1,3 +1,5 @@
+import Team.Role;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.ac.konkuk.ccslab.cm.entity.CMUser;
 import kr.ac.konkuk.ccslab.cm.event.CMDummyEvent;
 import kr.ac.konkuk.ccslab.cm.event.CMSessionEvent;
@@ -7,17 +9,24 @@ import kr.ac.konkuk.ccslab.cm.info.CMInteractionInfo;
 import kr.ac.konkuk.ccslab.cm.manager.CMInteractionManager;
 import kr.ac.konkuk.ccslab.cm.stub.CMClientStub;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
 public class Client {
     private CMClientStub clientStub;
     private ClientEventHandler clientEventHandler;
     private String token;
+    private ObjectMapper objectMapper;
 
     public Client() {
         clientStub = new CMClientStub();
         clientEventHandler = new ClientEventHandler(clientStub, this);
         this.token = "";
+        this.objectMapper = new ObjectMapper();
     }
 
     public void setToken(String token) {
@@ -45,7 +54,7 @@ public class Client {
 
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         Client client = new Client();
         CMClientStub cmClientStub = client.getClientStub();
         cmClientStub.setAppEventHandler(client.getClientEventHandler());
@@ -107,9 +116,22 @@ public class Client {
                     System.out.print("팀 이름 : ");
                     teamName = sc.next();
 
+                    Map<Role, Integer> rolelimits = new HashMap<>();
+
+                    System.out.print("광고 디자인  : ");
+                    rolelimits.put(Role.광고디자인, sc.nextInt());
+
+                    System.out.print("앱 개발  : ");
+                    rolelimits.put(Role.앱개발, sc.nextInt());
+
+                    String json = client.objectMapper.writeValueAsString(rolelimits);
+
                     ue.setEventField(CMInfo.CM_STR, "team_name", teamName);
                     ue.setEventField(CMInfo.CM_STR, "token", client.token);
+                    ue.setEventField(CMInfo.CM_STR, "teamlimit", json);
+
                     cmClientStub.send(ue, "SERVER");
+
                     break;
                 case 4:
                     ue.setStringID("GET-TEAM");
