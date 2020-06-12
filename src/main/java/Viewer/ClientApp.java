@@ -135,6 +135,20 @@ public class ClientApp extends JFrame {
 		ue.setEventField(CMInfo.CM_STR, "teamlimit", json);
 	}
 	
+	public void applyTeam() {
+	      CMUserEvent ue = new CMUserEvent();
+	      CMInteractionInfo info = clientStub.getCMInfo().getInteractionInfo();
+	      CMUser user = info.getMyself();
+	      ue.setStringID("APPLY-TEAM");
+	      
+	      ue.setSender(user.getName());
+	      ue.setDistributionGroup(user.getCurrentGroup());
+	      ue.setDistributionSession(user.getCurrentSession());
+	      
+	      clientStub.send(ue, "SERVER");
+	      this.print("Successfully applied ...");
+	   }
+	
 	public static void main (String[] args) {
 		try {
 			UIManager.setLookAndFeel (new MaterialLookAndFeel ());
