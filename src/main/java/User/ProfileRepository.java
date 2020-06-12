@@ -159,7 +159,7 @@ public class ProfileRepository {
     }
     
     @Transactional
-    public boolean deleteProfile(Long userId, Result result, CMInfo cmInfo) {
+    public Boolean deleteProfile(Long userId, Result result, CMInfo cmInfo) {
         Connection connection = null;
         Statement statement = null;
         

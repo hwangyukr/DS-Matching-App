@@ -45,4 +45,8 @@ public class ProfileService {
     	profile.setPortforlio(portforlio);
         return profileRepository.putProfile(profile, result, cmInfo);
     }
+    
+    public Boolean deleteProfile(Long userId, Result result) {
+    	return profileRepository.deleteProfile(userId, result, cmInfo);
+    }
 }
