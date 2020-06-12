@@ -1,4 +1,7 @@
 import Team.Role;
+import Team.Team;
+import Viewer.MyTeamView;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.ac.konkuk.ccslab.cm.entity.CMUser;
 import kr.ac.konkuk.ccslab.cm.event.CMDummyEvent;
@@ -21,6 +24,7 @@ public class Client {
     private ClientEventHandler clientEventHandler;
     private String token;
     private ObjectMapper objectMapper;
+	public Team my_team;
 
     public Client() {
         clientStub = new CMClientStub();
@@ -179,5 +183,6 @@ public class Client {
         }
 
     }
+
 
 }

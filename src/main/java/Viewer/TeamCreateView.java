@@ -1,4 +1,4 @@
-package main.java.Viewer;
+package Viewer;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -19,8 +19,9 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
 
-import main.java.Team.Role;
-import main.java.User.User;
+import Team.Role;
+import User.User;
+
 
 public class TeamCreateView extends Viewer{/**
 	 * 
