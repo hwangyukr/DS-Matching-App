@@ -35,4 +35,14 @@ public class ProfileService {
         profileRepository.postProfile(profile, result, cmInfo);
     	return profile;
     }
+    
+    public Long putProfile(Profile profile, Result result, 
+    		Role role, String content, String photo, String portforlio) {
+    	
+    	profile.setRole(role);
+    	profile.setContent(content);
+    	profile.setPhoto(photo);
+    	profile.setPortforlio(portforlio);
+        return profileRepository.putProfile(profile, result, cmInfo);
+    }
 }
