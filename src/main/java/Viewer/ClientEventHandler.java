@@ -7,6 +7,7 @@ import javax.swing.JOptionPane;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import Team.Application;
 import Team.Team;
 import kr.ac.konkuk.ccslab.cm.event.CMEvent;
 import kr.ac.konkuk.ccslab.cm.event.CMSessionEvent;
@@ -57,6 +58,9 @@ public class ClientEventHandler implements CMAppEventHandler {
             	
             	if(success.equals("1")) {
             		client.print("Login Success");
+            		String token = ue.getEventField(CMInfo.CM_STR, "token");
+            		client.token = token;
+            		client.reqeustMyTeam("hihiroo");
             	}
             	else {
             		client.print("Check your Email or Password !");
@@ -78,6 +82,7 @@ public class ClientEventHandler implements CMAppEventHandler {
                     String ret = ue.getEventField(CMInfo.CM_STR, "team");
                     Team team = null;
                     team = objectMapper.readValue(ret, Team.class);
+                    client.ChangeView(new MyTeamView(client, team));
                 } catch (JsonProcessingException e) {
                     e.printStackTrace();
                 }
@@ -93,7 +98,28 @@ public class ClientEventHandler implements CMAppEventHandler {
                     e.printStackTrace();
                 }
             }
-
+            
+            if(ue.getStringID().equals("POST-BOARD-REPLY")) {
+                try {
+                    String success = ue.getEventField(CMInfo.CM_INT, "success");
+                    String msg = ue.getEventField(CMInfo.CM_STR, "msg");
+                    if(success.equals("1")) client.print("posted successfully");
+                    else client.print("post failed" + msg);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            
+            if(ue.getStringID().equals("GET-APPLICATIONS-REPLY")) {
+            	  try {
+            	      String ret = ue.getEventField(CMInfo.CM_STR, "applications");
+            	      List<Application> applications = objectMapper.readValue(ret, objectMapper.getTypeFactory().constructCollectionType(List.class, Application.class));
+            	      client.ChangeView(new ApplicationView(client, applications));
+            	  } catch (JsonProcessingException e) {
+            	      e.printStackTrace();
+            	  }
+            	}
+            
             break;
         default:
             return;
