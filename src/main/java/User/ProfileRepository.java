@@ -71,8 +71,8 @@ public class ProfileRepository {
             if(ret != 1) throw new SQLException();
 
             String getQuery = 
-            		"select profile_id" + 
-            		"from profile" +
+            		"select profile_id " + 
+            		"from profile " +
             		"where user_id = '" + profile.getUser().getId() + "';";
             
             ResultSet res = CMDBManager.sendSelectQuery(getQuery, cmInfo);
