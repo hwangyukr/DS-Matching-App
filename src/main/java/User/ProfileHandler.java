@@ -85,7 +85,14 @@ public class ProfileHandler {
         	handleError(new Result("입력값을 확인하세요", false), ue);
         	return;
         }
-        Role role = Role.valueOf(roleName);
+        Role role;
+        try {
+        	role = Role.valueOf(roleName);
+        }
+        catch (java.lang.IllegalArgumentException e) {
+        	handleError(new Result("입력값을 확인하세요", false), ue);
+        	return;
+        }
         
         Result result = new Result();
         Profile profile = profileService.postProfile(validResult, result, role, content, photo, portforlio);
