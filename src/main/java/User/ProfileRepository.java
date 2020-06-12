@@ -12,8 +12,8 @@ import java.sql.*;
 public class ProfileRepository {
     public Profile getProfileByUserId(Long userId, Result result, CMInfo cmInfo) {
     	String query =
-    			"select p.*, r.role" +
-    			"from profile p, role r" +
+    			"select p.*, r.role " +
+    			"from profile p, role r " +
     			"where p.user_id = '" + userId + "' " +
     			"and p.role_id = r.role_id;";
     	ResultSet res = CMDBManager.sendSelectQuery(query, cmInfo);
