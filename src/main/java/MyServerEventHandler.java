@@ -73,6 +73,9 @@ public class MyServerEventHandler implements CMAppEventHandler {
                     case "DELETE-PROFILE":
                     	profileHandler.deleteProfile(ue);
                     	break;
+                    case "GET-USER":
+                        userHandler.getUser(ue);
+                        break;
                     default:
                         return;
 
