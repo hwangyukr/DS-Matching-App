@@ -14,7 +14,6 @@ public class UserService {
         this.cmInfo = cmInfo;
         this.userRepository = new UserRepository();
     }
-
     /*
         회원가입 되있는 이메일인지 확인
      */

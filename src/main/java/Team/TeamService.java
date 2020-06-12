@@ -1,5 +1,7 @@
 package Team;
 
+import Board.Board;
+import Board.BoardRepository;
 import Common.Result;
 import Config.TokenProvider;
 import User.User;
@@ -8,17 +10,20 @@ import kr.ac.konkuk.ccslab.cm.event.CMUserEvent;
 import kr.ac.konkuk.ccslab.cm.info.CMInfo;
 
 import java.util.List;
+import java.util.Map;
 
 public class TeamService {
 
     private CMInfo cmInfo;
     private TeamRepository teamRepository;
     private UserRepository userRepository;
+    private BoardRepository boardRepository;
 
     public TeamService(CMInfo cmInfo) {
         this.cmInfo = cmInfo;
         this.teamRepository = new TeamRepository();
         this.userRepository = new UserRepository();
+        this.boardRepository = new BoardRepository();
     }
 
     public List<Team> getTeams(Result result) {
@@ -27,10 +32,13 @@ public class TeamService {
 
     public Team getTeam(String teamName, Result result) {
         String query = teamRepository.getTeamQueryTeamName(teamName);
-        return teamRepository.getTeamByName(query, result, cmInfo);
+        Team team = teamRepository.getTeamByName(query, result, cmInfo);
+        List<Board> boards = boardRepository.getBoards(team.getId(), result, cmInfo);
+        team.setBoards(boards);
+        return team;
     }
 
-    public Team createTeam(TokenProvider.TokenResult validResult, Result result, String teamName) {
+    public Team createTeam(TokenProvider.TokenResult validResult, Result result, String teamName, Map<Role, Integer> limit) {
 
         User user = new User.Builder()
                 .id(validResult.getId())
@@ -40,6 +48,7 @@ public class TeamService {
                 .name(teamName)
                 .teamLeader(user)
                 .teamRoles(null)
+                .roleLimits(limit)
                 .build();
 
         teamRepository.saveTeam(team, result, cmInfo);

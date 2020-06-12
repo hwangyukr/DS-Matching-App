@@ -1,9 +1,11 @@
 package Team;
 
+import Board.Board;
 import User.User;
 
 import java.lang.reflect.Array;
 import java.util.*;
+
 
 public class Team {
 
@@ -13,7 +15,26 @@ public class Team {
     private User teamLeader;
     private List<Application> applications = new ArrayList<>();
     private Map<Role, Integer> currentRoles = new HashMap<>();
+    private Map<Role, Integer> roleLimits = new HashMap<>();
+    private List<Board> boards;
+
     public Team() {
+    }
+
+    public Map<Role, Integer> getRoleLimits() {
+        return roleLimits;
+    }
+
+    public List<Board> getBoards() {
+        return boards;
+    }
+
+    public void setBoards(List<Board> boards) {
+        this.boards = boards;
+    }
+
+    public void setRoleLimits(Map<Role, Integer> roleLimits) {
+        this.roleLimits = roleLimits;
     }
 
     public Team(Builder builder) {
@@ -23,6 +44,8 @@ public class Team {
         this.teamLeader = builder.teamLeader;
         this.applications = builder.applications;
         this.currentRoles = builder.currentRoles;
+        this.roleLimits = builder.roleLimits;
+        this.boards = builder.boards;
     }
 
 
@@ -34,10 +57,16 @@ public class Team {
         private Long id;
         private List<User> users = new ArrayList<>();
         private List<Application> applications = new ArrayList<>();
+        private Map<Role, Integer> roleLimits = new HashMap<>();
+        private List<Board> boards = new ArrayList<Board>();
 
         public Builder() {
         }
 
+        public Builder boards(List<Board> val) {
+            boards = val;
+            return this;
+        }
         public Builder name(String val) {
             name = val;
             return this;
@@ -55,6 +84,10 @@ public class Team {
             return this;
         }
 
+        public Builder roleLimits(Map<Role, Integer> val) {
+            roleLimits = val;
+            return this;
+        }
         public Team build() {
             return new Team(this);
         }

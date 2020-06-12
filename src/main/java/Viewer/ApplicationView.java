@@ -24,15 +24,28 @@ public class ApplicationView extends Viewer {
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		
+		
 		if(e.getSource() == button_1) {
 			client.print("Come back to login view");
 			client.ChangeView(new LoginView(client));
 		}
-		
+		else if(e.getSource() instanceof JButton) {
+			JButton btn = (JButton)e.getSource();
+			if(btn.getActionCommand() == "Confirm") {
+				String userid = ((JButton)e.getSource()).getName();
+				String teamid = String.valueOf(client.my_team.getId());
+				client.requestProcessApplication(userid, teamid);
+			}
+			else { // Show
+				
+			}
+		}
 	}
 
 	@Override
 	public void init() {
+		this.setLayout(null);
 		int size = applications.size();
 		if(size < 1) client.print("There is no Applcant");
 		else {
@@ -49,8 +62,8 @@ public class ApplicationView extends Viewer {
 				int y = 150 + 40*i;
 				lbl1.setBounds(30, y, 100, 40);
 				lbl2.setBounds(130, y, 100, 40);
-				btn1.setBounds(230, y, 100, 40);
-				btn2.setBounds(330, y, 100, 40);
+				btn1.setBounds(280, y, 90, 40);
+				btn2.setBounds(390, y, 90, 40);
 				this.add(lbl1);
 				this.add(lbl2);
 				this.add(btn1);
@@ -62,6 +75,7 @@ public class ApplicationView extends Viewer {
 		button_1.setBackground(new Color(211, 211, 211));
 		button_1.setBounds(155, 430, 76, 23);
 		this.add(button_1);
+
 		button_1.addActionListener(this);
 	}
 }

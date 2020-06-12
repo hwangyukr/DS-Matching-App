@@ -11,6 +11,8 @@ import javax.swing.JPanel;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
+import Team.Team;
+import User.User;
 import kr.ac.konkuk.ccslab.cm.entity.CMUser;
 import kr.ac.konkuk.ccslab.cm.event.CMUserEvent;
 import kr.ac.konkuk.ccslab.cm.info.CMInfo;
@@ -29,6 +31,9 @@ public class ClientApp extends JFrame {
 	
     private String email = null;
     private String pw = null;
+    
+    public Team my_team = null;
+    
     
 	public ClientApp() {
 		super("Team No3 - Matching System");
@@ -159,6 +164,14 @@ public class ClientApp extends JFrame {
 
 	public void requestApplications() {
 		CMUserEvent ue = GetUE("GET-APPLICATIONS");
+		clientStub.send(ue, "SERVER");
+	}
+
+	public void requestProcessApplication(String user_id, String team_id) {
+		CMUserEvent ue = GetUE("PROCESS-APPLICATION");
+		ue.setEventField(CMInfo.CM_LONG, "user_id", user_id);
+		ue.setEventField(CMInfo.CM_LONG, "team_id", team_id);
+		ue.setEventField(CMInfo.CM_INT, "yesTeam", "1");
 		clientStub.send(ue, "SERVER");
 	}
 }
