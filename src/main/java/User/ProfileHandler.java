@@ -43,9 +43,13 @@ public class ProfileHandler {
         TokenProvider.TokenResult validResult = getUserInfo(ue);
         if(validResult == null) return;
         
-        Long userId = Long.valueOf(ue.getEventField(CMInfo.CM_LONG, "user_id"));
-        if (userId == null) {
+        Long userId;
+        String userId_str = ue.getEventField(CMInfo.CM_LONG, "user_id");
+        if (userId_str == null) {
         	userId = validResult.getId();
+        }
+        else {
+        	userId = Long.valueOf(userId_str);
         }
         
         Result result = new Result();
