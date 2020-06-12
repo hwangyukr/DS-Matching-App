@@ -20,9 +20,9 @@ import kr.ac.konkuk.ccslab.cm.manager.CMDBManager;
 public class BoardRepository {
 	public List<Board> getBoards(Long teamId, Result result, CMInfo cmInfo) {
     	String query = 
-    			"select b.board_id, b.title, b.content, u.user_id, u.user_name" +
-    			"from user u, board b" +
-    			"where b.team_id = '" + teamId + "' and b.valid = 1 and b.author_id = u.user_id" +
+    			"select b.board_id, b.title, b.content, u.user_id, u.user_name " +
+    			"from user u, board b " +
+    			"where b.team_id = '" + teamId + "' and b.valid = 1 and b.author_id = u.user_id " +
     			"order by last_modified desc";
     	
         ResultSet resultSet = CMDBManager.sendSelectQuery(query, cmInfo);
@@ -58,13 +58,13 @@ public class BoardRepository {
 
     public Board getBoardById(Long boardId, Result result, CMInfo cmInfo) {
     	String query =
-    			"select b.title, b.content, u.user_id, u.user_name, t.team_id, t.team_name" +
-    			"from board b, user u, team t" +
-    			"where b.board_id = '" + boardId + "'and b.valid = 1 and b.author_id = u.user_id and b.team_id = t.team_id";
+    			"select b.title, b.content, u.user_id, u.user_name, t.team_id, t.team_name " +
+    			"from board b, user u, team t " +
+    			"where b.board_id = '" + boardId + "' and b.valid = 1 and b.author_id = u.user_id and b.team_id = t.team_id";
     	ResultSet res = CMDBManager.sendSelectQuery(query, cmInfo);
     	Board board = null;
 		try {
-			if (res.first()) {
+			while (res.next()) {
 				Long user_id = res.getLong("user_id");
 				Long team_id = res.getLong("team_id");
 				String user_name = res.getString("user_name");
@@ -118,10 +118,10 @@ public class BoardRepository {
             if(ret != 1) throw new SQLException();
 
             String getQuery = 
-            		"select board_id" + 
-            		"from board" +
-            		"where author_id = '" + board.getUser().getId() + "'" +
-            			"and team_id = '" + board.getTeam().getId() + "'" +
+            		"select board_id " + 
+            		"from board " +
+            		"where author_id = '" + board.getUser().getId() + "' " +
+            			"and team_id = '" + board.getTeam().getId() + "' " +
             		"order by last_modified desc";
             
             ResultSet res = CMDBManager.sendSelectQuery(getQuery, cmInfo);
