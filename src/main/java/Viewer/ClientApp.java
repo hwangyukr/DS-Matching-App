@@ -1,7 +1,9 @@
-package Viewer;
+package main.java.Viewer;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -11,8 +13,6 @@ import javax.swing.JPanel;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
-import Team.Team;
-import User.User;
 import kr.ac.konkuk.ccslab.cm.entity.CMUser;
 import kr.ac.konkuk.ccslab.cm.event.CMUserEvent;
 import kr.ac.konkuk.ccslab.cm.info.CMInfo;
@@ -20,6 +20,10 @@ import kr.ac.konkuk.ccslab.cm.info.CMInteractionInfo;
 import kr.ac.konkuk.ccslab.cm.stub.CMClientStub;
 import mdlaf.MaterialLookAndFeel;
 import mdlaf.themes.MaterialLiteTheme;
+import main.java.Team.*;
+import main.java.Viewer.MainView;
+import main.java.Viewer.TeamCreateView;
+
 
 public class ClientApp extends JFrame {
 	private static final long serialVersionUID = 1L;
@@ -31,9 +35,8 @@ public class ClientApp extends JFrame {
 	
     private String email = null;
     private String pw = null;
-    
-    public Team my_team = null;
-    
+    private MainView mainView;
+    private TeamCreateView teamCreateView;
     
 	public ClientApp() {
 		super("Team No3 - Matching System");
@@ -70,27 +73,15 @@ public class ClientApp extends JFrame {
 	}
 	
 	public void requestConnection(String id, String pw) {
+		clientStub.logoutCM();
+		clientStub.loginCM(id, pw);
+		System.out.println("requestConnection email : " + email);
+		System.out.println("requestConnection pw : " + pw);
 		this.email = id;
 		this.pw = pw;
-		
-		if(this.email == null) {
-			this.print("email is null");
-			return;
-		}
-		if(this.pw == null) {
-			this.print("password is null");
-			return;
-		}
-		
-		clientStub.logoutCM();
-		clientStub.loginCM(this.email, this.pw);
-		System.out.println("requestConnection email : " + this.email);
-		System.out.println("requestConnection pw : " + this.pw);
-
 	}
 	
 	public void requestLogin() {
-		
 		CMUserEvent ue = new CMUserEvent();
 		CMInteractionInfo info = clientStub.getCMInfo().getInteractionInfo();
 		CMUser user = info.getMyself();
@@ -120,29 +111,28 @@ public class ClientApp extends JFrame {
 		
 	}
 	
-	private CMUserEvent GetUE(String id) {
-		if(token == null) {
-			System.out.println("FAIL FETCH TOKEN");
-		}
+	public void requestMyTeam(String team_name) {
 		
+	}
+	
+	public void requestTeamList() {
 		CMUserEvent ue = new CMUserEvent();
 		CMInteractionInfo info = clientStub.getCMInfo().getInteractionInfo();
 		CMUser user = info.getMyself();
 		
-		ue.setStringID(id);
-		ue.setEventField(CMInfo.CM_STR, "token", this.token);
-		ue.setSender(user.getName());
-		ue.setDistributionGroup(user.getCurrentGroup());
-		ue.setDistributionSession(user.getCurrentSession());
-		return ue;
+		ue.setStringID("GET-TEAMS");
+		ue.setEventField(CMInfo.CM_STR, "token", token);
 	}
 	
-	public void reqeustMyTeam(String team_name) {
-		CMUserEvent ue = GetUE("GET-TEAM");
-		ue.setEventField(CMInfo.CM_STR, "team_name", team_name);
-		clientStub.send(ue, "SERVER");
-		this.print("GET TEAM REQEUSTED");
-		
+	public void requestCreateTeam(Map<Role, Integer> limits) {
+		CMUserEvent ue = new CMUserEvent();
+		ue.setStringID("CREATE-TEAM");
+		Map<Role, Integer> rolelimits = limits;
+		String json = client.objectMapper.writeValueAsString(rolelimits);
+
+		ue.setEventField(CMInfo.CM_STR, "team_name", "만나서 반가워요 ^^");
+		ue.setEventField(CMInfo.CM_STR, "token", token);
+		ue.setEventField(CMInfo.CM_STR, "teamlimit", json);
 	}
 	
 	public static void main (String[] args) {
@@ -155,23 +145,5 @@ public class ClientApp extends JFrame {
 		new ClientApp();
 	}
 
-	public void reqeustNewPost(Long team_id, String content) {
-		CMUserEvent ue = GetUE("POST-BOARD");
-		ue.setEventField(CMInfo.CM_LONG, "team_id", String.valueOf(team_id));
-		ue.setEventField(CMInfo.CM_STR, "content", content);
-		clientStub.send(ue, "SERVER");
-	}
 
-	public void requestApplications() {
-		CMUserEvent ue = GetUE("GET-APPLICATIONS");
-		clientStub.send(ue, "SERVER");
-	}
-
-	public void requestProcessApplication(String user_id, String team_id) {
-		CMUserEvent ue = GetUE("PROCESS-APPLICATION");
-		ue.setEventField(CMInfo.CM_LONG, "user_id", user_id);
-		ue.setEventField(CMInfo.CM_LONG, "team_id", team_id);
-		ue.setEventField(CMInfo.CM_INT, "yesTeam", "1");
-		clientStub.send(ue, "SERVER");
-	}
 }
