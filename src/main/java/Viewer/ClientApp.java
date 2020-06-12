@@ -85,6 +85,7 @@ public class ClientApp extends JFrame {
 	}
 	
 	public void requestLogin() {
+		
 		CMUserEvent ue = new CMUserEvent();
 		CMInteractionInfo info = clientStub.getCMInfo().getInteractionInfo();
 		CMUser user = info.getMyself();
@@ -114,7 +115,28 @@ public class ClientApp extends JFrame {
 		
 	}
 	
+	private CMUserEvent GetUE(String id) {
+		if(token == null) {
+			System.out.println("FAIL FETCH TOKEN");
+		}
+		
+		CMUserEvent ue = new CMUserEvent();
+		CMInteractionInfo info = clientStub.getCMInfo().getInteractionInfo();
+		CMUser user = info.getMyself();
+		
+		ue.setStringID(id);
+		ue.setEventField(CMInfo.CM_STR, "token", this.token);
+		ue.setSender(user.getName());
+		ue.setDistributionGroup(user.getCurrentGroup());
+		ue.setDistributionSession(user.getCurrentSession());
+		return ue;
+	}
+	
 	public void reqeustMyTeam(String team_name) {
+		CMUserEvent ue = GetUE("GET-TEAM");
+		ue.setEventField(CMInfo.CM_STR, "team_name", team_name);
+		clientStub.send(ue, "SERVER");
+		this.print("GET TEAM REQEUSTED");
 		
 	}
 	
@@ -128,5 +150,15 @@ public class ClientApp extends JFrame {
 		new ClientApp();
 	}
 
+	public void reqeustNewPost(Long team_id, String content) {
+		CMUserEvent ue = GetUE("POST-BOARD");
+		ue.setEventField(CMInfo.CM_LONG, "team_id", String.valueOf(team_id));
+		ue.setEventField(CMInfo.CM_STR, "content", content);
+		clientStub.send(ue, "SERVER");
+	}
 
+	public void requestApplications() {
+		CMUserEvent ue = GetUE("GET-APPLICATIONS");
+		clientStub.send(ue, "SERVER");
+	}
 }
