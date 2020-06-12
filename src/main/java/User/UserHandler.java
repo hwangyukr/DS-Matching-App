@@ -1,6 +1,9 @@
 package User;
 
 import Common.Result;
+import Config.TokenProvider;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.ac.konkuk.ccslab.cm.event.CMUserEvent;
 import kr.ac.konkuk.ccslab.cm.info.CMInfo;
 import kr.ac.konkuk.ccslab.cm.stub.CMServerStub;
@@ -10,16 +13,32 @@ public class UserHandler {
 
     private CMServerStub cmServerStub;
     private UserService userService;
+    private ObjectMapper objectMapper;
 
     public UserHandler(CMServerStub cmServerStub) {
         this.cmServerStub = cmServerStub;
         this.userService = new UserService(cmServerStub.getCMInfo());
+        this.objectMapper = new ObjectMapper();
     }
 
     public void handleError(Result result, CMUserEvent ue) {
         ue.setEventField(CMInfo.CM_INT, "success", "0");
         ue.setEventField(CMInfo.CM_STR, "msg", result.getMsg());
         cmServerStub.send(ue, ue.getSender());
+    }
+
+    /*
+        토큰 validation 확인 후 오류 시 에러 처리
+     */
+    public TokenProvider.TokenResult getUserInfo(CMUserEvent ue) {
+        String token = ue.getEventField(CMInfo.CM_STR, "token");
+        if(token == null || token.equals("")){
+            ue.setEventField(CMInfo.CM_INT, "success", "0");
+            ue.setEventField(CMInfo.CM_STR, "msg", "NOT AUTHORIZED");
+            cmServerStub.send(ue, ue.getSender());
+            return null;
+        }
+        return TokenProvider.validateToken(token);
     }
 
     /*
@@ -106,5 +125,37 @@ public class UserHandler {
 
     public void getProfile(CMUserEvent ue) {
         Profile profile = userService.findProfile(ue);
+    }
+
+    public void getUser(CMUserEvent ue) {
+
+        ue.setStringID("GET-USER-REPLY");
+        TokenProvider.TokenResult validResult = getUserInfo(ue);
+        if(validResult == null) return;
+
+        Long userId = Long.valueOf(ue.getEventField(CMInfo.CM_LONG, "user_id"));
+        if(userId == null) {
+            handleError(new Result("입력값을 확인하세요", false), ue);
+            return;
+        }
+
+        Result result = new Result();
+        User user = userService.getUser(result, userId);
+
+        if(!result.isSuccess()) {
+            handleError(result, ue);
+            return;
+        }
+
+        try {
+            String ret = objectMapper.writeValueAsString(user);
+            ue.setEventField(CMInfo.CM_INT, "success", "1");
+            ue.setEventField(CMInfo.CM_STR, "msg", validResult.getSuccess());
+            ue.setEventField(CMInfo.CM_STR, "user", ret);
+            cmServerStub.send(ue, ue.getSender());
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+
     }
 }

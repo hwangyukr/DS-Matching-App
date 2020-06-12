@@ -3,6 +3,7 @@ package User;
 import Common.Result;
 import Common.DBManager;
 import Config.Transactional;
+import Team.Role;
 import kr.ac.konkuk.ccslab.cm.info.CMInfo;
 import kr.ac.konkuk.ccslab.cm.manager.CMDBManager;
 
@@ -96,5 +97,36 @@ public class UserRepository {
 
     public User findById(Long userId, CMInfo cmInfo) {
         return null;
+    }
+
+    public User getUser(Result result, Long userId, CMInfo cmInfo) {
+        String getQuery = "select * from user u , role r where u.role_id = r.role_id and u.user_id = '" + userId + "';";
+        ResultSet resultSet = CMDBManager.sendSelectQuery(getQuery, cmInfo);
+        User user = null;
+        try {
+            while(resultSet.next()) {
+
+                Long id = resultSet.getLong("user_id");
+                String email = resultSet.getString("user_email");
+                String name = resultSet.getString("user_name");
+                Long team_id = resultSet.getLong("team_id");
+                Role role = Role.valueOf(resultSet.getString("role"));
+
+                user = new User.Builder()
+                        .id(id)
+                        .email(email)
+                        .name(name)
+                        .role(role)
+                        .team(new Team.Team.Builder().id(team_id).build())
+                        .build();
+            }
+        } catch (SQLException e) {
+            result.setSuccess(false);
+            result.setMsg("실패하였습니다");
+            return null;
+        }
+        result.setSuccess(true);
+        result.setMsg("성공하였습니다");
+        return user;
     }
 }

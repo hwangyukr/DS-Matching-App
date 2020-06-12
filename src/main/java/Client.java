@@ -165,6 +165,12 @@ public class Client {
                     ue.setEventField(CMInfo.CM_INT, "yesTeam", "1");
                     cmClientStub.send(ue, "SERVER");
                     break;
+                case 9:
+                    ue.setStringID("GET-USER");
+                    ue.setEventField(CMInfo.CM_LONG, "user_id", "14");
+                    ue.setEventField(CMInfo.CM_STR, "token", client.token);
+                    cmClientStub.send(ue, "SERVER");
+                    break;
                 case 0:
                     System.exit(0);
                 default:
