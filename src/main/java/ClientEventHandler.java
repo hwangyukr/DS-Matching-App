@@ -1,5 +1,7 @@
 import Team.*;
 import User.User;
+import Viewer.MyTeamView;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.ac.konkuk.ccslab.cm.event.CMEvent;
@@ -16,7 +18,7 @@ public class ClientEventHandler implements CMAppEventHandler {
     public CMClientStub clientStub;
     private ObjectMapper objectMapper;
     private Client client;
-    private Manager mafsaf;
+    //private Manager mafsaf;
     
     public ClientEventHandler(CMClientStub clientStub, Client client) {
         this.clientStub = clientStub;
@@ -71,6 +73,8 @@ public class ClientEventHandler implements CMAppEventHandler {
                         String ret = ue.getEventField(CMInfo.CM_STR, "team");
                         Team team = null;
                         team = objectMapper.readValue(ret, Team.class);
+                        client.my_team = team;
+                        //client.ChangeView(new MyTeamView(client, team));
                     } catch (JsonProcessingException e) {
                         e.printStackTrace();
                     }
