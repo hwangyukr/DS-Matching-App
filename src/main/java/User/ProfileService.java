@@ -46,7 +46,7 @@ public class ProfileService {
         return profileRepository.putProfile(profile, result, cmInfo);
     }
     
-    public Boolean deleteProfile(Long userId, Result result) {
-    	return profileRepository.deleteProfile(userId, result, cmInfo);
+    public void deleteProfile(Long userId, Result result) {
+    	profileRepository.deleteProfile(userId, result, cmInfo);
     }
 }

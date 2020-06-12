@@ -169,5 +169,28 @@ public class ProfileHandler {
         cmServerStub.send(ue, ue.getSender());
 	}
 	
-	
+	public void deleteProfile(CMUserEvent ue) {
+        ue.setStringID("DELETE-PROFILE-REPLY");
+        TokenProvider.TokenResult validResult = getUserInfo(ue);
+        if(validResult == null) return;
+        
+        Long userId = Long.valueOf(ue.getEventField(CMInfo.CM_LONG, "user_id"));
+        
+        if (userId == null) {
+        	userId = validResult.getId();
+        }
+        
+        Result result = new Result();
+        profileService.deleteProfile(userId, result);
+        
+        if(!result.isSuccess()) {
+            handleError(result, ue);
+            return;
+        }
+        
+        ue.setEventField(CMInfo.CM_INT,"success", "1");
+        ue.setEventField(CMInfo.CM_STR, "msg", "성공하였습니다");
+        ue.setEventField(CMInfo.CM_STR, "user_id", String.valueOf(userId));
+        cmServerStub.send(ue, ue.getSender());
+	}
 }

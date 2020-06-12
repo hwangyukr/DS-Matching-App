@@ -159,7 +159,7 @@ public class ProfileRepository {
     }
     
     @Transactional
-    public Boolean deleteProfile(Long userId, Result result, CMInfo cmInfo) {
+    public void deleteProfile(Long userId, Result result, CMInfo cmInfo) {
         Connection connection = null;
         Statement statement = null;
         
@@ -185,7 +185,7 @@ public class ProfileRepository {
             }
             result.setMsg("알 수 없는 오류");
             result.setSuccess(false);
-            return false;
+//            return -1l;
         } catch (SQLException e) {
             try {
                 connection.rollback();
@@ -194,11 +194,11 @@ public class ProfileRepository {
             }
             result.setMsg("실패하였습니다");
             result.setSuccess(false);
-            return false;
+//            return -1l;
         }
 
         result.setMsg("성공하였습니다");
         result.setSuccess(true);
-        return true;
+//        return true;
     }
 }
