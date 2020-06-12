@@ -1,4 +1,5 @@
-import Team.Team;
+import Team.*;
+import User.User;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.ac.konkuk.ccslab.cm.event.CMEvent;
@@ -30,17 +31,31 @@ public class ClientEventHandler implements CMAppEventHandler {
                 CMUserEvent ue = (CMUserEvent) cmEvent;
 
                 if(ue.getStringID().equals("SIGN-IN-REPLY")) {
-                    System.out.println("=======================");
                     int success = Integer.valueOf(ue.getEventField(CMInfo.CM_INT, "success"));
                     String token = ue.getEventField(CMInfo.CM_STR, "token");
-
                     if(success == 1) {
                         client.setToken(token);
                     }
                 }
 
-                if(ue.getStringID().equals("CREATE-TEAM")) {
+                if(ue.getStringID().equals("GET-APPLICATIONS-REPLY")) {
 
+                    int success = Integer.valueOf(ue.getEventField(CMInfo.CM_INT, "success"));
+                    if(success == 1) {
+                        try {
+                            String ret = ue.getEventField(CMInfo.CM_STR, "applications");
+                            List<Application> applications =
+                                    objectMapper.readValue(ret, objectMapper.getTypeFactory().constructCollectionType(List.class, Application.class));
+
+                            for(Application application : applications) {
+                                User user = application.getUser();
+                                System.out.println(user);
+                            }
+
+                        } catch (JsonProcessingException e) {
+                            e.printStackTrace();
+                        }
+                    }
                 }
 
                 if(ue.getStringID().equals("GET-TEAM-REPLY")) {
