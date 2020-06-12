@@ -111,7 +111,51 @@ public class ProfileRepository {
     
     @Transactional
     public Long putProfile(Profile profile, Result result, CMInfo cmInfo) {
-    	return null;
+        Connection connection = null;
+        Statement statement = null;
+        
+        try {
+            DBManager dbManager = DBManager.getConnection(cmInfo);
+            connection = dbManager.getConnection();
+            statement = dbManager.getStatement();
+            connection.setAutoCommit(false);
+            
+            String query = 
+            		"update profile set " +
+            		"role_id = '" + (profile.getRole().ordinal()+1) + "', " + 
+            		"content = '" + profile.getContent() + "', " +
+            		"photo = '" + profile.getPhoto() + "', " +
+            		"portforlio = '" + profile.getPortforlio() + "' " +
+            		"where user_id = '" + profile.getUser().getId() + "';";
+
+            int ret = statement.executeUpdate(query);
+            if(ret != 1) throw new SQLException();
+            
+            connection.commit();
+
+        } catch (SQLIntegrityConstraintViolationException e) {
+            try {
+                connection.rollback();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+            result.setMsg("알 수 없는 오류");
+            result.setSuccess(false);
+            return -1l;
+        } catch (SQLException e) {
+            try {
+                connection.rollback();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+            result.setMsg("실패하였습니다");
+            result.setSuccess(false);
+            return -1l;
+        }
+
+        result.setMsg("성공하였습니다");
+        result.setSuccess(true);
+        return profile.getId();
     }
     
     @Transactional
