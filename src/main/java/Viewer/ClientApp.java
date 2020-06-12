@@ -115,6 +115,17 @@ public class ClientApp extends JFrame {
 		
 	}
 	
+	//지우 
+	public void requestApplications() {
+		CMUserEvent ue = new CMUserEvent();
+		CMInteractionInfo info = clientStub.getCMInfo().getInteractionInfo();
+		CMUser user = info.getMyself();
+		ue.setStringID("GET-APPLICATIONS");
+		
+		clientStub.send(ue, "SERVER");
+		this.print("Requesting applications ...");
+	}
+	
 	public void requestTeamList() {
 		CMUserEvent ue = new CMUserEvent();
 		CMInteractionInfo info = clientStub.getCMInfo().getInteractionInfo();
@@ -134,6 +145,20 @@ public class ClientApp extends JFrame {
 		ue.setEventField(CMInfo.CM_STR, "token", token);
 		ue.setEventField(CMInfo.CM_STR, "teamlimit", json);
 	}
+	
+	public void applyTeam() {
+	      CMUserEvent ue = new CMUserEvent();
+	      CMInteractionInfo info = clientStub.getCMInfo().getInteractionInfo();
+	      CMUser user = info.getMyself();
+	      ue.setStringID("APPLY-TEAM");
+	      
+	      ue.setSender(user.getName());
+	      ue.setDistributionGroup(user.getCurrentGroup());
+	      ue.setDistributionSession(user.getCurrentSession());
+	      
+	      clientStub.send(ue, "SERVER");
+	      this.print("Successfully applied ...");
+	   }
 	
 	public static void main (String[] args) {
 		try {
