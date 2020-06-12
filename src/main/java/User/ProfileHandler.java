@@ -76,19 +76,16 @@ public class ProfileHandler {
         TokenProvider.TokenResult validResult = getUserInfo(ue);
         if (validResult == null) return;
         
-        Role role;
+        
         String roleName = ue.getEventField(CMInfo.CM_STR, "role");
         String content = ue.getEventField(CMInfo.CM_STR, "content");
         String photo = ue.getEventField(CMInfo.CM_STR, "photo");
         String portforlio = ue.getEventField(CMInfo.CM_STR, "portforlio");
-        
-        try {
-        	role = Role.valueOf(roleName);
-        }
-        catch (java.lang.IllegalArgumentException e) {
+        if (roleName == null) {
         	handleError(new Result("입력값을 확인하세요", false), ue);
         	return;
         }
+        Role role = Role.valueOf(roleName);
         
         Result result = new Result();
         Profile profile = profileService.postProfile(validResult, result, role, content, photo, portforlio);
