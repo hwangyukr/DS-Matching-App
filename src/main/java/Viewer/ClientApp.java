@@ -1,7 +1,9 @@
-package Viewer;
+package main.java.Viewer;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -18,6 +20,10 @@ import kr.ac.konkuk.ccslab.cm.info.CMInteractionInfo;
 import kr.ac.konkuk.ccslab.cm.stub.CMClientStub;
 import mdlaf.MaterialLookAndFeel;
 import mdlaf.themes.MaterialLiteTheme;
+import main.java.Team.*;
+import main.java.Viewer.MainView;
+import main.java.Viewer.TeamCreateView;
+
 
 public class ClientApp extends JFrame {
 	private static final long serialVersionUID = 1L;
@@ -29,6 +35,8 @@ public class ClientApp extends JFrame {
 	
     private String email = null;
     private String pw = null;
+    private MainView mainView;
+    private TeamCreateView teamCreateView;
     
 	public ClientApp() {
 		super("Team No3 - Matching System");
@@ -65,23 +73,12 @@ public class ClientApp extends JFrame {
 	}
 	
 	public void requestConnection(String id, String pw) {
+		clientStub.logoutCM();
+		clientStub.loginCM(id, pw);
+		System.out.println("requestConnection email : " + email);
+		System.out.println("requestConnection pw : " + pw);
 		this.email = id;
 		this.pw = pw;
-		
-		if(this.email == null) {
-			this.print("email is null");
-			return;
-		}
-		if(this.pw == null) {
-			this.print("password is null");
-			return;
-		}
-		
-		clientStub.logoutCM();
-		clientStub.loginCM(this.email, this.pw);
-		System.out.println("requestConnection email : " + this.email);
-		System.out.println("requestConnection pw : " + this.pw);
-
 	}
 	
 	public void requestLogin() {
@@ -114,7 +111,7 @@ public class ClientApp extends JFrame {
 		
 	}
 	
-	public void reqeustMyTeam(String team_name) {
+	public void requestMyTeam(String team_name) {
 		
 	}
 	
@@ -128,6 +125,40 @@ public class ClientApp extends JFrame {
 		clientStub.send(ue, "SERVER");
 		this.print("Requesting applications ...");
 	}
+	
+	public void requestTeamList() {
+		CMUserEvent ue = new CMUserEvent();
+		CMInteractionInfo info = clientStub.getCMInfo().getInteractionInfo();
+		CMUser user = info.getMyself();
+		
+		ue.setStringID("GET-TEAMS");
+		ue.setEventField(CMInfo.CM_STR, "token", token);
+	}
+	
+	public void requestCreateTeam(Map<Role, Integer> limits) {
+		CMUserEvent ue = new CMUserEvent();
+		ue.setStringID("CREATE-TEAM");
+		Map<Role, Integer> rolelimits = limits;
+		String json = client.objectMapper.writeValueAsString(rolelimits);
+
+		ue.setEventField(CMInfo.CM_STR, "team_name", "만나서 반가워요 ^^");
+		ue.setEventField(CMInfo.CM_STR, "token", token);
+		ue.setEventField(CMInfo.CM_STR, "teamlimit", json);
+	}
+	
+	public void applyTeam() {
+	      CMUserEvent ue = new CMUserEvent();
+	      CMInteractionInfo info = clientStub.getCMInfo().getInteractionInfo();
+	      CMUser user = info.getMyself();
+	      ue.setStringID("APPLY-TEAM");
+	      
+	      ue.setSender(user.getName());
+	      ue.setDistributionGroup(user.getCurrentGroup());
+	      ue.setDistributionSession(user.getCurrentSession());
+	      
+	      clientStub.send(ue, "SERVER");
+	      this.print("Successfully applied ...");
+	   }
 	
 	public static void main (String[] args) {
 		try {

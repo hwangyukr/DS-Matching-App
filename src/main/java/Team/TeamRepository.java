@@ -1,5 +1,6 @@
 package Team;
 
+import Board.BoardRepository;
 import Common.DBManager;
 import Common.Result;
 import Config.Transactional;
@@ -56,6 +57,21 @@ public class TeamRepository {
                 teams.put(teamId, team);
 
             }
+
+            for(Map.Entry<Long, Team> team : teams.entrySet()) {
+                query = "select tr.team_id, tr.role, tr.role_limit " +
+                        "from team_role tr, team t " +
+                        "where tr.team_id = t.team_id; ;";
+
+                resultSet = CMDBManager.sendSelectQuery(query, cmInfo);
+                while(resultSet.next()) {
+                    Long teamId = resultSet.getLong("team_id");
+                    Role role = Role.valueOf(resultSet.getString("role"));
+                    int limit = resultSet.getInt("role_limit");
+                    Map<Role, Integer> roleLimits = teams.get(teamId).getRoleLimits();
+                    roleLimits.put(role, limit);
+                }
+            }
         } catch (SQLException e) {
             result.setMsg("실패하였습니다");
             result.setSuccess(false);
@@ -69,7 +85,6 @@ public class TeamRepository {
 
     public Team getTeamByName(String query, Result result, CMInfo cmInfo) {
 
-        System.out.println(query);
         ResultSet resultSet = CMDBManager.sendSelectQuery(query, cmInfo);
         Team team = new Team();
         List<User> members = team.getUsers();
@@ -104,6 +119,21 @@ public class TeamRepository {
                 team.setName(teamName1);
                 team.setId(teamId);
             }
+
+            query = "select tr.role, tr.role_limit " +
+                    "from team_role tr, team t " +
+                    "where tr.team_id = t.team_id " +
+                    "and tr.team_id = '" + team.getId() + "';";
+            resultSet = CMDBManager.sendSelectQuery(query, cmInfo);
+            Map<Role, Integer> roleLimits = team.getRoleLimits();
+
+            while(resultSet.next()) {
+                Role role = Role.valueOf(resultSet.getString("role"));
+                int limit = resultSet.getInt("role_limit");
+                roleLimits.put(role, limit);
+            }
+            team.setRoleLimits(roleLimits);
+
         } catch (SQLException e) {
             result.setMsg("실패하였습니다");
             result.setSuccess(false);
@@ -175,6 +205,7 @@ public class TeamRepository {
                 "and team.team_name = '" + teamName + "' " +
                 ") sq " +
                 "where sq.team_id = u.team_id and u.role_id = r.role_id;";
+        System.out.println(query);
         return query;
     }
 
@@ -228,6 +259,20 @@ public class TeamRepository {
             query = "update user set team_id = '" + id + "' where user_id = '" + team.getTeamLeader().getId() + "';";
             ret = statement.executeUpdate(query);
             if(ret != 1) throw new SQLException();
+
+            /*
+                팀 롤별 제한 정보 업데이트
+             */
+            Map<Role, Integer> teamLimits = team.getRoleLimits();
+            for(Map.Entry<Role, Integer> entry : teamLimits.entrySet()) {
+
+                query = "insert into team_role(team_id, role, role_limit) values (" +
+                        " '" + team.getId()  + "'," +
+                        " '" + entry.getKey()  + "'," +
+                        " '" + entry.getValue() + "');";
+                ret = statement.executeUpdate(query);
+                if(ret != 1) throw new SQLException();
+            }
 
             team.setId(id);
             connection.commit();

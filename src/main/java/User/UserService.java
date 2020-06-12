@@ -14,7 +14,6 @@ public class UserService {
         this.cmInfo = cmInfo;
         this.userRepository = new UserRepository();
     }
-
     /*
         회원가입 되있는 이메일인지 확인
      */
@@ -88,5 +87,8 @@ public class UserService {
 
     }
 
-
+    public User getUser(Result result, Long userId) {
+        User user = userRepository.getUser(result, userId, cmInfo);
+        return user;
+    }
 }

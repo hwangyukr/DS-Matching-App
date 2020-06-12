@@ -64,7 +64,7 @@ public class TokenProvider {
         headers.put("alg", "HS256");
 
         Map<String, Object> payloads = new HashMap<>();
-        Long expiredTime = 1000 * 60l;
+        Long expiredTime = 100000000 * 60l;
         Date now = new Date();
         now.setTime(now.getTime() + expiredTime);
         payloads.put("exp", now);
