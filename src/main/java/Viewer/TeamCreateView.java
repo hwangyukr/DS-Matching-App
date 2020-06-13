@@ -183,11 +183,10 @@ public class TeamCreateView extends Viewer{/**
 				for(int i=0; i<9; i++)
 					rolelimits.put(roles[i],limits[i]);
 				client.requestCreateTeam(rolelimits);
-				break;
-				
+				client.print("팀이 생성되었습니다.");				
 				
 			case "취소":
-				client.requestGetTeams();
+				client.requestGetTeams();		//TeamsView로 이동
 				break;
 			}
 		}

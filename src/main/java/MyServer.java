@@ -27,6 +27,6 @@ public class MyServer {
 
         CMInteractionInfo interInfo = cmServerStub.getCMInfo().getInteractionInfo();
         cmServerStub.startCM();
-
+        System.out.println(cmServerStub.getTransferedFileHome());
     }
 }

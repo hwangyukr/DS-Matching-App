@@ -4,20 +4,18 @@ import Viewer.MyTeamView;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.ac.konkuk.ccslab.cm.entity.CMUser;
-import kr.ac.konkuk.ccslab.cm.event.CMDummyEvent;
-import kr.ac.konkuk.ccslab.cm.event.CMSessionEvent;
-import kr.ac.konkuk.ccslab.cm.event.CMUserEvent;
+import kr.ac.konkuk.ccslab.cm.event.*;
+import kr.ac.konkuk.ccslab.cm.info.CMFileTransferInfo;
 import kr.ac.konkuk.ccslab.cm.info.CMInfo;
 import kr.ac.konkuk.ccslab.cm.info.CMInteractionInfo;
+import kr.ac.konkuk.ccslab.cm.manager.CMFileTransferManager;
 import kr.ac.konkuk.ccslab.cm.manager.CMInteractionManager;
 import kr.ac.konkuk.ccslab.cm.stub.CMClientStub;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Scanner;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.*;
 
 public class Client {
     private CMClientStub clientStub;
@@ -70,7 +68,8 @@ public class Client {
         ue.setHandlerGroup(myself.getCurrentGroup());
         ue.setHandlerSession(myself.getCurrentSession());
 
-        cmClientStub.loginCM("kongee", "0000");
+        String cmId = "kongee";
+        cmClientStub.loginCM(cmId, "0000");
         Scanner sc = new Scanner(System.in);
 
         while(true) {
@@ -88,6 +87,24 @@ public class Client {
             String teamName;
 
             switch (input) {
+
+                case 10:
+                    cmClientStub.requestFile("/"+ cmId + "/ss.jpg", "SERVER");
+                    cmClientStub.requestSNSContent( myself.getName(), 10);
+                    break;
+
+                case 11:
+                    String strMessage = "안";
+                    ArrayList<String> filePathList = new ArrayList<>();
+                    int nReplyOf = 0;
+                    int nLevelOfDisclosure = 0;
+                    filePathList.add("/Users/jonghyun/Desktop/ss.jpg");
+                    cmClientStub.requestSNSContentUpload(myself.getName(), strMessage, 1,
+                            nReplyOf, nLevelOfDisclosure, filePathList);
+
+                    //CMFileTransferManager.pushFile("/Users/jonghyun/Desktop/ss.jpg", "SERVER", cmClientStub.getCMInfo());
+                    break;
+
                 case 1:
                     System.out.print("이메일 : ");
                     email = sc.next();
@@ -129,12 +146,22 @@ public class Client {
                     rolelimits.put(Role.앱개발, sc.nextInt());
 
                     String json = client.objectMapper.writeValueAsString(rolelimits);
+                    String fileNameThatWillBeInServer = "/" + myself.getName() + "/ss.jpg";
+                    String fileNameInClientLocal = "/Users/jonghyun/Desktop/ss.jpg";
 
                     ue.setEventField(CMInfo.CM_STR, "team_name", teamName);
                     ue.setEventField(CMInfo.CM_STR, "token", client.token);
                     ue.setEventField(CMInfo.CM_STR, "teamlimit", json);
+                    ue.setEventField(CMInfo.CM_STR, "file_name", fileNameThatWillBeInServer);
 
                     cmClientStub.send(ue, "SERVER");
+
+                    /*
+                        파일 전송은 팀생성이 성공하였으면
+                        CREATE-TEAM-REPLY에서 success를 확인후 보내주는게 좋을듯!
+
+                     */
+                    CMFileTransferManager.pushFile(fileNameInClientLocal, "SERVER", cmClientStub.getCMInfo());
 
                     break;
                 case 4:

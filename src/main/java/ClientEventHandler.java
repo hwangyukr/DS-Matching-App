@@ -5,6 +5,8 @@ import Viewer.MyTeamView;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.ac.konkuk.ccslab.cm.event.CMEvent;
+import kr.ac.konkuk.ccslab.cm.event.CMFileEvent;
+import kr.ac.konkuk.ccslab.cm.event.CMSNSEvent;
 import kr.ac.konkuk.ccslab.cm.event.CMUserEvent;
 import kr.ac.konkuk.ccslab.cm.event.handler.CMAppEventHandler;
 import kr.ac.konkuk.ccslab.cm.info.CMInfo;
@@ -30,6 +32,21 @@ public class ClientEventHandler implements CMAppEventHandler {
     public void processEvent(CMEvent cmEvent)  {
 
         switch (cmEvent.getType()) {
+
+            case CMInfo.CM_SNS_EVENT:
+                CMSNSEvent se = (CMSNSEvent) cmEvent;
+                System.out.println("======================");
+                System.out.println(se.getContentID());
+                System.out.println(se.getDate());
+                System.out.println(se.getUserName() );
+                System.out.println(se);
+                break;
+
+            case CMInfo.CM_FILE_EVENT:
+                CMFileEvent fe = (CMFileEvent) cmEvent;
+                System.out.println("===========================");
+                System.out.println(fe);
+                break;
             case CMInfo.CM_USER_EVENT:
                 CMUserEvent ue = (CMUserEvent) cmEvent;
 
@@ -69,15 +86,18 @@ public class ClientEventHandler implements CMAppEventHandler {
                 }
 
                 if(ue.getStringID().equals("GET-TEAM-REPLY")) {
+
+                    Team team = null;
                     try {
                         String ret = ue.getEventField(CMInfo.CM_STR, "team");
-                        Team team = null;
                         team = objectMapper.readValue(ret, Team.class);
                         client.my_team = team;
-                        //client.ChangeView(new MyTeamView(client, team));
                     } catch (JsonProcessingException e) {
                         e.printStackTrace();
                     }
+                    String fileName = team.getFileName();
+                    clientStub.requestFile("/1kongee/ss.jpg", "SERVER");
+                    //clientStub.requestFile(fileName, "SERVER");
                 }
                 if(ue.getStringID().equals("GET-TEAMS-REPLY")) {
                     try {
