@@ -80,6 +80,21 @@ public class MyServerEventHandler implements CMAppEventHandler {
                     case "GET-USER":
                         userHandler.getUser(ue);
                         break;
+                    case "GET-BOARD":
+                    	boardHandler.getBoard(ue);
+                        break;
+                    case "GET-BOARDS":
+                    	boardHandler.getBoards(ue);
+                        break;
+                    case "POST-BOARD":
+                    	boardHandler.postBoard(ue);
+                        break;
+                    case "PUT-BOARD":
+                    	boardHandler.putBoard(ue);
+                    	break;
+                    case "DELETE-BOARD":
+                    	boardHandler.deleteBoard(ue);
+                    	break;
                     default:
                         return;
 

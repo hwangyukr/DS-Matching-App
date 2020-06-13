@@ -48,11 +48,13 @@ public class BoardHandller {
         TokenProvider.TokenResult validResult = getUserInfo(ue);
         if(validResult == null) return;
 
-        Long teamId = Long.valueOf(ue.getEventField(CMInfo.CM_LONG, "team_id"));
-        if(teamId == null) {
+        String teamId_str = ue.getEventField(CMInfo.CM_LONG, "team_id");
+        if(teamId_str == null) {
             handleError(new Result("입력값을 확인하세요", false), ue);
             return;
         }
+        
+        Long teamId = Long.valueOf(teamId_str);
         
         Result result = new Result();
         List<Board> boards = boardService.getBoards(teamId, result);
@@ -81,11 +83,13 @@ public class BoardHandller {
         TokenProvider.TokenResult validResult = getUserInfo(ue);
         if(validResult == null) return;
 
-        Long boardId = Long.valueOf(ue.getEventField(CMInfo.CM_LONG, "board_id"));
-        if(boardId == null) {
+        String boardId_str = ue.getEventField(CMInfo.CM_LONG, "board_id");
+        if(boardId_str == null) {
             handleError(new Result("입력값을 확인하세요", false), ue);
             return;
         }
+        
+        Long boardId = Long.valueOf(boardId_str);
         
         Result result = new Result();
         Board board = boardService.getBoard(boardId, result);
@@ -114,13 +118,15 @@ public class BoardHandller {
         TokenProvider.TokenResult validResult = getUserInfo(ue);
         if(validResult == null) return;
 
-        String title = ue.getEventField(CMInfo.CM_STR, "title");
-        String content = ue.getEventField(CMInfo.CM_STR, "content");
-        Long teamId = Long.valueOf(ue.getEventField(CMInfo.CM_LONG, "team_id"));
-        if(teamId == null) {
+        String teamId_str = ue.getEventField(CMInfo.CM_LONG, "team_id");
+        if(teamId_str == null) {
             handleError(new Result("입력값을 확인하세요", false), ue);
             return;
         }
+        
+        Long teamId = Long.valueOf(teamId_str);
+        String title = ue.getEventField(CMInfo.CM_STR, "title");
+        String content = ue.getEventField(CMInfo.CM_STR, "content");
         
         Result result = new Result();
         Board board = boardService.postBoard(validResult, result, title, content, teamId);
@@ -141,14 +147,15 @@ public class BoardHandller {
         TokenProvider.TokenResult validResult = getUserInfo(ue);
         if(validResult == null) return;
 
-        Long boardId = Long.valueOf(ue.getEventField(CMInfo.CM_LONG, "board_id"));
-        String title = ue.getEventField(CMInfo.CM_STR, "title");
-        String content = ue.getEventField(CMInfo.CM_STR, "content");
-        
-        if(boardId == null) {
+        String boardId_str = ue.getEventField(CMInfo.CM_LONG, "board_id");
+        if(boardId_str == null) {
             handleError(new Result("입력값을 확인하세요", false), ue);
             return;
         }
+        
+        Long boardId = Long.valueOf(boardId_str);
+        String title = ue.getEventField(CMInfo.CM_STR, "title");
+        String content = ue.getEventField(CMInfo.CM_STR, "content");
         
         Result result = new Result();
         Board board = boardService.getBoard(boardId, result);
@@ -183,12 +190,13 @@ public class BoardHandller {
         TokenProvider.TokenResult validResult = getUserInfo(ue);
         if(validResult == null) return;
 
-        Long boardId = Long.valueOf(ue.getEventField(CMInfo.CM_LONG, "board_id"));
-        
-        if(boardId == null) {
+        String boardId_str = ue.getEventField(CMInfo.CM_LONG, "board_id");
+        if(boardId_str == null) {
             handleError(new Result("입력값을 확인하세요", false), ue);
             return;
         }
+        
+        Long boardId = Long.valueOf(boardId_str);
         
         Result result = new Result();
         Board board = boardService.getBoard(boardId, result);

@@ -126,7 +126,7 @@ public class BoardRepository {
             
             ResultSet res = CMDBManager.sendSelectQuery(getQuery, cmInfo);
             Long id = -9999l;
-            if (res.first()) {
+            while (res.next()) {
             	id = res.getLong("board_id");
             }
             
