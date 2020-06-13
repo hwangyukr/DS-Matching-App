@@ -71,7 +71,8 @@ public class ProfileRepository {
 
             int ret = statement.executeUpdate(query);
             if(ret != 1) throw new SQLException();
-
+            connection.commit();
+            
             String getQuery = 
             		"select profile_id " + 
             		"from profile " +
@@ -84,8 +85,6 @@ public class ProfileRepository {
             }
             
             profile.setId(id);
-            connection.commit();
-
         } catch (SQLIntegrityConstraintViolationException e) {
             try {
                 connection.rollback();

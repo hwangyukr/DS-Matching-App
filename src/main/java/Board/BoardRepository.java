@@ -116,23 +116,22 @@ public class BoardRepository {
 
             int ret = statement.executeUpdate(query);
             if(ret != 1) throw new SQLException();
-
+            connection.commit();
+            
             String getQuery = 
             		"select board_id " + 
             		"from board " +
             		"where author_id = '" + board.getUser().getId() + "' " +
-            			"and team_id = '" + board.getTeam().getId() + "' " +
             		"order by last_modified desc";
             
             ResultSet res = CMDBManager.sendSelectQuery(getQuery, cmInfo);
             Long id = -9999l;
             while (res.next()) {
             	id = res.getLong("board_id");
+            	break;
             }
             
             board.setId(id);
-            connection.commit();
-
         } catch (SQLIntegrityConstraintViolationException e) {
             try {
                 connection.rollback();
