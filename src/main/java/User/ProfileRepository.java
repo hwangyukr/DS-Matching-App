@@ -29,6 +29,7 @@ public class ProfileRepository {
 				String content = res.getString("content");
 				String photo = res.getString("photo");
 				String portforlio = res.getString("portforlio");
+				String fileName = res.getString("file_name");
 				profile = new Profile.Builder()
 						.id(id)
 						.user(user)
@@ -36,6 +37,7 @@ public class ProfileRepository {
 						.content(content)
 						.photo(photo)
 						.portforlio(portforlio)
+						.fileName(fileName)
 						.build();
 			}
 		} catch (SQLException e) {
@@ -58,14 +60,14 @@ public class ProfileRepository {
             connection = dbManager.getConnection();
             statement = dbManager.getStatement();
             connection.setAutoCommit(false);
-            int role_id = profile.getRole().ordinal()+1;
             String query =
-            		"insert into profile(user_id, role_id, content, photo, portforlio) values (" +
+            		"insert into profile(user_id, role_id, content, photo, portforlio, file_name) values (" +
             				"'" + profile.getUser().getId() + "', " +
-            				"'" + role_id + "', " +
+            				"'" + (profile.getRole().ordinal()+1) + "', " +
             				"'" + profile.getContent() + "', " +
             				"'" + profile.getPhoto() + "', " +
-            				"'" + profile.getPortforlio() + "');";
+            				"'" + profile.getPortforlio() + "', " +
+            				"'" + profile.getFileName() + "');";
 
             int ret = statement.executeUpdate(query);
             if(ret != 1) throw new SQLException();
@@ -125,7 +127,8 @@ public class ProfileRepository {
             		"role_id = '" + (profile.getRole().ordinal()+1) + "', " + 
             		"content = '" + profile.getContent() + "', " +
             		"photo = '" + profile.getPhoto() + "', " +
-            		"portforlio = '" + profile.getPortforlio() + "' " +
+            		"portforlio = '" + profile.getPortforlio() + "', " +
+            		"file_name = '" + profile.getFileName() + "' " +
             		"where user_id = '" + profile.getUser().getId() + "';";
 
             int ret = statement.executeUpdate(query);
