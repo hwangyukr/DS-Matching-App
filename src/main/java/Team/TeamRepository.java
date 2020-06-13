@@ -16,7 +16,7 @@ public class TeamRepository {
     public List<Team> getTeams(Result result, CMInfo cmInfo) {
 
         String query =
-                "select u.user_id, u.user_name, u.user_email, r.role, t.team_id, t.team_name " +
+                "select u.user_id, u.user_name, u.user_email, r.role, t.team_id, t.team_name, t.file_name " +
                 "from user u, team t, role r " +
                 "where u.team_id = t.team_id and u.role_id = r.role_id;";
         ResultSet resultSet = CMDBManager.sendSelectQuery(query, cmInfo);
@@ -27,11 +27,14 @@ public class TeamRepository {
 
                 Team team;
                 Long teamId = resultSet.getLong("team_id");
+                String fileName = resultSet.getString("file_name");
+
                 if(teams.get(teamId) == null) {
                     String teamName = resultSet.getString("team_name");
                     team = new Team.Builder()
                             .id(teamId)
                             .name(teamName)
+                            .fileName(fileName)
                             .build();
                 }
                 else team = teams.get(teamId);
@@ -96,6 +99,7 @@ public class TeamRepository {
 
                 Long id = resultSet.getLong("user_id");
                 Long teamLeader_id = resultSet.getLong("team_leader");
+                String fileName = resultSet.getString("file_name");
                 String email = resultSet.getString("user_email");
                 String userName = resultSet.getString("user_name");
 
@@ -116,6 +120,7 @@ public class TeamRepository {
 
                 Long teamId = resultSet.getLong("team_id");
                 String teamName1 = resultSet.getString("team_name");
+                team.setFileName(fileName);
                 team.setName(teamName1);
                 team.setId(teamId);
             }
@@ -197,12 +202,11 @@ public class TeamRepository {
     }
 
     public String getTeamQueryTeamName(String teamName) {
-        String query = "select u.user_id, u.user_name, u.user_email, r.role, sq.team_id, sq.team_name , sq.team_leader " +
+        String query = "select u.user_id, u.user_name, u.user_email, r.role, sq.file_name, sq.team_id, sq.team_name , sq.team_leader " +
                 "from user u, role r, (" +
-                "select team.team_id, team.team_name, team.team_leader " +
-                "from user, team " +
-                "where user.team_id = team.team_id " +
-                "and team.team_name = '" + teamName + "' " +
+                "select team.team_id, team.team_name, team.team_leader, team.file_name " +
+                "from team " +
+                "where team.team_name = '" + teamName + "' " +
                 ") sq " +
                 "where sq.team_id = u.team_id and u.role_id = r.role_id;";
         System.out.println(query);
@@ -210,12 +214,11 @@ public class TeamRepository {
     }
 
     public String getTeamQueryTeamId(Long id) {
-        String query = "select u.user_id, u.user_name, u.user_email, r.role, sq.team_id, sq.team_name , sq.team_leader " +
+        String query = "select u.user_id, u.user_name, u.user_email, r.role, sq.file_name, sq.team_id, sq.team_name , sq.team_leader " +
                 "from user u, role r, (" +
-                "select team.team_id, team.team_name, team.team_leader " +
-                "from user, team " +
-                "where user.team_id = team.team_id " +
-                "and team.team_id = '" + id + "' " +
+                "select team.team_id, team.team_name, team.team_leader, team.file_name " +
+                "from team " +
+                "where team.team_id = '" + id + "' " +
                 ") sq " +
                 "where sq.team_id = u.team_id and u.role_id = r.role_id;";
         return query;
@@ -235,8 +238,9 @@ public class TeamRepository {
             connection.setAutoCommit(false);
 
             String query =
-                    "insert into team(team_name, team_leader) values (" +
+                    "insert into team(team_name, file_name, team_leader) values (" +
                             " '" + team.getName() + "'," +
+                            " '" + team.getFileName() + "'," +
                             " '" + team.getTeamLeader().getId() + "');";
 
             /*

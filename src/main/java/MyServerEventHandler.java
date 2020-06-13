@@ -13,6 +13,8 @@ import kr.ac.konkuk.ccslab.cm.info.CMInfo;
 import kr.ac.konkuk.ccslab.cm.manager.CMDBManager;
 import kr.ac.konkuk.ccslab.cm.stub.CMServerStub;
 
+import static kr.ac.konkuk.ccslab.cm.event.CMFileEvent.END_FILE_TRANSFER;
+
 public class MyServerEventHandler implements CMAppEventHandler {
 
     private CMServerStub cmServerStub;
@@ -33,11 +35,7 @@ public class MyServerEventHandler implements CMAppEventHandler {
 
         switch (cmEvent.getType()) {
 
-            case CMInfo.CM_FILE_EVENT:
-                CMFileEvent fe = (CMFileEvent) cmEvent;
-                System.out.println(fe.getBlockSize());
-                System.out.println(fe);
-                break;
+
             case CMInfo.CM_USER_EVENT:
 
                 CMUserEvent ue = (CMUserEvent) cmEvent;

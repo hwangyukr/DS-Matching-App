@@ -9,7 +9,16 @@ public class Profile {
     private String content;
     private String photo;
     private String portforlio;
-    
+    private String fileName;
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+
     public void setId(Long id) {
     	this.id = id;
     }
@@ -69,12 +78,17 @@ public class Profile {
         private String content;
         private String photo;
         private String portforlio;
-        
+        private String fileName;
+
         public Builder() {
         }
 
         public Builder id(Long id) {
             this.id = id;
+            return this;
+        }
+        public Builder fileName(String fileName) {
+            this.fileName = fileName;
             return this;
         }
         
@@ -118,5 +132,6 @@ public class Profile {
         this.content = builder.content;
         this.photo = builder.photo;
         this.portforlio = builder.portforlio;
+        this.fileName = builder.fileName;
     }
 }
