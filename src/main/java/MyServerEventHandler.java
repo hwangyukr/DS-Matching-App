@@ -4,6 +4,7 @@ import Team.TeamHandler;
 import User.ProfileHandler;
 import User.UserHandler;
 import kr.ac.konkuk.ccslab.cm.event.CMEvent;
+import kr.ac.konkuk.ccslab.cm.event.CMFileEvent;
 import kr.ac.konkuk.ccslab.cm.event.CMSessionEvent;
 import kr.ac.konkuk.ccslab.cm.event.CMUserEvent;
 import kr.ac.konkuk.ccslab.cm.event.handler.CMAppEventHandler;
@@ -11,6 +12,8 @@ import kr.ac.konkuk.ccslab.cm.info.CMConfigurationInfo;
 import kr.ac.konkuk.ccslab.cm.info.CMInfo;
 import kr.ac.konkuk.ccslab.cm.manager.CMDBManager;
 import kr.ac.konkuk.ccslab.cm.stub.CMServerStub;
+
+import static kr.ac.konkuk.ccslab.cm.event.CMFileEvent.END_FILE_TRANSFER;
 
 public class MyServerEventHandler implements CMAppEventHandler {
 
@@ -31,6 +34,7 @@ public class MyServerEventHandler implements CMAppEventHandler {
     public void processEvent(CMEvent cmEvent) {
 
         switch (cmEvent.getType()) {
+
 
             case CMInfo.CM_USER_EVENT:
 

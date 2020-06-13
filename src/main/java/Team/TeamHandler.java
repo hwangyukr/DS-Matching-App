@@ -142,6 +142,7 @@ public class TeamHandler<T> {
 
         String teamName = ue.getEventField(CMInfo.CM_STR, "team_name");
         String json = ue.getEventField(CMInfo.CM_STR, "teamlimit");
+        String fileName = ue.getEventField(CMInfo.CM_STR, "file_name");
         if(teamName == null || json == null) {
             handleError(new Result("입력값을 확인하세요", false), ue);
             return;
@@ -156,7 +157,7 @@ public class TeamHandler<T> {
         }
 
         Result result = new Result();
-        Team team = teamService.createTeam(validResult, result, teamName, limit);
+        Team team = teamService.createTeam(validResult, result, teamName, fileName, limit);
 
         /*
             teamService에 파라미터로 result를 넣어줘서 에러가 나면

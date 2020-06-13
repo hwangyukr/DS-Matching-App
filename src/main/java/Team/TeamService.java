@@ -38,7 +38,7 @@ public class TeamService {
         return team;
     }
 
-    public Team createTeam(TokenProvider.TokenResult validResult, Result result, String teamName, Map<Role, Integer> limit) {
+    public Team createTeam(TokenProvider.TokenResult validResult, Result result, String teamName, String fileName, Map<Role, Integer> limit) {
 
         User user = new User.Builder()
                 .id(validResult.getId())
@@ -49,6 +49,7 @@ public class TeamService {
                 .teamLeader(user)
                 .teamRoles(null)
                 .roleLimits(limit)
+                .fileName(fileName)
                 .build();
 
         teamRepository.saveTeam(team, result, cmInfo);
