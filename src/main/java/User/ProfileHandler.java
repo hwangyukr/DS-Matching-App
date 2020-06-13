@@ -81,6 +81,7 @@ public class ProfileHandler {
         String content = ue.getEventField(CMInfo.CM_STR, "content");
         String photo = ue.getEventField(CMInfo.CM_STR, "photo");
         String portforlio = ue.getEventField(CMInfo.CM_STR, "portforlio");
+        String fileName = ue.getEventField(CMInfo.CM_STR, "file_name");
         if (roleName == null) {
         	handleError(new Result("입력값을 확인하세요", false), ue);
         	return;
@@ -95,7 +96,7 @@ public class ProfileHandler {
         }
         
         Result result = new Result();
-        Profile profile = profileService.postProfile(validResult, result, role, content, photo, portforlio);
+        Profile profile = profileService.postProfile(validResult, result, role, content, photo, portforlio, fileName);
         
         if (!result.isSuccess()) {
             handleError(result, ue);
@@ -118,17 +119,14 @@ public class ProfileHandler {
         TokenProvider.TokenResult validResult = getUserInfo(ue);
         if(validResult == null) return;
         
-        Long userId = Long.valueOf(ue.getEventField(CMInfo.CM_LONG, "user_id"));
-        
-        if (userId == null) {
-        	userId = validResult.getId();
-        }
+        Long userId = validResult.getId();
         
         Role role;
         String roleName = ue.getEventField(CMInfo.CM_STR, "role");
         String content = ue.getEventField(CMInfo.CM_STR, "content");
         String photo = ue.getEventField(CMInfo.CM_STR, "photo");
         String portforlio = ue.getEventField(CMInfo.CM_STR, "portforlio");
+        String fileName = ue.getEventField(CMInfo.CM_STR, "file_name");
         
         Result result = new Result();
         Profile profile = profileService.getProfile(userId, result);
@@ -151,21 +149,23 @@ public class ProfileHandler {
             }
         }
         
-//        TODO: 과연 텅빈 값으로 오는 요청이 의도하지 않은 값이라고 할 수 있는가?
-//       정말로 프사를 내리거나 포트폴리오를 지우거나, 자기소개를 빈칸으로 놔두는 경우에 대해서는 어떻게 설명할 것인가?
-//        if (content == null) {
-//        	content = profile.getContent();
-//        }
-//        
-//        if (photo == null) {
-//        	photo = profile.getPhoto();
-//        }
-//        
-//        if (portforlio == null) {
-//        	portforlio = profile.getPortforlio();
-//        }
+        if (content == null) {
+        	content = profile.getContent();
+        }
         
-        Long id = profileService.putProfile(profile, result, role, content, photo, portforlio);
+        if (photo == null) {
+        	photo = profile.getPhoto();
+        }
+        
+        if (portforlio == null) {
+        	portforlio = profile.getPortforlio();
+        }
+        
+        if (fileName == null) {
+        	fileName = profile.getFileName();
+        }
+        
+        Long id = profileService.putProfile(profile, result, role, content, photo, portforlio, fileName);
         if(!result.isSuccess()) {
             handleError(result, ue);
             return;
@@ -182,11 +182,7 @@ public class ProfileHandler {
         TokenProvider.TokenResult validResult = getUserInfo(ue);
         if(validResult == null) return;
         
-        Long userId = Long.valueOf(ue.getEventField(CMInfo.CM_LONG, "user_id"));
-        
-        if (userId == null) {
-        	userId = validResult.getId();
-        }
+        Long userId = validResult.getId();
         
         Result result = new Result();
         profileService.deleteProfile(userId, result);

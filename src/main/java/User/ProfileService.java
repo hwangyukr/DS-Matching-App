@@ -20,7 +20,8 @@ public class ProfileService {
     
     public Profile postProfile(
     		TokenProvider.TokenResult validResult, 
-    		Result result, Role role, String content, String photo, String portforlio) {
+    		Result result, Role role, String content, 
+    		String photo, String portforlio, String fileName) {
     	
         User user = new User.Builder()
                 .id(validResult.getId())
@@ -31,18 +32,21 @@ public class ProfileService {
         		.content(content)
         		.photo(photo)
         		.portforlio(portforlio)
+        		.fileName(fileName)
         		.build();
         profileRepository.postProfile(profile, result, cmInfo);
     	return profile;
     }
     
     public Long putProfile(Profile profile, Result result, 
-    		Role role, String content, String photo, String portforlio) {
+    		Role role, String content, String photo,
+    		String portforlio, String fileName) {
     	
     	profile.setRole(role);
     	profile.setContent(content);
     	profile.setPhoto(photo);
     	profile.setPortforlio(portforlio);
+    	profile.setFileName(fileName);
         return profileRepository.putProfile(profile, result, cmInfo);
     }
     
