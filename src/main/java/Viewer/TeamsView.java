@@ -1,4 +1,4 @@
-package main.java.Viewer;
+package Viewer;
 
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
@@ -51,8 +51,8 @@ public class TeamsView extends Viewer {
    private User user;
    private ClientApp client;
    
-   JButton btn_reg;      //?? 媛??엯?떊泥? 踰꾪듉
-   private List<Team> teamList;      //?? 由ъ뒪?듃
+   JButton btn_reg;     
+   private List<Team> teamList;     
    
    public TeamsView(ClientApp client, User user, List<Team> teamList) {
       super(client);
@@ -67,7 +67,7 @@ public class TeamsView extends Viewer {
       // TODO Auto-generated constructor stub
    }
    
-   public void init() {       //?븘吏? team?씠 ?뾾?쓣 寃쎌슦 null?씠?씪 媛??젙
+   public void init() {       
 
       contentPane = this;
       contentPane.setBackground(new Color(248, 248, 255));
@@ -85,26 +85,26 @@ public class TeamsView extends Viewer {
       
       /***속한 팀이름 또는 팀에 가입해달라는 라벨****/
       JLabel lb_team = new JLabel("(team name)");
-      lb_team.setFont(new Font("援대┝", Font.PLAIN, 16));
+      lb_team.setFont(new Font("굴림", Font.PLAIN, 16));
       lb_team.setBounds(125, 20, 212, 41);
       if(team!=null)
-         lb_team.setText("?? ?씠由?: "+team.getName());
+         lb_team.setText("팀 이름: "+team.getName());
       else
-         lb_team.setText("???뿉 媛??엯?빐二쇱꽭?슂");
+         lb_team.setText("팀에 가입해주세요");
       panel_team.add(lb_team);
       
       /***팀 입장 또는 팀 생성 버튼****/
-      JButton btn_team = new JButton("?? ?깮?꽦");
-      btn_team.setFont(new Font("援대┝", Font.PLAIN, 20));
+      JButton btn_team = new JButton("팀 생성");
+      btn_team.setFont(new Font("굴림", Font.PLAIN, 20));
       if(team!=null)
-         btn_team.setText("?? ?엯?옣");
+         btn_team.setText("팀 입장");
       btn_team.addActionListener(listener);
       btn_team.setBounds(186, 71, 151, 33);
       panel_team.add(btn_team);
       
       /***프로필 버튼****/
-      JButton btn_profile = new JButton("?봽濡쒗븘 蹂닿린");
-      btn_profile.setFont(new Font("援대┝", Font.PLAIN, 20));
+      JButton btn_profile = new JButton("프로필 보기");
+      btn_profile.setFont(new Font("굴림", Font.PLAIN, 20));
       btn_profile.setBounds(186, 114, 151, 33);
       btn_profile.addActionListener(listener);
       panel_team.add(btn_profile);
@@ -154,15 +154,15 @@ public class TeamsView extends Viewer {
       });
       scrollPane.setViewportView(list);
       
-      JLabel lb_teamList = new JLabel("?? 紐⑸줉");
+      JLabel lb_teamList = new JLabel("팀 목록");
       lb_teamList.setHorizontalAlignment(SwingConstants.CENTER);
       scrollPane.setColumnHeaderView(lb_teamList);
-      lb_teamList.setFont(new Font("援대┝", Font.PLAIN, 20));
+      lb_teamList.setFont(new Font("굴림", Font.PLAIN, 20));
       
       
       /****리스트에서 선택한 팀에 가입신청 버튼*****/
-      btn_reg = new JButton("?? 媛??엯");
-      btn_reg.setFont(new Font("援대┝", Font.PLAIN, 16));
+      btn_reg = new JButton("팀 가입");
+      btn_reg.setFont(new Font("굴림", Font.PLAIN, 16));
       btn_reg.addActionListener(listener);
       btn_reg.setBounds(267, 494, 107, 37);
       btn_reg.setVisible(false);
@@ -220,18 +220,18 @@ public class TeamsView extends Viewer {
          JButton b = (JButton) e.getSource();
          
          switch(b.getText()) {
-         case "?? ?깮?꽦":
-        	client.ChangeView(new TeamCreateView(client, user));
-            break;
-         case "?? ?엯?옣":
-        	client.ChangeView(new MyTeamView(client, user.getTeam()));
-            break;
-         case "?봽濡쒗븘 蹂닿린":
-        	client.ChangeView(new JoinProfileView(client, user.getName(), user.getEmail(), user.getPassword()));
-            break;
-         case "?? 媛??엯":
-        	client.applyTeam();
-	        client.print("팀 가입 신청 완료");
+			case "팀 생성":
+				client.ChangeView(new TeamCreateView(client, user));
+				break;
+			case "팀 입장":
+				client.ChangeView(new MyTeamView(client, user.getTeam()));
+				break;
+			case "프로필 보기":	//id->email
+				client.ChangeView(new JoinProfileView(client, user.getName(), user.getEmail(), user.getPassword()));
+				break;
+			case "팀 가입":
+	            client.applyTeam();
+	            client.print("팀 가입 신청 완료");
 	            /*
 	            JPanel ApplyComplete = new JPanel();
 	            {
