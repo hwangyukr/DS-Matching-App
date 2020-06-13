@@ -1,4 +1,4 @@
-package Viewer;
+package main.java.Viewer;
 
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
@@ -47,12 +47,12 @@ public class TeamsView extends Viewer {
    private JPanel contentPane;
    private JTable table;
    private Team team;
-   private JList<Team> list;
+   private JList<String> list;
    private User user;
    private ClientApp client;
    
-   JButton btn_reg;      //팀 가입신청 버튼
-   public List<Team> teamList;      //팀 리스트
+   JButton btn_reg;      //?? 媛??엯?떊泥? 踰꾪듉
+   private List<Team> teamList;      //?? 由ъ뒪?듃
    
    public TeamsView(ClientApp client, User user, List<Team> teamList) {
       super(client);
@@ -60,23 +60,20 @@ public class TeamsView extends Viewer {
       this.client = client;
       this.user = user;
       this.teamList = teamList;
-      team = user.getTeam();
+      team = user.getTeam();		//user가 팀에 가입되있지 않은 상태면 null임을 가정(확인 필요)
       client.print("MainView");
       init();
       
       // TODO Auto-generated constructor stub
    }
    
-   public List<Team> getTeamList() {
-      return this.teamList;
-   }
-   public void init() {       //아직 team이 없을 경우 null이라 가정
+   public void init() {       //?븘吏? team?씠 ?뾾?쓣 寃쎌슦 null?씠?씪 媛??젙
 
       contentPane = this;
       contentPane.setBackground(new Color(248, 248, 255));
       contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
       contentPane.setLayout(null);
-      // setBounds(100, 100, 450, 300);
+      
       
       JPanel panel_team = new JPanel();
       panel_team.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
@@ -88,63 +85,50 @@ public class TeamsView extends Viewer {
       
       /***속한 팀이름 또는 팀에 가입해달라는 라벨****/
       JLabel lb_team = new JLabel("(team name)");
-      lb_team.setFont(new Font("굴림", Font.PLAIN, 16));
+      lb_team.setFont(new Font("援대┝", Font.PLAIN, 16));
       lb_team.setBounds(125, 20, 212, 41);
       if(team!=null)
-         lb_team.setText("팀 이름: "+team.getName());
+         lb_team.setText("?? ?씠由?: "+team.getName());
       else
-         lb_team.setText("팀에 가입해주세요");
+         lb_team.setText("???뿉 媛??엯?빐二쇱꽭?슂");
       panel_team.add(lb_team);
       
       /***팀 입장 또는 팀 생성 버튼****/
-      JButton btn_team = new JButton("팀 생성");
-      btn_team.setFont(new Font("굴림", Font.PLAIN, 20));
+      JButton btn_team = new JButton("?? ?깮?꽦");
+      btn_team.setFont(new Font("援대┝", Font.PLAIN, 20));
       if(team!=null)
-         btn_team.setText("팀 입장");
+         btn_team.setText("?? ?엯?옣");
       btn_team.addActionListener(listener);
       btn_team.setBounds(186, 71, 151, 33);
       panel_team.add(btn_team);
       
       /***프로필 버튼****/
-      JButton btn_profile = new JButton("프로필 보기");
-      btn_profile.setFont(new Font("굴림", Font.PLAIN, 20));
+      JButton btn_profile = new JButton("?봽濡쒗븘 蹂닿린");
+      btn_profile.setFont(new Font("援대┝", Font.PLAIN, 20));
       btn_profile.setBounds(186, 114, 151, 33);
       btn_profile.addActionListener(listener);
       panel_team.add(btn_profile);
       
-      /***프로필 이미지????****/
+      /***프로필 이미지****/
+      //일단 라벨만 붙혀놈
       JLabel lb_image = new JLabel("profile image");
       lb_image.setIcon(null);
       lb_image.setBounds(12, 20, 101, 133);
       panel_team.add(lb_image);
-      
-      /***추천받기 체크박스****/
-      JCheckBox chckbx_recommend = new JCheckBox("\uCD94\uCC9C \uBC1B\uAE30");
-      chckbx_recommend.setBounds(279, 198, 95, 23);
-      chckbx_recommend.addActionListener(new ActionListener() {
-         @Override
-         public void actionPerformed(ActionEvent e) {
-            // TODO Auto-generated method stub
-            if(chckbx_recommend.isSelected()) {
-               updateTeamList(true);      //팀 리스트 다시 받아오기
-            }
-         }
-      });
-      contentPane.add(chckbx_recommend);
       
       /***팀 목록*****/
       JScrollPane scrollPane = new JScrollPane();
       scrollPane.setBounds(12, 227, 362, 244);
       contentPane.add(scrollPane);
 
-      updateTeamList(false);
+      updateTeamList();
       list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
       list.addMouseListener(new MouseAdapter() {
          public void mouseClicked(MouseEvent e) {
-            Map<Role, Integer> currentRole = list.getSelectedValue().getCurrentRoles();
-            Map<Role, Integer> maximumRole = list.getSelectedValue().getRoleLimits();      //getMaximum 추가해야댐
-            
-            //팀 구성표 업데이트
+        	Map<Role, Integer> currentRole = teamList.get(list.getSelectedIndex()).getCurrentRoles();
+			Map<Role, Integer> maximumRole = teamList.get(list.getSelectedIndex()).getRoleLimits();		//Team class에 getRoleLimits() 추가 필요
+			
+			/***팀 구성표 업데이트***/
             Role[] roles = Role.values();
             int cur_designer = 0, cur_developer = 0, cur_planner = 0;
             int max_designer = 0, max_developer = 0, max_planner = 0;
@@ -170,15 +154,15 @@ public class TeamsView extends Viewer {
       });
       scrollPane.setViewportView(list);
       
-      JLabel lb_teamList = new JLabel("팀 목록");
+      JLabel lb_teamList = new JLabel("?? 紐⑸줉");
       lb_teamList.setHorizontalAlignment(SwingConstants.CENTER);
       scrollPane.setColumnHeaderView(lb_teamList);
-      lb_teamList.setFont(new Font("굴림", Font.PLAIN, 20));
+      lb_teamList.setFont(new Font("援대┝", Font.PLAIN, 20));
       
       
       /****리스트에서 선택한 팀에 가입신청 버튼*****/
-      btn_reg = new JButton("팀 가입");
-      btn_reg.setFont(new Font("굴림", Font.PLAIN, 16));
+      btn_reg = new JButton("?? 媛??엯");
+      btn_reg.setFont(new Font("援대┝", Font.PLAIN, 16));
       btn_reg.addActionListener(listener);
       btn_reg.setBounds(267, 494, 107, 37);
       btn_reg.setVisible(false);
@@ -223,9 +207,7 @@ public class TeamsView extends Viewer {
          }
       });
       table.getColumnModel().getColumn(0).setResizable(false);
-      table.getColumnModel().getColumn(0).setPreferredWidth(45);
       table.getColumnModel().getColumn(1).setResizable(false);
-      table.getColumnModel().getColumn(1).setPreferredWidth(71);
       table.getColumnModel().getColumn(2).setResizable(false);
       table.setCellSelectionEnabled(true);
       table.setColumnSelectionAllowed(true);
@@ -238,35 +220,37 @@ public class TeamsView extends Viewer {
          JButton b = (JButton) e.getSource();
          
          switch(b.getText()) {
-         case "팀 생성":
-            ////////
+         case "?? ?깮?꽦":
+        	client.ChangeView(new TeamCreateView(client, user));
             break;
-         case "팀 입장":
-            //client.ChangeView(new MyTeamView(client));
+         case "?? ?엯?옣":
+        	client.ChangeView(new MyTeamView(client, user.getTeam()));
             break;
-         case "프로필 보기":
-            //client.ChangeView(new JoinProfileView(client, user.getName(), user.getId(), user.getPassword()));
+         case "?봽濡쒗븘 蹂닿린":
+        	client.ChangeView(new JoinProfileView(client, user.getName(), user.getEmail(), user.getPassword()));
             break;
-         case "팀 가입":
-               client.applyTeam();
-               
-               JPanel ApplyComplete = new JPanel();
-               {
-                  JPanel buttonPane = new JPanel();
-                  buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
-                  contentPane.add(buttonPane, BorderLayout.SOUTH);
-                  {
-                     JButton cancelButton = new JButton("OK");
-                     cancelButton.addMouseListener(new MouseAdapter() {
-                        @Override
-                        public void mouseReleased(MouseEvent arg0) {
-                           client.exit();// 창닫음
-                        }
-                     });
-                     cancelButton.setActionCommand("OK");
-                     buttonPane.add(cancelButton);
-                  }
-               }
+         case "?? 媛??엯":
+        	client.applyTeam();
+	        client.print("팀 가입 신청 완료");
+	            /*
+	            JPanel ApplyComplete = new JPanel();
+	            {
+	               JPanel buttonPane = new JPanel();
+	               buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
+	               contentPane.add(buttonPane, BorderLayout.SOUTH);
+	               {
+	                  JButton cancelButton = new JButton("OK");
+	                  cancelButton.addMouseListener(new MouseAdapter() {
+	                     @Override
+	                     public void mouseReleased(MouseEvent arg0) {
+	                        client.exit();// 창닫음
+	                     }
+	                  });
+	                  cancelButton.setActionCommand("OK");
+	                  buttonPane.add(cancelButton);
+	               }
+	            }
+	            */
                break;
             
 
@@ -274,12 +258,12 @@ public class TeamsView extends Viewer {
       }
    }
    
-   private void updateTeamList(boolean isChecked) {
+   private void updateTeamList() {
          
-      DefaultListModel<Team> listModel = new DefaultListModel<Team>();
+      DefaultListModel<String> listModel = new DefaultListModel<String>();
       
       for(int i=0; i<teamList.size(); i++) {
-         listModel.addElement(teamList.get(i));
+    	  listModel.addElement(teamList.get(i).getName());
       }
       list.setModel(listModel);
    }
