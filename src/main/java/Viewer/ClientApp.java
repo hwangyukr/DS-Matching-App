@@ -153,6 +153,8 @@ public class ClientApp extends JFrame {
 		
 		ue.setStringID("GET-TEAMS");
 		ue.setEventField(CMInfo.CM_STR, "token", token);
+		clientStub.send(ue, "SERVER");
+		this.print("GET TEAM LIST (GET-TEAMS) REQEUSTED");
 	}
 	
 	public void requestCreateTeam(Map<Role, Integer> limits) {
@@ -200,6 +202,7 @@ public class ClientApp extends JFrame {
 	public void requestApplications() {
 		CMUserEvent ue = GetUE("GET-APPLICATIONS");
 		clientStub.send(ue, "SERVER");
+		print("GET-APPLICATIONS requested");
 	}
 
 	public void requestProcessApplication(String user_id, String team_id) {

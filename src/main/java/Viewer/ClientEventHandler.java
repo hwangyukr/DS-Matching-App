@@ -108,39 +108,43 @@ public class ClientEventHandler implements CMAppEventHandler {
                 } catch (JsonProcessingException e) {
                     e.printStackTrace();
                 }
-                if(ue.getStringID().equals("POST-BOARD-REPLY")) {
-                    try {
-                        String success = ue.getEventField(CMInfo.CM_INT, "success");
-                        String msg = ue.getEventField(CMInfo.CM_STR, "msg");
-                        if(success.equals("1")) client.print("posted successfully");
-                        else client.print("post failed" + msg);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-
-                if(ue.getStringID().equals("GET-APPLICATIONS-REPLY")) {
-            	  try {
-            	      String ret = ue.getEventField(CMInfo.CM_STR, "applications");
-            	      List<Application> applications = objectMapper.readValue(ret, objectMapper.getTypeFactory().constructCollectionType(List.class, Application.class));
-            	      client.ChangeView(new ApplicationView(client, applications));
-            	  } catch (JsonProcessingException e) {
-            	      e.printStackTrace();
-            	  }
-            	}
-
-                if(ue.getStringID().equals("PROCESS-APPLICATION-REPLY")) {
-                	String success = ue.getEventField(CMInfo.CM_INT, "success");
-                	if(success.equals("1")) {
-                		client.print("Confirm Application Success");
-                		client.requestApplications();
-                	}
-                	else {
-                		client.print("Check you are team manager");
-                	}
-              	}
-                ///리스트 업데이트하기
             }
+            if(ue.getStringID().equals("POST-BOARD-REPLY")) {
+                try {
+                    String success = ue.getEventField(CMInfo.CM_INT, "success");
+                    String msg = ue.getEventField(CMInfo.CM_STR, "msg");
+                    if(success.equals("1")) client.print("posted successfully");
+                    else client.print("post failed" + msg);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            if(ue.getStringID().equals("GET-APPLICATIONS-REPLY")) {
+        	  try {
+        		  String success = ue.getEventField(CMInfo.CM_INT, "success");
+              	  client.print("PROCESS-APPLICATION-REPLY Succes : " + success);
+        	      String ret = ue.getEventField(CMInfo.CM_STR, "applications");
+        	      List<Application> applications = objectMapper.readValue(ret, objectMapper.getTypeFactory().constructCollectionType(List.class, Application.class));
+        	      client.ChangeView(new ApplicationView(client, applications));
+        	  } catch (JsonProcessingException e) {
+        	      e.printStackTrace();
+        	  }
+        	}
+
+            if(ue.getStringID().equals("PROCESS-APPLICATION-REPLY")) {
+            	String success = ue.getEventField(CMInfo.CM_INT, "success");
+            	client.print("PROCESS-APPLICATION-REPLY Succes : " + success);
+            	if(success.equals("1")) {
+            		client.print("Confirm Application Success");
+            		client.requestApplications();
+            	}
+            	else {
+            		client.print("Check you are team manager");
+            	}
+          	}
+                ///리스트 업데이트하기
+            
 
             break;
         default:
