@@ -14,6 +14,7 @@ public class UIConst {
 	static final int BUTTON_LOGIN = 0x66;
 	static final int BUTTON_SIGNUP = 0x65;
 	static final int BUTTON_EXIT = 0x67;
+	static final int BUTTON_UPLOAD = 0x68;
 	
 	static JButton BUTTON(String txt, int type) {
 		JButton button = new JButton (txt);
@@ -40,7 +41,13 @@ public class UIConst {
 			fg = new Color (255, 240, 240);
 			hover = new Color (196, 196, 196);
 			break;
+		case BUTTON_UPLOAD:
+			bg = new Color (200, 225, 200);
+			fg = new Color (100, 145, 100);
+			hover = new Color (196, 196, 196);
+			break;
 		}
+		
 		
 		button.setForeground (fg);
 		button.setBackground (bg);

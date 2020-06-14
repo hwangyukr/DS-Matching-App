@@ -36,6 +36,7 @@ public class JoinView extends Viewer {
 			String name = textField.getText();
 			String id = textField_1.getText();
 			String pw = textField_2.getText();
+			
 			client.ChangeView(new JoinProfileView(client, name, id, pw));
 		}
 		

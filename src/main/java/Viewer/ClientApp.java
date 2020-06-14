@@ -19,6 +19,7 @@ import kr.ac.konkuk.ccslab.cm.entity.CMUser;
 import kr.ac.konkuk.ccslab.cm.event.CMUserEvent;
 import kr.ac.konkuk.ccslab.cm.info.CMInfo;
 import kr.ac.konkuk.ccslab.cm.info.CMInteractionInfo;
+import kr.ac.konkuk.ccslab.cm.manager.CMFileTransferManager;
 import kr.ac.konkuk.ccslab.cm.stub.CMClientStub;
 import mdlaf.MaterialLookAndFeel;
 import mdlaf.themes.MaterialLiteTheme;
@@ -118,8 +119,30 @@ public class ClientApp extends JFrame {
 		pack ();
 	}
 	
-	public void requestSignUp(String name, String id, String pw, String role, String introduce) {
+	public void requestSignUp(String name, String id, String pw, Role role, String introduce) {
+		CMUserEvent ue = new CMUserEvent();
+		CMInteractionInfo info = clientStub.getCMInfo().getInteractionInfo();
+		CMUser user = info.getMyself();
+		ue.setStringID("SIGN-UP");
 		
+		System.out.println("name : " + name);
+		System.out.println("id : " + id);
+		System.out.println("id : " + pw);
+		
+		ue.setEventField(CMInfo.CM_STR, "email", id);
+		ue.setEventField(CMInfo.CM_STR, "password", pw);
+		ue.setEventField(CMInfo.CM_STR, "username", name);
+		
+		
+		ue.setEventField(CMInfo.CM_STR, "role", role.toString());
+		ue.setEventField(CMInfo.CM_STR, "introduce", introduce);
+		
+		ue.setSender(user.getName());
+		ue.setDistributionGroup(user.getCurrentGroup());
+		ue.setDistributionSession(user.getCurrentSession());
+		
+		clientStub.send(ue, "SERVER");
+		this.print("Requesting SignUp ...");
 	}
 	
 	public void requestMyTeam(String team_name) {
@@ -162,7 +185,7 @@ public class ClientApp extends JFrame {
 		Map<Role, Integer> rolelimits = limits;
 		//String json = client.objectMapper.writeValueAsString(rolelimits);
 
-		//ue.setEventField(CMInfo.CM_STR, "team_name", "만나서 반가워요 ^^");
+		//ue.setEventField(CMInfo.CM_STR, "team_name", "留뚮굹�꽌 諛섍��썙�슂 ^^");
 		//ue.setEventField(CMInfo.CM_STR, "token", token);
 		//ue.setEventField(CMInfo.CM_STR, "teamlimit", json);
 	}
@@ -221,6 +244,57 @@ public class ClientApp extends JFrame {
 
 	public void requestGetTeams() {
 		// TODO Auto-generated method stub
+		
+	}
+
+	public void requestLoginWithParam(String id, String pw2) {
+		// TODO Auto-generated method stub
+		CMUserEvent ue = new CMUserEvent();
+		CMInteractionInfo info = clientStub.getCMInfo().getInteractionInfo();
+		CMUser user = info.getMyself();
+		ue.setStringID("SIGN-IN");
+
+		ue.setEventField(CMInfo.CM_STR, "email", email);
+		ue.setEventField(CMInfo.CM_STR, "password", pw);
+		ue.setSender(user.getName());
+		ue.setDistributionGroup(user.getCurrentGroup());
+		ue.setDistributionSession(user.getCurrentSession());
+		
+		clientStub.send(ue, "SERVER");
+		this.print("Request Login ...");
+	}
+
+	public void createProfileRequest(Role role, String introduce, String photo_pathFileName,
+			String photo_originalFileName, String portfolio_pathFileName, String portfolio_originalFileName) {
+		
+		CMUserEvent ue = new CMUserEvent();
+		CMInteractionInfo info = clientStub.getCMInfo().getInteractionInfo();
+		CMUser user = info.getMyself();
+		ue.setStringID("POST-PROFIE");
+		
+		String portfolioInServer = "/" + user.getName() + "/" + portfolio_originalFileName;
+		String imageInServer = "/" + user.getName() + "/" + photo_originalFileName;
+		
+		ue.setEventField(CMInfo.CM_STR, "role", role.toString());
+		ue.setEventField(CMInfo.CM_STR, "content", introduce);
+		ue.setEventField(CMInfo.CM_STR, "token", this.token);
+		
+		ue.setEventField(CMInfo.CM_STR, "file_name", imageInServer);
+		ue.setEventField(CMInfo.CM_STR, "original_file_name", photo_originalFileName);
+		ue.setEventField(CMInfo.CM_STR, "portfolio",portfolioInServer);
+		ue.setEventField(CMInfo.CM_STR, "original_portfolio", portfolio_originalFileName);
+
+		ue.setSender(user.getName());
+		ue.setDistributionGroup(user.getCurrentGroup());
+		ue.setDistributionSession(user.getCurrentSession());
+		
+		clientStub.send(ue, "SERVER");
+		this.print("Request Login ...");
+		
+
+		CMFileTransferManager.pushFile(photo_pathFileName, "SERVER", clientStub.getCMInfo());
+		CMFileTransferManager.pushFile(photo_pathFileName, "SERVER", clientStub.getCMInfo());
+		
 		
 	}
 }
