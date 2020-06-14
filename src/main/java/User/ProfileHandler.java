@@ -81,7 +81,7 @@ public class ProfileHandler {
         String roleName = ue.getEventField(CMInfo.CM_STR, "role");
         String content = ue.getEventField(CMInfo.CM_STR, "content");
         String photo = ue.getEventField(CMInfo.CM_STR, "photo");
-        String portforlio = ue.getEventField(CMInfo.CM_STR, "portforlio");
+        String portforlio = ue.getEventField(CMInfo.CM_STR, "portfolio");
         String originalPortfolio = ue.getEventField(CMInfo.CM_STR, "original_portfolio");
         String fileName = ue.getEventField(CMInfo.CM_STR, "file_name");
         String originalFileName = ue.getEventField(CMInfo.CM_STR, "original_file_name");

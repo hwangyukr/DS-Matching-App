@@ -27,13 +27,18 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 
 import User.*;
 import Viewer.MyTeamView;
 import Viewer.UIConst;
 
-public class ProfileView extends Viewer {
+public class ProfileView extends Viewer implements MouseListener {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
@@ -42,6 +47,9 @@ public class ProfileView extends Viewer {
 	private JTextField txt_subrole;
 	private JButton btn_pf;
 	private JFileChooser jfc;
+	static final String absolutePath = System.getProperty("user.dir")
+			+ "/client-file-path/";
+
 	File pf_src = null;
 	
 	public ProfileView(ClientApp client, Profile profile) {
@@ -54,23 +62,33 @@ public class ProfileView extends Viewer {
 		client.clientStub.requestFile(imgFileName, "SERVER");
 			
 		String pfFileName = profile.getPortforlio();
-		if((pfFileName!=null) && !client.clientStub.requestFile(pfFileName, "SERVER")) {
-			pf_src = new File("./client-file-path/"+ profile.getOriginalPortfolio());
+		if((pfFileName!=null)) {
+			pf_src = new File(absolutePath + profile.getOriginalPortfolio());
 		}
 		
 		String imgOriginalFileName = profile.getOriginalFileName();
 		System.out.println(imgFileName);
 		System.out.println(imgOriginalFileName);
 
+		init();
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
 		if(e.getSource().equals(btn_pf)) {
-			if(jfc!= null) {
+			if(pf_src!= null) {
+
+				//
 				jfc = new JFileChooser(pf_src);
 				jfc.showSaveDialog(this);
+				String destination = jfc.getSelectedFile().getAbsolutePath();
+				String file = absolutePath + profile.getOriginalPortfolio();
+				try {
+					Files.copy(Paths.get(file), Paths.get(destination), StandardCopyOption.REPLACE_EXISTING);
+				} catch (IOException ex) {
+					ex.printStackTrace();
+				}
 			}
 			else
 				client.print("no uploaded portfolio");
@@ -96,13 +114,8 @@ public class ProfileView extends Viewer {
 		contentPane.add(role_label2);
 	     
 
-	    JButton exit_btn = UIConst.BUTTON("Cancle", UIConst.BUTTON_EXIT);
-	    exit_btn.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				client.requestMyTeam(String.valueOf(profile.getUser().getTeam().getId()));
-			}
-		});
+	    JButton exit_btn = UIConst.BUTTON("Cancel", UIConst.BUTTON_EXIT);
+	    exit_btn.addMouseListener(this);
 	    exit_btn.setBounds(320, 700, 100, 50);
 		
 		contentPane.add (exit_btn);
@@ -176,5 +189,32 @@ public class ProfileView extends Viewer {
 		
 		contentPane.add(btn_pf);
 		setSize(UIConst.WIDTH, UIConst.HEIGHT);
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		System.out.println("-0-");
+		client.requestTeamList();
+		//client.requestMyTeam(String.valueOf(profile.getUser().getTeam().getId()));
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+
 	}
 }

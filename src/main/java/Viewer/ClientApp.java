@@ -136,6 +136,9 @@ public class ClientApp extends JFrame {
 	}
 	
 	public void requestSignUp(String name, String id, String pw) {
+
+		clientStub.loginCM(id, pw);
+
 		CMUserEvent ue = new CMUserEvent();
 		CMInteractionInfo info = clientStub.getCMInfo().getInteractionInfo();
 		CMUser user = info.getMyself();
@@ -179,12 +182,7 @@ public class ClientApp extends JFrame {
 	}
 
 	public void requestTeamList() {
-		CMUserEvent ue = new CMUserEvent();
-		CMInteractionInfo info = clientStub.getCMInfo().getInteractionInfo();
-		CMUser user = info.getMyself();
-		
-		ue.setStringID("GET-TEAMS");
-		ue.setEventField(CMInfo.CM_STR, "token", token);
+		CMUserEvent ue = GetUE("GET-TEAMS");
 		clientStub.send(ue, "SERVER");
 		this.print("GET TEAM LIST (GET-TEAMS) REQEUSTED");
 	}
@@ -271,15 +269,7 @@ public class ClientApp extends JFrame {
 
 	
 	public ImageIcon getProfileImg(String originalFileName) {
-		Image img = null;
-		File srcimg = new File("./client-file-path/"+originalFileName);
-		try {
-			img = ImageIO.read(srcimg);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return new ImageIcon(img);
+		return new ImageIcon(ProfileView.absolutePath + originalFileName);
 	}
 
 	public void requestLoginWithParam(String email, String pw) {
@@ -307,7 +297,7 @@ public class ClientApp extends JFrame {
 
 	public void createProfileRequest(String role, String introduce, String photo_pathFileName,
 			String photo_originalFileName, String portfolio_pathFileName, String portfolio_originalFileName) {
-		
+
 		CMUserEvent ue = new CMUserEvent();
 		CMInteractionInfo info = clientStub.getCMInfo().getInteractionInfo();
 		CMUser user = info.getMyself();
@@ -331,7 +321,6 @@ public class ClientApp extends JFrame {
 		
 		clientStub.send(ue, "SERVER");
 		this.print("Request Login ...");
-		
 
 		CMFileTransferManager.pushFile(photo_pathFileName, "SERVER", clientStub.getCMInfo());
 		CMFileTransferManager.pushFile(photo_pathFileName, "SERVER", clientStub.getCMInfo());

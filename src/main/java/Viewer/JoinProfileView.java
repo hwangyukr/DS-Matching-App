@@ -1,9 +1,6 @@
 package Viewer;
 
-import java.awt.BorderLayout;
-import java.awt.Choice;
-import java.awt.Font;
-import java.awt.Graphics2D;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -35,6 +32,9 @@ public class JoinProfileView extends Viewer {
 	private JButton done_btn = null;
 	private JButton exit_btn = null;
 	private JTextArea intro = null;
+
+	JLabel img_profile = null;
+
 	JRadioButton role_radio[] = new JRadioButton[3];
 	
 	JPanel imagePanel = new JPanel();
@@ -58,6 +58,7 @@ public class JoinProfileView extends Viewer {
 
 	public JoinProfileView(ClientApp client, String name, String id, String pw) {
 		super(client);
+		this.img_profile = new JLabel("nono");
 		init();
 		this.name = name;
 		this.id = id;
@@ -65,24 +66,32 @@ public class JoinProfileView extends Viewer {
 	}
 
 	
-	public void setTarget(File photo_pathFileName2) {
-		targetFile = photo_pathFileName2;
-		try {
-			targetImg = rescale(ImageIO.read(photo_pathFileName2));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	public void setTarget(String photo_pathFileName2) {
+//		targetFile = photo_pathFileName2;
+//		try {
+//			targetImg = rescale(ImageIO.read(photo_pathFileName2));
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//
+//		//imagePanel.setLayout(new BorderLayout(0, 0));
+//		//imagePanel.add(new JLabel(new ImageIcon(targetImg)));
+//		imagePanel.setLayout(null);
+//		ImageIcon icon = new ImageIcon(targetImg);
 
-		//imagePanel.setLayout(new BorderLayout(0, 0));
-		//imagePanel.add(new JLabel(new ImageIcon(targetImg)));
-		imagePanel.setLayout(null);
-		ImageIcon icon = new ImageIcon(targetImg);
-		JLabel lbl = new JLabel();
-		lbl.setBounds(0,0,128,128);
-		imagePanel.add(lbl);
-		imagePanel.setVisible(true);
-		setVisible(true);
+		ImageIcon icon = client.getProfileImg(photo_originalFileName);
+		System.out.println(photo_originalFileName);
+		System.out.println(icon.getImage() == null);
+		System.out.println(icon.getIconHeight());
+//		JLabel lbl = new JLabel(icon);
+//		lbl.setBounds(0,0,128,128);
+//		imagePanel.add(lbl);
+//		imagePanel.setVisible(true);
+//		setVisible(true);
+		img_profile.setIcon(icon);
+		img_profile.setText(null);
+
 	}
 
 	private BufferedImage rescale(BufferedImage originalImage) {
@@ -103,7 +112,9 @@ public class JoinProfileView extends Viewer {
 			if (jfc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
 				photo_pathFileName = jfc.getSelectedFile().getAbsoluteFile().toString();
 				photo_originalFileName = jfc.getSelectedFile().getName();
-				setTarget(jfc.getSelectedFile().getAbsoluteFile());
+				System.out.println(photo_originalFileName);
+				//setTarget(jfc.getSelectedFile().getAbsoluteFile());
+				setTarget(photo_pathFileName);
 			}
 		}
 
@@ -162,6 +173,11 @@ public class JoinProfileView extends Viewer {
 		// TODO Auto-generated method stub
 		this.setLayout(null);
 
+		img_profile.setHorizontalAlignment(SwingConstants.CENTER);
+		img_profile.setBounds(40, 80, 170, 203);
+		img_profile.setBackground(Color.WHITE);
+		this.add(img_profile);
+
 		JLabel title = new JLabel("<html><div style='color: #336644;'> Your Profile </div></html>",
 				SwingConstants.CENTER);
 		Font font = new Font("����", Font.PLAIN, 30);
@@ -179,9 +195,9 @@ public class JoinProfileView extends Viewer {
 		photoUpload.addActionListener(this);
 		this.add(photoUpload);
 		
-		imagePanel.setBounds(70, 107, 198, 191);
-		imagePanel.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
-		this.add(imagePanel);
+//		imagePanel.setBounds(70, 107, 198, 191);
+//		imagePanel.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
+//		this.add(imagePanel);
 
 		portfolioUpload = UIConst.BUTTON("Portfolio", UIConst.BUTTON_UPLOAD);
 		portfolioUpload.setBounds(337, 210, 120, 42);
