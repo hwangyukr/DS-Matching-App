@@ -36,6 +36,7 @@ public class ClientEventHandler implements CMAppEventHandler {
 
     private void processSessionEvent(CMSessionEvent event) {
     	int id = event.getID();
+    	client.print("Login Completed");
     	switch(id) {
 		case CMSessionEvent.LOGIN_ACK:
 			if(event.isValidUser() != 0) {
@@ -55,7 +56,10 @@ public class ClientEventHandler implements CMAppEventHandler {
     public void processEvent(CMEvent cmEvent)  {
 
         switch (cmEvent.getType()) {
-    
+
+        case CMInfo.CM_FILE_EVENT:
+            // some logic redirect
+            break;
         case CMInfo.CM_SESSION_EVENT:
         	processSessionEvent((CMSessionEvent) cmEvent);
         	break;
@@ -71,6 +75,7 @@ public class ClientEventHandler implements CMAppEventHandler {
                     client.requestLogin("0");
                 }
             }
+
             if(ue.getStringID().equals("SIGN-IN-REPLY")) {
             	System.out.println("!SIGN-IN-REPLY !");
             	String success = ue.getEventField(CMInfo.CM_INT, "success");
@@ -84,6 +89,7 @@ public class ClientEventHandler implements CMAppEventHandler {
                     client.token = token;
                     client.user_id = user_id;
                     client.team_id = team_id;
+                    System.out.println(tag.equals("1") + " " + tag);
                     if(tag.equals("1")) client.requestTeamList();
             	}
             	else {

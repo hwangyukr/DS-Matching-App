@@ -64,7 +64,7 @@ public class ClientApp extends JFrame {
 		clientStub = new CMClientStub();
 		clientEventHandler = new ClientEventHandler(this);
 		clientStub.setAppEventHandler(clientEventHandler);
-		
+		//clientStub.loginCM("kongee", "0000");
 		this.addWindowListener(new java.awt.event.WindowAdapter() {
 		    @Override
 		    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
@@ -140,7 +140,6 @@ public class ClientApp extends JFrame {
 		CMInteractionInfo info = clientStub.getCMInfo().getInteractionInfo();
 		CMUser user = info.getMyself();
 
-		clientStub.loginCM("kongee", "0000");
 		ue.setStringID("SIGN-UP");
 		
 		System.out.println("name : " + name);
