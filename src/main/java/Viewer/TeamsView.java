@@ -59,6 +59,7 @@ public class TeamsView extends Viewer implements MouseListener {
       this.client = client;
       this.teamList = teamList;
       this.team_id = team_id;		//user가 팀에 가입되있지 않은 상태면 null임을 가정(확인 필요)
+      if(this.team_id.equals("0")) this.team_id = null;
       init();
       
       // TODO Auto-generated constructor stub

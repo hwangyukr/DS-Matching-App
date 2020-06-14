@@ -204,6 +204,8 @@ public class ClientApp extends JFrame {
 		ue.setEventField(CMInfo.CM_STR, "team_name", teamName);
 		ue.setEventField(CMInfo.CM_STR, "token", token);
 		ue.setEventField(CMInfo.CM_STR, "teamlimit", json);
+		print("MAKE TEAM EVENT");
+		clientStub.send(ue, "SERVER");
 	}
 	
 	public void applyTeam(String teamName) {
