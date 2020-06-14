@@ -161,7 +161,7 @@ public class ClientApp extends JFrame {
 		CMUserEvent ue = new CMUserEvent();
 		ue.setStringID("CREATE-TEAM");
 		Map<Role, Integer> rolelimits = limits;
-		String json;
+		String json = null;
 		try {
 			json = objectMapper.writeValueAsString(rolelimits);
 		} catch (JsonProcessingException e) {
@@ -226,10 +226,7 @@ public class ClientApp extends JFrame {
 		this.print("GET TEAM REQEUSTED : " + team_id);
 	}
 
-	public void requestGetTeams() {
-		// TODO Auto-generated method stub
-		
-	}
+	
 
 	public void requestGetUser(String user_id) {
 		CMUserEvent ue = GetUE("GET-PROFILE");

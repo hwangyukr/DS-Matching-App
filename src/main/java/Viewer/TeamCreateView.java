@@ -190,7 +190,7 @@ public class TeamCreateView extends Viewer{/**
 				client.requestCreateTeam(rolelimits, teamName);
 				
 			case "취소":
-				client.requestGetTeams();		//TeamsView로 이동
+				client.requestTeamList();		//TeamsView로 이동
 				break;
 			}
 		}

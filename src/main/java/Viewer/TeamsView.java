@@ -134,7 +134,7 @@ public class TeamsView extends Viewer {
             
             for(int i=0; i<9; i++) {
             	if(currentRole.get(roles[i]) == null)
-            		currentRole.replace(roles[i], 0);
+            		currentRole.put(roles[i], 0);
             }
            
             for(int i=0; i<=3; i++) {
@@ -176,7 +176,7 @@ public class TeamsView extends Viewer {
       
       /****리스트에서 선택한 팀의 구성 표****/
       setOrganizationTable();
-      table.setVisible(false);
+      table.setVisible(true);
       contentPane.add(table);
       
       
@@ -190,10 +190,10 @@ public class TeamsView extends Viewer {
       table = new JTable();
       table.setModel(new DefaultTableModel(
          new Object[][] {
-            {null, "디자인", "개발"},
-            {"일단", null, null},
-            {"아무거나", null, null},
-            {"넣을게요", null, null},
+            {null, "current", "maximum"},
+            {"designer", null, null},
+            {"developer", null, null},
+            {"planner", null, null},
          },
          new String[] {
             " ", "current", "maximum"
@@ -242,7 +242,6 @@ public class TeamsView extends Viewer {
             client.ChangeView(new TeamCreateView(client));
             break;
          case "팀 입장":
-            //client.ChangeView(new MyTeamView(client, user.getTeam()));
             client.requestMyTeam(String.valueOf(this.team.getId()));
             break;
          case "프로필 보기":	//id->email

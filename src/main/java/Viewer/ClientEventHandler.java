@@ -70,11 +70,9 @@ public class ClientEventHandler implements CMAppEventHandler {
             	if(success.equals("1")) {
             		client.print("Login Success");
             		String token = ue.getEventField(CMInfo.CM_STR, "token");
-                    String user_id = ue.getEventField(CMInfo.CM_LONG, "user_id");
                     String team_id = ue.getEventField(CMInfo.CM_LONG, "team_id");
                     client.token = token;
-                    client.user_id = user_id;
-                    client.team_id = team_id;
+
                     client.requestTeamList();
             		//client.requestMyTeam(team_id);
             	}
@@ -169,7 +167,7 @@ public class ClientEventHandler implements CMAppEventHandler {
                     
                     if(success.equals("1")) {
                     	String profile = ue.getEventField(CMInfo.CM_STR, "profile");
-                    	Profile profileObj = objectMapper.readValue(profile, objectMapper.getTypeFactory().constructType(Profile.class));
+                    	Profile profileObj = objectMapper.readValue(profile, Profile.class);
                     	client.ChangeView(new ProfileView(client, profileObj.getUser()));
                     }
                     else {
