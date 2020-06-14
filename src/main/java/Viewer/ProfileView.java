@@ -50,6 +50,9 @@ public class ProfileView extends Viewer {
 		String pfFileName = profile.getPortforlio();
 		client.clientStub.requestFile(pfFileName, "SERVER");
 
+		String imgOriginalFileName = profile.getOriginalFileName();
+		System.out.println(imgOriginalFileName);
+
 	}
 
 	@Override
