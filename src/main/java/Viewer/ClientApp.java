@@ -305,17 +305,18 @@ public class ClientApp extends JFrame {
 		this.print("Request Login ...");
 	}
 
-	public void createProfileRequest(Role role, String introduce, String photo_pathFileName,
-									 String photo_originalFileName, String portfolio_pathFileName, String portfolio_originalFileName) {
+
+	public void createProfileRequest(String role, String introduce, String photo_pathFileName,
+			String photo_originalFileName, String portfolio_pathFileName, String portfolio_originalFileName) {
 		
 		CMUserEvent ue = new CMUserEvent();
 		CMInteractionInfo info = clientStub.getCMInfo().getInteractionInfo();
 		CMUser user = info.getMyself();
-		ue.setStringID("POST-PROFIE");
-		
-		String portfolioInServer =  user.getName() + "/" + portfolio_originalFileName;
-		String imageInServer =  user.getName() + "/" + photo_originalFileName;
-		
+		ue.setStringID("POST-PROFILE");
+		// WTF!!!
+		String portfolioInServer = "/" + user.getName() + "/" + portfolio_originalFileName;
+		String imageInServer = "/" + user.getName() + "/" + photo_originalFileName;
+
 		ue.setEventField(CMInfo.CM_STR, "role", role.toString());
 		ue.setEventField(CMInfo.CM_STR, "content", introduce);
 		ue.setEventField(CMInfo.CM_STR, "token", this.token);
