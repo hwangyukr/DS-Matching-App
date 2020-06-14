@@ -33,23 +33,35 @@ public class ProfileView extends Viewer {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
-	private User user;
-	private JTextField textField;
-	private JTextField textField_1;
+	private Profile profile;
+	private JTextField txt_role;
+	private JTextField txt_subrole;
+	private JButton btn_pf;
 
-	public ProfileView(ClientApp client, User user) {
+	public ProfileView(ClientApp client, Profile profile) {
 		super(client);
-		this.user = user;
+		this.profile = profile;
 		this.client = client;
+		
+		//download img file from server
+		String imgFileName = profile.getFileName();
+		client.clientStub.requestFile(imgFileName, "SERVER");
+		
+		String pfFileName = profile.getPortforlio();
+		client.clientStub.requestFile(pfFileName, "SERVER");
 
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
+		if(e.getSource().equals(btn_pf)) {
+			
+		}
 
 	}
 
+	@SuppressWarnings("null")
 	@Override
 	public void init() {
 		// TODO Auto-generated method stub
@@ -71,7 +83,7 @@ public class ProfileView extends Viewer {
 	    exit_btn.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				client.requestMyTeam(String.valueOf(user.getTeam().getId()));
+				client.requestMyTeam(String.valueOf(profile.getUser().getTeam().getId()));
 			}
 		});
 	    exit_btn.setBounds(320, 700, 100, 50);
@@ -88,7 +100,7 @@ public class ProfileView extends Viewer {
 		intro.setLineWrap(true);
 		intro.setFont(new Font("Verdana", Font.PLAIN, 12));
 		scrollPane.setViewportView(intro);
-		
+		intro.setText(profile.getContent());
 		
 		JLabel intro_label = UIConst.LABEL("Introduction");
 		intro_label.setBounds(40, 510, 200, 40);
@@ -101,35 +113,50 @@ public class ProfileView extends Viewer {
 		this.setSize(1000, 40);
 		title.setBounds(0, 30, 540, 40);
 		contentPane.add(title);
-
-		JLabel label = new JLabel("New label");
-		label.setBounds(282, 137, -73, 15);
-		contentPane.add(label);
 		
-		textField = new JTextField();
-		textField.setEnabled(false);
-		textField.setEditable(false);
-		textField.setAutoscrolls(false);
-		textField.setFont(new Font("Verdana", Font.PLAIN, 16));
-		textField.setBounds(40, 310, 170, 40);
-		contentPane.add(textField);
-		textField.setColumns(10);
+		txt_role = new JTextField();
+		txt_role.setEnabled(false);
+		txt_role.setEditable(false);
+		txt_role.setAutoscrolls(false);
+		txt_role.setFont(new Font("Verdana", Font.PLAIN, 16));
+		txt_role.setBounds(40, 310, 170, 40);
+		txt_role.setColumns(10);
 		
-		textField_1 = new JTextField();
-		textField_1.setEnabled(false);
-		textField_1.setEditable(false);
-		textField_1.setAutoscrolls(false);
-		textField_1.setFont(new Font("Verdana", Font.PLAIN, 16));
-		textField_1.setColumns(10);
-		textField_1.setBounds(300, 310, 170, 40);
-		contentPane.add(textField_1);
+		txt_subrole = new JTextField();
+		txt_subrole.setEnabled(false);
+		txt_subrole.setEditable(false);
+		txt_subrole.setAutoscrolls(false);
+		txt_subrole.setFont(new Font("Verdana", Font.PLAIN, 16));
+		txt_subrole.setColumns(10);
+		txt_subrole.setBounds(300, 310, 170, 40);
 		
+		String subrole = String.valueOf(profile.getRole());
+		if(subrole.equals("서비스UI") || subrole.equals("광고디자인") || subrole.equals("아이콘"))
+			txt_role.setText("designer");
+		else if(subrole.equals("일정관리") || subrole.equals("사용자분석"))
+			txt_role.setText("planner");
+		else
+			txt_role.setText("developer");
+		txt_subrole.setText(subrole);
+		contentPane.add(txt_role);
+		contentPane.add(txt_subrole);
 		
 		//profile image
 		JLabel img_profile = new JLabel("(No Profile Image)");
+		if(profile.getOriginalFileName()!=null) {
+			img_profile.setIcon(client.getProfileImg(profile.getOriginalFileName()));
+			img_profile.setText(null);
+		}
+		
 		img_profile.setHorizontalAlignment(SwingConstants.CENTER);
 		img_profile.setBounds(40, 80, 170, 203);
 		contentPane.add(img_profile);
+		
+		btn_pf = UIConst.BUTTON("Portfolio", UIConst.BUTTON_LOGIN);
+		btn_pf.setBounds(300, 80, 170, 40);
+		btn_pf.setFont(new Font("Verdana", Font.PLAIN, 16));
+		
+		contentPane.add(btn_pf);
 		setSize(UIConst.WIDTH, UIConst.HEIGHT);
 	}
 }

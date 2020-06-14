@@ -178,7 +178,7 @@ public class ClientEventHandler implements CMAppEventHandler {
                     if(success.equals("1")) {
                     	String profile = ue.getEventField(CMInfo.CM_STR, "profile");
                     	Profile profileObj = objectMapper.readValue(profile, Profile.class);
-                    	client.ChangeView(new ProfileView(client, profileObj.getUser()));
+                    	client.ChangeView(new ProfileView(client, profileObj));
                     }
                     else {
                         client.print("Get User Failed");
