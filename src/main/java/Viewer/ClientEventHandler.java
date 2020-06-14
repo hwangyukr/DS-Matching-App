@@ -197,6 +197,16 @@ public class ClientEventHandler implements CMAppEventHandler {
             	client.print(msg);
                 client.requestMyTeam(team_id);
             }
+
+            if(ue.getStringID().equals("APPLY-TEAM-REPLY")) {
+                String success = ue.getEventField(CMInfo.CM_INT, "success");
+                client.print("APPLY TEAM SUCCESS : " + success);
+                if(success.equals("1")) {
+                    JOptionPane.showMessageDialog(null, "팀 가입 요청 Success");
+                } else {
+                    JOptionPane.showMessageDialog(null, "팀 가입 요청 Fail");
+                }
+            }
             break;
             
         default:

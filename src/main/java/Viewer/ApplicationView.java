@@ -36,7 +36,8 @@ public class ApplicationView extends Viewer {
 				client.requestProcessApplication(userid, teamid);
 			}
 			else { // Show
-				
+				String userid = ((JButton)e.getSource()).getName();
+				client.requestGetUser(userid);
 			}
 		}
 	}

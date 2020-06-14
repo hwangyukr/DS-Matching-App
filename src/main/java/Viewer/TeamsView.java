@@ -75,7 +75,7 @@ public class TeamsView extends Viewer implements MouseListener {
       
       JPanel panel_team = new JPanel();
       panel_team.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
-      panel_team.setBounds(12, 10, 362, 176);
+      panel_team.setBounds(30, 70, UIConst.WIDTH-60, 180);
       contentPane.add(panel_team);
       panel_team.setLayout(null);
 
@@ -109,12 +109,12 @@ public class TeamsView extends Viewer implements MouseListener {
       //일단 라벨만 붙혀놈
       JLabel lb_image = new JLabel("profile image");
       lb_image.setIcon(null);
-      lb_image.setBounds(12, 20, 101, 133);
+      lb_image.setBounds(30, 20, 101, 133);
       panel_team.add(lb_image);
       
       /***팀 목록*****/
       JScrollPane scrollPane = new JScrollPane();
-      scrollPane.setBounds(12, 227, 362, 244);
+      scrollPane.setBounds(30, 260, UIConst.WIDTH-60, 244);
       contentPane.add(scrollPane);
 
       list = new JList<String>();
@@ -134,7 +134,7 @@ public class TeamsView extends Viewer implements MouseListener {
       btn_reg = new JButton("팀 가입");
       btn_reg.setFont(new Font("굴림", Font.PLAIN, 16));
       btn_reg.addActionListener(this);
-      btn_reg.setBounds(267, 494, 107, 37);
+      btn_reg.setBounds(30, 760, UIConst.WIDTH-60, 200);
       btn_reg.setVisible(false);
       contentPane.add(btn_reg);
       
@@ -181,7 +181,7 @@ public class TeamsView extends Viewer implements MouseListener {
       table.getColumnModel().getColumn(2).setResizable(false);
       table.setCellSelectionEnabled(true);
       table.setColumnSelectionAllowed(true);
-      table.setBounds(22, 481, 270, 200);
+      table.setBounds(30, 520, UIConst.WIDTH-60, 75);
       
    }
 
