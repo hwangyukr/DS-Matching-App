@@ -103,14 +103,15 @@ public class TeamHandler<T> {
         TokenProvider.TokenResult validResult = getUserInfo(ue);
         if(validResult == null) return;
 
-        String teamName = ue.getEventField(CMInfo.CM_STR, "team_name");
-        if(teamName == null) {
+        Long teamId = Long.valueOf(ue.getEventField(CMInfo.CM_LONG, "team_id"));
+
+        if(teamId == null) {
             handleError(new Result("입력값을 확인하세요", false), ue);
             return;
         }
 
         Result result = new Result();
-        Team team = teamService.getTeam(teamName, result);
+        Team team = teamService.getTeam(teamId, result);
 
         /*
             result값이 false이면 그에 대한 에러 메시지 처리
