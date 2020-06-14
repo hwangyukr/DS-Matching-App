@@ -119,10 +119,12 @@ public class ClientApp extends JFrame {
 		pack ();
 	}
 	
-	public void requestSignUp(String name, String id, String pw, Role role, String introduce) {
+	public void requestSignUp(String name, String id, String pw) {
 		CMUserEvent ue = new CMUserEvent();
 		CMInteractionInfo info = clientStub.getCMInfo().getInteractionInfo();
 		CMUser user = info.getMyself();
+
+		clientStub.loginCM("kongee", "0000");
 		ue.setStringID("SIGN-UP");
 		
 		System.out.println("name : " + name);
@@ -131,12 +133,11 @@ public class ClientApp extends JFrame {
 		
 		ue.setEventField(CMInfo.CM_STR, "email", id);
 		ue.setEventField(CMInfo.CM_STR, "password", pw);
-		ue.setEventField(CMInfo.CM_STR, "username", name);
-		
-		
-		ue.setEventField(CMInfo.CM_STR, "role", role.toString());
-		ue.setEventField(CMInfo.CM_STR, "introduce", introduce);
-		
+		ue.setEventField(CMInfo.CM_STR, "name", name);
+
+		this.email = id;
+		this.pw = pw;
+
 		ue.setSender(user.getName());
 		ue.setDistributionGroup(user.getCurrentGroup());
 		ue.setDistributionSession(user.getCurrentSession());
@@ -247,15 +248,20 @@ public class ClientApp extends JFrame {
 		
 	}
 
-	public void requestLoginWithParam(String id, String pw2) {
+	public void requestLoginWithParam(String email, String pw) {
 		// TODO Auto-generated method stub
 		CMUserEvent ue = new CMUserEvent();
 		CMInteractionInfo info = clientStub.getCMInfo().getInteractionInfo();
 		CMUser user = info.getMyself();
+
+		clientStub.loginCM("kongee", "0000");
 		ue.setStringID("SIGN-IN");
 
 		ue.setEventField(CMInfo.CM_STR, "email", email);
 		ue.setEventField(CMInfo.CM_STR, "password", pw);
+
+		System.out.println(email + " " + pw);
+
 		ue.setSender(user.getName());
 		ue.setDistributionGroup(user.getCurrentGroup());
 		ue.setDistributionSession(user.getCurrentSession());

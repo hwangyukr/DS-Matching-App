@@ -50,6 +50,12 @@ public class ClientEventHandler implements CMAppEventHandler {
             case CMInfo.CM_USER_EVENT:
                 CMUserEvent ue = (CMUserEvent) cmEvent;
 
+                if(ue.getStringID().equals("SIGN-UP-REPLY")) {
+                    int success = Integer.valueOf(ue.getEventField(CMInfo.CM_INT, "success"));
+                    if(success == 1) {
+                    }
+                }
+
                 if(ue.getStringID().equals("SIGN-IN-REPLY")) {
                     int success = Integer.valueOf(ue.getEventField(CMInfo.CM_INT, "success"));
                     String token = ue.getEventField(CMInfo.CM_STR, "token");

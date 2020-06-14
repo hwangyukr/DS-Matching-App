@@ -9,7 +9,9 @@ public class Profile {
     private String content;
     private String photo;
     private String portforlio;
+    private String originalPortfolio;
     private String fileName;
+    private String originalFileName;
 
     public String getFileName() {
         return fileName;

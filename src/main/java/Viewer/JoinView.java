@@ -32,11 +32,13 @@ public class JoinView extends Viewer {
 	public void actionPerformed(ActionEvent e) {
 		
 		if(e.getSource() == button) {
+
 			client.print("Write your profile");
 			String name = textField.getText();
 			String id = textField_1.getText();
 			String pw = textField_2.getText();
-			
+			System.out.println(name + " " + id + " " + pw);
+			client.requestSignUp(name, id, pw);
 			client.ChangeView(new JoinProfileView(client, name, id, pw));
 		}
 		

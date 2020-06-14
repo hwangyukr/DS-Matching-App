@@ -108,12 +108,10 @@ public class JoinProfileView extends Viewer {
 		if (e.getSource() == done_btn) {
 			String introduce = intro.getText();
 			client.print("your Role : " + role);
-			client.requestLoginWithParam(id, pw);
-			
-			while(client.token != null) {
-			}
-			client.createProfileRequest(role, introduce, photo_pathFileName, photo_originalFileName, portfolio_pathFileName, portfolio_originalFileName);
+			client.createProfileRequest(
+					Role.앱개발, introduce, photo_pathFileName, photo_originalFileName, portfolio_pathFileName, portfolio_originalFileName);
 		}
+
 		if (e.getSource() == exit_btn) {
 			client.ChangeView(new JoinView(client));
 		}
@@ -194,6 +192,7 @@ public class JoinProfileView extends Viewer {
 		JTextArea intro = new JTextArea("");
 		intro.setBounds(60, 550, UIConst.WIDTH - 120, 100);
 		this.add(intro);
+		this.intro = intro;
 
 		done_btn = UIConst.BUTTON("Done", UIConst.BUTTON_LOGIN);
 		done_btn.setBounds(100, 700, 100, 50);
