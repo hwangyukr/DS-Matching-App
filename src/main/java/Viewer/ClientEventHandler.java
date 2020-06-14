@@ -68,7 +68,7 @@ public class ClientEventHandler implements CMAppEventHandler {
                 System.out.println("일단 성공했니? " + success);
                 if(success.equals("1")) {
                     client.print("Login Success");
-                    client.requestLogin();
+                    client.requestLogin("0");
                 }
             }
             if(ue.getStringID().equals("SIGN-IN-REPLY")) {
