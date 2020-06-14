@@ -98,8 +98,8 @@ public class ClientApp extends JFrame {
 		System.out.println("requestConnection email : " + this.email);
 		System.out.println("requestConnection pw : " + this.pw);
 	}
-	
-	public void requestLogin() {
+
+	public void requestLogin(String tag) {
 		CMUserEvent ue = new CMUserEvent();
 		CMInteractionInfo info = clientStub.getCMInfo().getInteractionInfo();
 		CMUser user = info.getMyself();
@@ -109,7 +109,8 @@ public class ClientApp extends JFrame {
 		System.out.println("requestLogin pw : " + pw);
 		ue.setEventField(CMInfo.CM_STR, "email", email);
 		ue.setEventField(CMInfo.CM_STR, "password", pw);
-		
+		ue.setEventField(CMInfo.CM_STR, "tag", tag);
+
 		ue.setSender(user.getName());
 		ue.setDistributionGroup(user.getCurrentGroup());
 		ue.setDistributionSession(user.getCurrentSession());
