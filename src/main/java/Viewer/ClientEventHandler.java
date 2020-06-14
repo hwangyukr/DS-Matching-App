@@ -118,7 +118,7 @@ public class ClientEventHandler implements CMAppEventHandler {
                     String msg = ue.getEventField(CMInfo.CM_STR, "msg");
                     if(success.equals("1")) {
                         client.print("posted successfully");
-                        client.reqeustMyTeam(String.valueOf(client.my_team.getId()));
+                        client.requestMyTeam(String.valueOf(client.my_team.getId()));
 
                     }
                     else client.print("post failed" + msg);
