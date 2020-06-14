@@ -252,8 +252,6 @@ public class ClientApp extends JFrame {
 		this.print("GET TEAM REQEUSTED : " + team_id);
 	}
 
-	
-
 	public void requestGetUser(String user_id) {
 		CMUserEvent ue = GetUE("GET-PROFILE");
 		ue.setEventField(CMInfo.CM_LONG, "user_id", user_id);

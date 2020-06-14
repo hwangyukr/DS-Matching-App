@@ -21,11 +21,12 @@ public class ProfileService {
     public Profile postProfile(
     		TokenProvider.TokenResult validResult, 
     		Result result, Role role, String content, 
-    		String photo, String portforlio, String fileName, String originalFileName) {
-    	
+    		String photo, String portforlio, String originalPortfolio, String fileName, String originalFileName) {
+
         User user = new User.Builder()
                 .id(validResult.getId())
                 .build();
+
         Profile profile = new Profile.Builder()
         		.user(user)
         		.role(role)
@@ -33,8 +34,10 @@ public class ProfileService {
         		.photo(photo)
         		.portforlio(portforlio)
         		.fileName(fileName)
+				.originalPortforlio(originalPortfolio)
         		.originalFileName(originalFileName)
         		.build();
+
         profileRepository.postProfile(profile, result, cmInfo);
     	return profile;
     }
@@ -55,4 +58,6 @@ public class ProfileService {
     public void deleteProfile(Long userId, Result result) {
     	profileRepository.deleteProfile(userId, result, cmInfo);
     }
+
+
 }

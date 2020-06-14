@@ -205,6 +205,12 @@ public class Client {
                     ue.setEventField(CMInfo.CM_STR, "token", client.token);
                     cmClientStub.send(ue, "SERVER");
                     break;
+                case 20:
+                    ue.setStringID("GET-PROFILE");
+                    ue.setEventField(CMInfo.CM_STR, "token", client.token);
+                    ue.setEventField(CMInfo.CM_LONG, "user_id", "15");
+                    cmClientStub.send(ue, "SERVER");
+                    break;
                 case 0:
                     System.exit(0);
                 default:
