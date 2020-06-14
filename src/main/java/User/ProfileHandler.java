@@ -45,6 +45,7 @@ public class ProfileHandler {
         
         Long userId;
         String userId_str = ue.getEventField(CMInfo.CM_LONG, "user_id");
+
         if (userId_str == null) {
         	userId = validResult.getId();
         }
@@ -54,7 +55,7 @@ public class ProfileHandler {
         
         Result result = new Result();
         Profile profile = profileService.getProfile(userId, result);
-        
+
         if (!result.isSuccess()) {
             handleError(result, ue);
             return;
@@ -81,7 +82,9 @@ public class ProfileHandler {
         String content = ue.getEventField(CMInfo.CM_STR, "content");
         String photo = ue.getEventField(CMInfo.CM_STR, "photo");
         String portforlio = ue.getEventField(CMInfo.CM_STR, "portforlio");
+        String originalPortfolio = ue.getEventField(CMInfo.CM_STR, "original_portfolio");
         String fileName = ue.getEventField(CMInfo.CM_STR, "file_name");
+        String originalFileName = ue.getEventField(CMInfo.CM_STR, "original_file_name");
         if (roleName == null) {
         	handleError(new Result("입력값을 확인하세요", false), ue);
         	return;
@@ -96,7 +99,7 @@ public class ProfileHandler {
         }
         
         Result result = new Result();
-        Profile profile = profileService.postProfile(validResult, result, role, content, photo, portforlio, fileName);
+        Profile profile = profileService.postProfile(validResult, result, role, content, photo, portforlio, originalPortfolio, fileName, originalFileName);
         
         if (!result.isSuccess()) {
             handleError(result, ue);
@@ -127,6 +130,7 @@ public class ProfileHandler {
         String photo = ue.getEventField(CMInfo.CM_STR, "photo");
         String portforlio = ue.getEventField(CMInfo.CM_STR, "portforlio");
         String fileName = ue.getEventField(CMInfo.CM_STR, "file_name");
+        String originalFileName = ue.getEventField(CMInfo.CM_STR, "original_file_name");
         
         Result result = new Result();
         Profile profile = profileService.getProfile(userId, result);
@@ -165,7 +169,11 @@ public class ProfileHandler {
         	fileName = profile.getFileName();
         }
         
-        Long id = profileService.putProfile(profile, result, role, content, photo, portforlio, fileName);
+        if (originalFileName == null) {
+        	originalFileName = profile.getOriginalFileName();
+        }
+        
+        Long id = profileService.putProfile(profile, result, role, content, photo, portforlio, fileName, originalFileName);
         if(!result.isSuccess()) {
             handleError(result, ue);
             return;

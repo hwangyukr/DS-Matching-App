@@ -2,6 +2,7 @@ package Viewer;
 
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
+import java.awt.FileDialog;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -16,33 +17,68 @@ import java.awt.TextArea;
 import java.awt.Choice;
 import javax.swing.SwingConstants;
 import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JFileChooser;
 import javax.swing.JRadioButtonMenuItem;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
 import javax.swing.JMenuItem;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
+
 import User.*;
+import Viewer.MyTeamView;
+import Viewer.UIConst;
 
 public class ProfileView extends Viewer {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
-	private User user;
-
-	public ProfileView(ClientApp client, User user) {
+	private Profile profile;
+	private JTextField txt_role;
+	private JTextField txt_subrole;
+	private JButton btn_pf;
+	private JFileChooser jfc;
+	File pf_src = null;
+	
+	public ProfileView(ClientApp client, Profile profile) {
 		super(client);
-		this.user = user;
+		this.profile = profile;
 		this.client = client;
+		
+		//download files from server
+		String imgFileName = profile.getFileName();
+		client.clientStub.requestFile(imgFileName, "SERVER");
+			
+		String pfFileName = profile.getPortforlio();
+		if((pfFileName!=null) && !client.clientStub.requestFile(pfFileName, "SERVER")) {
+			pf_src = new File("./client-file-path/"+ profile.getOriginalPortfolio());
+		}
+		
+		String imgOriginalFileName = profile.getOriginalFileName();
+		System.out.println(imgFileName);
+		System.out.println(imgOriginalFileName);
 
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
+		if(e.getSource().equals(btn_pf)) {
+			if(jfc!= null) {
+				jfc = new JFileChooser(pf_src);
+				jfc.showSaveDialog(this);
+			}
+			else
+				client.print("no uploaded portfolio");
+		}
 
 	}
 
+	@SuppressWarnings("null")
 	@Override
 	public void init() {
 		// TODO Auto-generated method stub
@@ -51,55 +87,94 @@ public class ProfileView extends Viewer {
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(null);
 
-		JLabel lblNewLabel = new JLabel("\uCE74\uD14C\uACE0\uB9AC");
-		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		lblNewLabel.setBounds(66, 116, 57, 15);
-		contentPane.add(lblNewLabel);
+		JLabel role_label = UIConst.LABEL("Role");
+	    role_label.setBounds(40, 260, 200, 40);
+	    contentPane.add(role_label);
+	      
+	    JLabel role_label2 = UIConst.LABEL("Subrole");
+	    role_label2.setBounds(300, 260, 200, 40);
+		contentPane.add(role_label2);
+	     
 
-		JButton btnNewButton_1 = new JButton("닫기");
-		btnNewButton_1.addMouseListener(new MouseAdapter() {
+	    JButton exit_btn = UIConst.BUTTON("Cancle", UIConst.BUTTON_EXIT);
+	    exit_btn.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				client.ChangeView(new MyTeamView(client, user.getTeam()));
+				client.requestMyTeam(String.valueOf(profile.getUser().getTeam().getId()));
 			}
 		});
-		btnNewButton_1.setBounds(260, 500, 97, 23);
-		contentPane.add(btnNewButton_1);
+	    exit_btn.setBounds(320, 700, 100, 50);
+		
+		contentPane.add (exit_btn);
+		
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBounds(40, 556, 460, 119);
+		contentPane.add(scrollPane);
 
-		TextArea textArea = new TextArea();
-		textArea.setEnabled(false);
-		textArea.setEditable(false);
-		textArea.setBounds(34, 204, 313, 279);
-		contentPane.add(textArea);
+		JTextArea intro = new JTextArea("");
+		intro.setEnabled(false);
+		intro.setEditable(false);
+		intro.setLineWrap(true);
+		intro.setFont(new Font("Verdana", Font.PLAIN, 12));
+		scrollPane.setViewportView(intro);
+		intro.setText(profile.getContent());
+		
+		JLabel intro_label = UIConst.LABEL("Introduction");
+		intro_label.setBounds(40, 510, 200, 40);
+		contentPane.add(intro_label);
 
-		JLabel lblNewLabel_1 = new JLabel("\uC138\uBD80 \uCE74\uD14C\uACE0\uB9AC");
-		lblNewLabel_1.setHorizontalAlignment(SwingConstants.CENTER);
-		lblNewLabel_1.setBounds(236, 116, 90, 15);
-		contentPane.add(lblNewLabel_1);
-
-		JLabel lblNewLabel_2 = new JLabel("\uC790\uAE30\uC18C\uAC1C");
-		lblNewLabel_2.setBounds(34, 173, 57, 15);
-		contentPane.add(lblNewLabel_2);
-
-		JLabel lblNewLabel_3 = new JLabel("PROFILE");
-		lblNewLabel_3.setHorizontalAlignment(SwingConstants.CENTER);
-		lblNewLabel_3.setFont(new Font("Impact", Font.ITALIC, 28));
-		lblNewLabel_3.setBounds(66, 50, 242, 44);
-		contentPane.add(lblNewLabel_3);
-
-		JLabel lblNewLabel_4 = new JLabel("category");
-		lblNewLabel_4.setHorizontalAlignment(SwingConstants.CENTER);
-		lblNewLabel_4.setBounds(34, 137, 128, 20);
-		contentPane.add(lblNewLabel_4);
-
-		JLabel label = new JLabel("New label");
-		label.setBounds(282, 137, -73, 15);
-		contentPane.add(label);
-
-		JLabel lblNewLabel_4_1 = new JLabel("detailed category");
-		lblNewLabel_4_1.setHorizontalAlignment(SwingConstants.CENTER);
-		lblNewLabel_4_1.setBounds(219, 137, 128, 20);
-		contentPane.add(lblNewLabel_4_1);
-		setSize(400, 600);
+		JLabel title = new JLabel("<html><div style='color: #336644;'> Your Profile </div></html>",
+		SwingConstants.CENTER);
+		Font font = new Font("    ", Font.PLAIN, 30);
+		title.setFont(font);
+		this.setSize(1000, 40);
+		title.setBounds(0, 30, 540, 40);
+		contentPane.add(title);
+		
+		txt_role = new JTextField();
+		txt_role.setEnabled(false);
+		txt_role.setEditable(false);
+		txt_role.setAutoscrolls(false);
+		txt_role.setFont(new Font("Verdana", Font.PLAIN, 16));
+		txt_role.setBounds(40, 310, 170, 40);
+		txt_role.setColumns(10);
+		
+		txt_subrole = new JTextField();
+		txt_subrole.setEnabled(false);
+		txt_subrole.setEditable(false);
+		txt_subrole.setAutoscrolls(false);
+		txt_subrole.setFont(new Font("Verdana", Font.PLAIN, 16));
+		txt_subrole.setColumns(10);
+		txt_subrole.setBounds(300, 310, 170, 40);
+		
+		String subrole = String.valueOf(profile.getRole());
+		if(subrole.equals("서비스UI") || subrole.equals("광고디자인") || subrole.equals("아이콘"))
+			txt_role.setText("designer");
+		else if(subrole.equals("일정관리") || subrole.equals("사용자분석"))
+			txt_role.setText("planner");
+		else
+			txt_role.setText("developer");
+		txt_subrole.setText(subrole);
+		contentPane.add(txt_role);
+		contentPane.add(txt_subrole);
+		
+		//profile image
+		JLabel img_profile = new JLabel("(No Profile Image)");
+		if(profile.getOriginalFileName()!=null) {
+			img_profile.setIcon(client.getProfileImg(profile.getOriginalFileName()));
+			img_profile.setText(null);
+		}
+		
+		img_profile.setHorizontalAlignment(SwingConstants.CENTER);
+		img_profile.setBounds(40, 80, 170, 203);
+		contentPane.add(img_profile);
+		
+		btn_pf = UIConst.BUTTON("Portfolio", UIConst.BUTTON_LOGIN);
+		btn_pf.setBounds(300, 80, 170, 40);
+		btn_pf.setFont(new Font("Verdana", Font.PLAIN, 16));
+		btn_pf.addActionListener(this);
+		
+		contentPane.add(btn_pf);
+		setSize(UIConst.WIDTH, UIConst.HEIGHT);
 	}
 }

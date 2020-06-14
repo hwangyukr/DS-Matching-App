@@ -17,13 +17,14 @@ import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
+import javax.swing.plaf.basic.BasicOptionPaneUI;
 import javax.swing.table.DefaultTableModel;
 
 import Team.Role;
 import User.User;
 
 
-public class TeamCreateView extends Viewer{/**
+public class TeamCreateView extends Viewer implements ActionListener {/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
@@ -39,24 +40,42 @@ public class TeamCreateView extends Viewer{/**
 	private JLabel lb_planner;
 	private JButton btn_cancle;
 	private JButton btn_create;
-	private User user;
 	private Map<Role, Integer> rolelimits;
+	JLabel lb_teamName;
 
-	public TeamCreateView(ClientApp client, User user) {
+	public TeamCreateView(ClientApp client) {
 		super(client);
 		rolelimits = new HashMap<Role, Integer>();
-		this.user = user;
 		init();
 	}
 	
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		JButton b = (JButton) e.getSource();
+
+		switch(b.getText()) {
+			case "생성":
+				String teamName = lb_teamName.getText();
+				int[] limits = new int[9];
+				for(int i=0; i<9; i++)
+					limits[i] = (int) table.getValueAt(i, 1);
+				Role[] roles = Role.values();
+				for(int i=0; i<9; i++)
+					rolelimits.put(roles[i], limits[i]);
+				client.requestCreateTeam(rolelimits, teamName);
+
+			case "취소":
+				client.requestTeamList();		//TeamsView로 이동
+				break;
+		}
 	}
 
 	@Override
 	public void init() {
 		// TODO Auto-generated method stub
+		contentPane = this;
+
 		setBounds(100, 100, 450, 300);
 		this.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setSize(400,600);
@@ -77,7 +96,7 @@ public class TeamCreateView extends Viewer{/**
 		edit_teamName.setFont(new Font("굴림", Font.PLAIN, 14));
 		edit_teamName.setColumns(10);
 		
-		JLabel lb_teamName = new JLabel("\uD300 \uC774\uB984");
+		lb_teamName = new JLabel("\uD300 \uC774\uB984");
 		lb_teamName.setBounds(134, 9, 64, 19);
 		panel.add(lb_teamName);
 		lb_teamName.setFont(new Font("굴림", Font.PLAIN, 16));
@@ -92,8 +111,7 @@ public class TeamCreateView extends Viewer{/**
 		edit_subject.setBounds(196, 36, 166, 94);
 		edit_subject.setLineWrap( true );
 		panel.add(edit_subject);
-		
-		
+
 		table = new JTable();
 		table.setFont(new Font("굴림", Font.PLAIN, 16));
 		table.setRowHeight(35);
@@ -127,10 +145,9 @@ public class TeamCreateView extends Viewer{/**
 				return columnEditables[column];
 			}
 		});
+
+
 		table.getColumnModel().getColumn(0).setResizable(false);
-		table.getColumnModel().getColumn(0).setPreferredWidth(200);
-		table.getColumnModel().getColumn(0).setMinWidth(20);
-		table.getColumnModel().getColumn(1).setPreferredWidth(40);
 		table.setBounds(137, 179, 237, 316);
 		contentPane.add(table);
 		
@@ -161,34 +178,16 @@ public class TeamCreateView extends Viewer{/**
 		lb_planner.setBounds(12, 424, 125, 70);
 		contentPane.add(lb_planner);
 		
+		
 		btn_cancle = new JButton("취소");
 		btn_cancle.setBounds(283, 505, 91, 48);
+		btn_cancle.addActionListener(this);
 		contentPane.add(btn_cancle);
 		
 		btn_create = new JButton("생성");
 		btn_create.setBounds(167, 505, 91, 48);
+		btn_create.addActionListener(this);
 		contentPane.add(btn_create);
 	}
-	
-	private class ButtonActionListener implements ActionListener {
-		public void actionPerformed(ActionEvent e) {
-			JButton b = (JButton) e.getSource();
-			
-			switch(b.getText()) {
-			case "생성":
-				int[] limits = new int[9];
-				for(int i=0; i<9; i++)
-					limits[i] = (int) table.getValueAt(i, 1);
-				Role[] roles = Role.values();
-				for(int i=0; i<9; i++)
-					rolelimits.put(roles[i],limits[i]);
-				client.requestCreateTeam(rolelimits);
-				client.print("팀이 생성되었습니다.");				
-				
-			case "취소":
-				client.requestGetTeams();		//TeamsView로 이동
-				break;
-			}
-		}
-	}
+
 }

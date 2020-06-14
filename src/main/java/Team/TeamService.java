@@ -30,26 +30,27 @@ public class TeamService {
         return teamRepository.getTeams(result, cmInfo);
     }
 
-    public Team getTeam(String teamName, Result result) {
-        String query = teamRepository.getTeamQueryTeamName(teamName);
+    public Team getTeam(Long teamId, Result result) {
+        String query = teamRepository.getTeamQueryTeamId(teamId);
         Team team = teamRepository.getTeamByName(query, result, cmInfo);
         List<Board> boards = boardRepository.getBoards(team.getId(), result, cmInfo);
         team.setBoards(boards);
         return team;
     }
 
-    public Team createTeam(TokenProvider.TokenResult validResult, Result result, String teamName, String fileName, Map<Role, Integer> limit) {
+    public Team createTeam(TokenProvider.TokenResult validResult, Result result, TeamDto dto) {
 
         User user = new User.Builder()
                 .id(validResult.getId())
                 .build();
 
         Team team = new Team.Builder()
-                .name(teamName)
+                .name(dto.getName())
                 .teamLeader(user)
                 .teamRoles(null)
-                .roleLimits(limit)
-                .fileName(fileName)
+                .roleLimits(dto.getRoleLimits())
+                .fileName(dto.getFileName())
+                .originalFileName(dto.getOriginalFileName())
                 .build();
 
         teamRepository.saveTeam(team, result, cmInfo);

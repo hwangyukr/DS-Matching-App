@@ -1,8 +1,9 @@
 import Team.*;
-import User.User;
+import User.*;
 import Viewer.MyTeamView;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.ac.konkuk.ccslab.cm.event.CMEvent;
 import kr.ac.konkuk.ccslab.cm.event.CMFileEvent;
@@ -50,6 +51,12 @@ public class ClientEventHandler implements CMAppEventHandler {
             case CMInfo.CM_USER_EVENT:
                 CMUserEvent ue = (CMUserEvent) cmEvent;
 
+                if(ue.getStringID().equals("SIGN-UP-REPLY")) {
+                    int success = Integer.valueOf(ue.getEventField(CMInfo.CM_INT, "success"));
+                    if(success == 1) {
+                    }
+                }
+
                 if(ue.getStringID().equals("SIGN-IN-REPLY")) {
                     int success = Integer.valueOf(ue.getEventField(CMInfo.CM_INT, "success"));
                     String token = ue.getEventField(CMInfo.CM_STR, "token");
@@ -96,7 +103,7 @@ public class ClientEventHandler implements CMAppEventHandler {
                         e.printStackTrace();
                     }
                     String fileName = team.getFileName();
-                    clientStub.requestFile("/1kongee/ss.jpg", "SERVER");
+                    clientStub.requestFile("/kongee/ss.jpg", "SERVER");
                     //clientStub.requestFile(fileName, "SERVER");
                 }
                 if(ue.getStringID().equals("GET-TEAMS-REPLY")) {
@@ -119,7 +126,31 @@ public class ClientEventHandler implements CMAppEventHandler {
                 	  } catch (JsonProcessingException e) {
                 	      e.printStackTrace();
                 	  }
-                	}
+                }
+
+                if(ue.getStringID().equals("GET-PROFILE-REPLY")) {
+
+                    int success = Integer.valueOf(ue.getEventField(CMInfo.CM_INT, "success"));
+                    if(success == 1) {
+                        Profile profile = null;
+                        try {
+                            String ret = ue.getEventField(CMInfo.CM_STR, "profile");
+                            profile =
+                                    objectMapper.readValue(ret, Profile.class);
+                        } catch (JsonMappingException e) {
+                            e.printStackTrace();
+                        } catch (JsonProcessingException e) {
+                            e.printStackTrace();
+                        }
+                        System.out.println(profile);
+                        String fileName = profile.getFileName();
+                        clientStub.requestFile("kongee/ss.jpg", "SERVER");
+                    }
+                    String msg = ue.getEventField(CMInfo.CM_STR, "msg");
+                    System.out.println();
+
+                }
+
 
                 break;
             default:
