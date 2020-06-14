@@ -43,7 +43,7 @@ public class UserRepository {
             int ret = statement.executeUpdate(query);
             if(ret != 1) throw new SQLException();
 
-            query = "select * from user where email = '" + user.getEmail() + "';";
+            query = "select * from user where user_email = '" + user.getEmail() + "';";
             ResultSet resultSet = CMDBManager.sendSelectQuery(query, cmInfo);
 
             while(resultSet.next()) {
