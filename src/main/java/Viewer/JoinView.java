@@ -79,7 +79,7 @@ public class JoinView extends Viewer {
 		name_fld.setBounds(125, 365, 300, 30);
 		this.add (name_fld);
 		
-		id_fld = new JPasswordField();
+		id_fld = new JTextField();
 		id_fld.setBounds(125, 400, 300, 30);
 		this.add (id_fld);
 		

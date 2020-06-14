@@ -12,6 +12,7 @@ import Team.Application;
 import Team.Team;
 
 import kr.ac.konkuk.ccslab.cm.event.CMEvent;
+import kr.ac.konkuk.ccslab.cm.event.CMFileEvent;
 import kr.ac.konkuk.ccslab.cm.event.CMSessionEvent;
 import kr.ac.konkuk.ccslab.cm.event.CMUserEvent;
 import kr.ac.konkuk.ccslab.cm.event.CMUserEventField;
@@ -19,43 +20,42 @@ import kr.ac.konkuk.ccslab.cm.event.handler.CMAppEventHandler;
 import kr.ac.konkuk.ccslab.cm.info.CMInfo;
 import kr.ac.konkuk.ccslab.cm.stub.CMClientStub;
 
-
 public class ClientEventHandler implements CMAppEventHandler {
 
 	private ClientApp client;
-    private CMClientStub clientStub;
-    private ObjectMapper objectMapper;
+	private CMClientStub clientStub;
+	private ObjectMapper objectMapper;
 
-    
-    public ClientEventHandler(ClientApp client) {
-    	this.client = client;
-        this.clientStub = client.clientStub;
-        this.objectMapper = new ObjectMapper();
-   
-    }
+	public ClientEventHandler(ClientApp client) {
+		this.client = client;
+		this.clientStub = client.clientStub;
+		this.objectMapper = new ObjectMapper();
 
-    private void processSessionEvent(CMSessionEvent event) {
-    	int id = event.getID();
-    	switch(id) {
+	}
+
+	private void processSessionEvent(CMSessionEvent event) {
+		int id = event.getID();
+		switch (id) {
 		case CMSessionEvent.LOGIN_ACK:
-			if(event.isValidUser() != 0) {
+			if (event.isValidUser() != 0) {
 				client.print("Server Connected !");
 				JOptionPane.showMessageDialog(null, "Server Connected Successfully");
 				client.requestLogin("1");
-			}
-			else { // 0 is login fail
+			} else { // 0 is login fail
 				client.print("Connection Refused");
 				JOptionPane.showMessageDialog(null, "Connection Failed ..");
 			}
 			break;
 		}
-    }
-    
-    @Override
+	}
+
+	@Override
     public void processEvent(CMEvent cmEvent)  {
 
         switch (cmEvent.getType()) {
     
+        
+        	
         case CMInfo.CM_SESSION_EVENT:
         	processSessionEvent((CMSessionEvent) cmEvent);
         	break;
@@ -194,9 +194,25 @@ public class ClientEventHandler implements CMAppEventHandler {
             	String team_id = ue.getEventField(CMInfo.CM_STR, "team_id");
             	client.requestMyTeam(team_id);
             }
+            
+            if(ue.getStringID().equals("POST-PROFILE-REPLY")) {
+            	
+                       String success = ue.getEventField(CMInfo.CM_INT, "success");
+                       client.print("GET-PROFILE-REPLY : " + success);
+                       
+                       if(success.equals("1")) {
+                            client.requestTeamList();
+                       }
+                       else {
+                            client.print("Get User Failed");
+                       }
+                }
+            
             break;
             
-        default:
+            
+            
+        	default:
             return;
         }
     }

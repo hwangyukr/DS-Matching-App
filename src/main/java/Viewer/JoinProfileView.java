@@ -149,8 +149,7 @@ public class JoinProfileView extends Viewer {
 		if (e.getSource() == done_btn) {
 			String introduce = intro.getText();
 			client.print("your Role : " + role);
-			client.createProfileRequest(
-					role, introduce, photo_pathFileName, photo_originalFileName, portfolio_pathFileName, portfolio_originalFileName);
+			client.createProfileRequest(role, introduce, photo_pathFileName, photo_originalFileName, portfolio_pathFileName, portfolio_originalFileName);
 		}
 
 		if (e.getSource() == exit_btn) {
