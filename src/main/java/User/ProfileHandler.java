@@ -167,6 +167,10 @@ public class ProfileHandler {
         	fileName = profile.getFileName();
         }
         
+        if (originalFileName == null) {
+        	originalFileName = profile.getOriginalFileName();
+        }
+        
         Long id = profileService.putProfile(profile, result, role, content, photo, portforlio, fileName, originalFileName);
         if(!result.isSuccess()) {
             handleError(result, ue);
