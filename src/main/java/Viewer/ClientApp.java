@@ -51,6 +51,8 @@ public class ClientApp extends JFrame {
     
     public Team my_team = null;
     public ObjectMapper objectMapper = new ObjectMapper();
+
+    int state = 0; // state가 1이면 Login 2이면 join
     
     
 	public ClientApp() {

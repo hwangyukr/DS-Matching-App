@@ -38,6 +38,7 @@ public class JoinView extends Viewer {
 			String id = textField_1.getText();
 			String pw = textField_2.getText();
 			System.out.println(name + " " + id + " " + pw);
+			client.state = 2;
 			client.requestSignUp(name, id, pw);
 			client.ChangeView(new JoinProfileView(client, name, id, pw));
 		}

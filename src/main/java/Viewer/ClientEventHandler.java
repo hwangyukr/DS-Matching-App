@@ -41,7 +41,7 @@ public class ClientEventHandler implements CMAppEventHandler {
 			if(event.isValidUser() != 0) {
 				client.print("Server Connected !");
 				JOptionPane.showMessageDialog(null, "Server Connected Successfully");
-				client.requestLogin("1");
+				if(client.state == 1)client.requestLogin("1");
 			}
 			else { // 0 is login fail
 				client.print("Connection Refused");
