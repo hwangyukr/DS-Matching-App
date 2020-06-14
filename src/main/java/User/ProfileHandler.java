@@ -82,6 +82,7 @@ public class ProfileHandler {
         String photo = ue.getEventField(CMInfo.CM_STR, "photo");
         String portforlio = ue.getEventField(CMInfo.CM_STR, "portforlio");
         String fileName = ue.getEventField(CMInfo.CM_STR, "file_name");
+        String originalFileName = ue.getEventField(CMInfo.CM_STR, "original_file_name");
         if (roleName == null) {
         	handleError(new Result("입력값을 확인하세요", false), ue);
         	return;
@@ -96,7 +97,7 @@ public class ProfileHandler {
         }
         
         Result result = new Result();
-        Profile profile = profileService.postProfile(validResult, result, role, content, photo, portforlio, fileName);
+        Profile profile = profileService.postProfile(validResult, result, role, content, photo, portforlio, fileName, originalFileName);
         
         if (!result.isSuccess()) {
             handleError(result, ue);
@@ -127,6 +128,7 @@ public class ProfileHandler {
         String photo = ue.getEventField(CMInfo.CM_STR, "photo");
         String portforlio = ue.getEventField(CMInfo.CM_STR, "portforlio");
         String fileName = ue.getEventField(CMInfo.CM_STR, "file_name");
+        String originalFileName = ue.getEventField(CMInfo.CM_STR, "original_file_name");
         
         Result result = new Result();
         Profile profile = profileService.getProfile(userId, result);
@@ -165,7 +167,7 @@ public class ProfileHandler {
         	fileName = profile.getFileName();
         }
         
-        Long id = profileService.putProfile(profile, result, role, content, photo, portforlio, fileName);
+        Long id = profileService.putProfile(profile, result, role, content, photo, portforlio, fileName, originalFileName);
         if(!result.isSuccess()) {
             handleError(result, ue);
             return;

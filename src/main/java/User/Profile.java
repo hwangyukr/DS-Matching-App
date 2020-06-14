@@ -10,6 +10,15 @@ public class Profile {
     private String photo;
     private String portforlio;
     private String fileName;
+    private String originalFileName;
+    
+    public String getOriginalFileName() {
+    	return originalFileName;
+    }
+    
+    public void setOriginalFileName(String originaFileName) {
+    	this.originalFileName = originaFileName;	
+    }
 
     public String getFileName() {
         return fileName;
@@ -79,6 +88,7 @@ public class Profile {
         private String photo;
         private String portforlio;
         private String fileName;
+        private String originalFileName;
 
         public Builder() {
         }
@@ -90,6 +100,11 @@ public class Profile {
         public Builder fileName(String fileName) {
             this.fileName = fileName;
             return this;
+        }
+        
+        public Builder originalFileName(String originalFileName) {
+        	this.originalFileName = originalFileName;
+        	return this;
         }
         
         public Builder user(User user) {
@@ -133,5 +148,6 @@ public class Profile {
         this.photo = builder.photo;
         this.portforlio = builder.portforlio;
         this.fileName = builder.fileName;
+        this.originalFileName = builder.originalFileName;
     }
 }

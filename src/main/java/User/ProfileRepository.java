@@ -30,6 +30,7 @@ public class ProfileRepository {
 				String photo = res.getString("photo");
 				String portforlio = res.getString("portforlio");
 				String fileName = res.getString("file_name");
+				String originalFileName = res.getString("original_file_name");
 				profile = new Profile.Builder()
 						.id(id)
 						.user(user)
@@ -38,6 +39,7 @@ public class ProfileRepository {
 						.photo(photo)
 						.portforlio(portforlio)
 						.fileName(fileName)
+						.originalFileName(originalFileName)
 						.build();
 			}
 		} catch (SQLException e) {
@@ -61,13 +63,14 @@ public class ProfileRepository {
             statement = dbManager.getStatement();
             connection.setAutoCommit(false);
             String query =
-            		"insert into profile(user_id, role_id, content, photo, portforlio, file_name) values (" +
+            		"insert into profile(user_id, role_id, content, photo, portforlio, file_name, original_file_name) values (" +
             				"'" + profile.getUser().getId() + "', " +
             				"'" + (profile.getRole().ordinal()+1) + "', " +
             				"'" + profile.getContent() + "', " +
             				"'" + profile.getPhoto() + "', " +
             				"'" + profile.getPortforlio() + "', " +
-            				"'" + profile.getFileName() + "');";
+            				"'" + profile.getFileName() + "', " +
+            				"'" + profile.getOriginalFileName() + "');";
 
             int ret = statement.executeUpdate(query);
             if(ret != 1) throw new SQLException();
@@ -128,6 +131,7 @@ public class ProfileRepository {
             		"photo = '" + profile.getPhoto() + "', " +
             		"portforlio = '" + profile.getPortforlio() + "', " +
             		"file_name = '" + profile.getFileName() + "' " +
+            		"original_file_name = '" + profile.getOriginalFileName() + "' " +
             		"where user_id = '" + profile.getUser().getId() + "';";
 
             int ret = statement.executeUpdate(query);
