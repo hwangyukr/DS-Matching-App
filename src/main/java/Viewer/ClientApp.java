@@ -51,6 +51,8 @@ public class ClientApp extends JFrame {
     
     public Team my_team = null;
     public ObjectMapper objectMapper = new ObjectMapper();
+
+    int state = 0; // state가 1이면 Login 2이면 join
     
     
 	public ClientApp() {
@@ -62,7 +64,7 @@ public class ClientApp extends JFrame {
 		clientStub = new CMClientStub();
 		clientEventHandler = new ClientEventHandler(this);
 		clientStub.setAppEventHandler(clientEventHandler);
-		
+		//clientStub.loginCM("kongee", "0000");
 		this.addWindowListener(new java.awt.event.WindowAdapter() {
 		    @Override
 		    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
@@ -138,7 +140,6 @@ public class ClientApp extends JFrame {
 		CMInteractionInfo info = clientStub.getCMInfo().getInteractionInfo();
 		CMUser user = info.getMyself();
 
-		clientStub.loginCM("kongee", "0000");
 		ue.setStringID("SIGN-UP");
 		
 		System.out.println("name : " + name);
@@ -189,8 +190,7 @@ public class ClientApp extends JFrame {
 	}
 	
 	public void requestCreateTeam(Map<Role, Integer> limits, String teamName) {
-		CMUserEvent ue = new CMUserEvent();
-		ue.setStringID("CREATE-TEAM");
+		CMUserEvent ue = this.GetUE("CREATE-TEAM");
 		Map<Role, Integer> rolelimits = limits;
 
 		String json = null;
@@ -204,7 +204,7 @@ public class ClientApp extends JFrame {
 		ue.setEventField(CMInfo.CM_STR, "team_name", teamName);
 		ue.setEventField(CMInfo.CM_STR, "token", token);
 		ue.setEventField(CMInfo.CM_STR, "teamlimit", json);
-		print("MAKE TEAM EVENT");
+		print("MAKE TEAM EVENT : " + teamName);
 		clientStub.send(ue, "SERVER");
 	}
 	
@@ -303,6 +303,7 @@ public class ClientApp extends JFrame {
 		clientStub.send(ue, "SERVER");
 		this.print("Request Login ...");
 	}
+
 
 	public void createProfileRequest(String role, String introduce, String photo_pathFileName,
 			String photo_originalFileName, String portfolio_pathFileName, String portfolio_originalFileName) {

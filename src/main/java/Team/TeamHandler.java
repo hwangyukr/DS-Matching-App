@@ -146,7 +146,7 @@ public class TeamHandler<T> {
         String fileName = ue.getEventField(CMInfo.CM_STR, "file_name");
         String originaFileName = ue.getEventField(CMInfo.CM_STR, "original_file_name");
 
-        if(teamName == null || json == null || originaFileName == null) {
+        if(teamName == null || json == null) {
             handleError(new Result("입력값을 확인하세요", false), ue);
             return;
         }

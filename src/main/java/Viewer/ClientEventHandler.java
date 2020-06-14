@@ -33,29 +33,32 @@ public class ClientEventHandler implements CMAppEventHandler {
 
 	}
 
-	private void processSessionEvent(CMSessionEvent event) {
-		int id = event.getID();
-		switch (id) {
+private void processSessionEvent(CMSessionEvent event) {
+    	int id = event.getID();
+    	client.print("Login Completed");
+    	switch(id) {
 		case CMSessionEvent.LOGIN_ACK:
-			if (event.isValidUser() != 0) {
+			if(event.isValidUser() != 0) {
 				client.print("Server Connected !");
 				JOptionPane.showMessageDialog(null, "Server Connected Successfully");
-				client.requestLogin("1");
-			} else { // 0 is login fail
+				if(client.state == 1)client.requestLogin("1");
+			}
+			else { // 0 is login fail
 				client.print("Connection Refused");
 				JOptionPane.showMessageDialog(null, "Connection Failed ..");
 			}
 			break;
 		}
-	}
+    }
 
 	@Override
     public void processEvent(CMEvent cmEvent)  {
 
         switch (cmEvent.getType()) {
-    
-        
-        	
+
+        case CMInfo.CM_FILE_EVENT:
+            // some logic redirect
+            break;
         case CMInfo.CM_SESSION_EVENT:
         	processSessionEvent((CMSessionEvent) cmEvent);
         	break;
@@ -71,6 +74,7 @@ public class ClientEventHandler implements CMAppEventHandler {
                     client.requestLogin("0");
                 }
             }
+
             if(ue.getStringID().equals("SIGN-IN-REPLY")) {
             	System.out.println("!SIGN-IN-REPLY !");
             	String success = ue.getEventField(CMInfo.CM_INT, "success");
@@ -84,6 +88,7 @@ public class ClientEventHandler implements CMAppEventHandler {
                     client.token = token;
                     client.user_id = user_id;
                     client.team_id = team_id;
+                    System.out.println(tag.equals("1") + " " + tag);
                     if(tag.equals("1")) client.requestTeamList();
             	}
             	else {
@@ -191,8 +196,21 @@ public class ClientEventHandler implements CMAppEventHandler {
             }
             
             if(ue.getStringID().equals("CREATE-TEAM-REPLY")) {
-            	String team_id = ue.getEventField(CMInfo.CM_STR, "team_id");
-            	client.requestMyTeam(team_id);
+                String success = ue.getEventField(CMInfo.CM_INT, "success");
+                String team_id = ue.getEventField(CMInfo.CM_STR, "team_id");
+                String msg = ue.getEventField(CMInfo.CM_STR, "msg");
+            	client.print(msg);
+                client.requestMyTeam(team_id);
+            }
+
+            if(ue.getStringID().equals("APPLY-TEAM-REPLY")) {
+                String success = ue.getEventField(CMInfo.CM_INT, "success");
+                client.print("APPLY TEAM SUCCESS : " + success);
+                if(success.equals("1")) {
+                    JOptionPane.showMessageDialog(null, "팀 가입 요청 Success");
+                } else {
+                    JOptionPane.showMessageDialog(null, "팀 가입 요청 Fail");
+                }
             }
             
             if(ue.getStringID().equals("POST-PROFILE-REPLY")) {

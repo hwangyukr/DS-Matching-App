@@ -35,6 +35,8 @@ public class LoginView extends Viewer {
 			String id = idtxt.getText();
 			String pw = pwtxt.getText();
 			System.out.println(id);
+
+			client.state = 1;
 			client.requestConnection(id, pw);
 			client.print("Trying Login ...");
 			
