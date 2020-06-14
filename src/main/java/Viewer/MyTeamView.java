@@ -88,11 +88,10 @@ public class MyTeamView extends Viewer implements ListSelectionListener {
 		title.setBounds(0, 50, UIConst.WIDTH, 40);
 		this.add(title);
 
-		int mem_num = team.getUsers().size() + 1;
+		int mem_num = team.getUsers().size();
 		for(int i=0; i<mem_num; i++) {
 			User member = null;
-			if(i==0) member = team.getTeamLeader();
-			else member = team.getUsers().get(i-1);
+			member = team.getUsers().get(i);
 			JPanel row = new JPanel();
 			row.setLayout(new GridLayout(1, 5));
 

@@ -68,7 +68,7 @@ public class ClientEventHandler implements CMAppEventHandler {
                 System.out.println("일단 성공했니? " + success);
                 if(success.equals("1")) {
                     client.print("Login Success");
-                    client.requestLogin();
+                    client.requestLogin("0");
                 }
             }
             if(ue.getStringID().equals("SIGN-IN-REPLY")) {
@@ -118,10 +118,11 @@ public class ClientEventHandler implements CMAppEventHandler {
 
                 try {
                     String ret = ue.getEventField(CMInfo.CM_STR, "team");
+                    String team_id = ue.getEventField(CMInfo.CM_LONG, "team_id");;
                     client.print("GET-TEAMS-REPLY ret : " + ret);
                     List<Team> teams = objectMapper.readValue(ret, objectMapper.getTypeFactory().constructCollectionType(List.class, Team.class));
 
-                    client.ChangeView(new TeamsView(client, client.my_team, teams));
+                    client.ChangeView(new TeamsView(client, client.team_id, teams));
 
 				
                 } catch (JsonProcessingException e) {

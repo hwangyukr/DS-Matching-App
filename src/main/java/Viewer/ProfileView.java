@@ -57,6 +57,9 @@ public class ProfileView extends Viewer {
 		
 		pf_src = new File("./client-file-path/"+ profile.getOriginalPortfolio());	//server에서 구현필요
 
+		String imgOriginalFileName = profile.getOriginalFileName();
+		System.out.println(imgOriginalFileName);
+
 	}
 
 	@Override

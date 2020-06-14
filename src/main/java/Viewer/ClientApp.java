@@ -204,6 +204,8 @@ public class ClientApp extends JFrame {
 		ue.setEventField(CMInfo.CM_STR, "team_name", teamName);
 		ue.setEventField(CMInfo.CM_STR, "token", token);
 		ue.setEventField(CMInfo.CM_STR, "teamlimit", json);
+		print("MAKE TEAM EVENT");
+		clientStub.send(ue, "SERVER");
 	}
 	
 	public void applyTeam(String teamName) {
@@ -220,12 +222,14 @@ public class ClientApp extends JFrame {
 	   }
 	
 	public static void main (String[] args) {
+		/*
 		try {
 			UIManager.setLookAndFeel (new MaterialLookAndFeel ());
 		}
 		catch (UnsupportedLookAndFeelException e) {
 			e.printStackTrace ();
 		}
+		*/
 		new ClientApp();
 	}
 
@@ -257,8 +261,6 @@ public class ClientApp extends JFrame {
 		clientStub.send(ue, "SERVER");
 		this.print("GET TEAM REQEUSTED : " + team_id);
 	}
-
-	
 
 	public void requestGetUser(String user_id) {
 		CMUserEvent ue = GetUE("GET-PROFILE");

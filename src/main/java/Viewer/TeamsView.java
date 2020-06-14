@@ -44,7 +44,7 @@ public class TeamsView extends Viewer implements MouseListener {
    
    private JPanel contentPane;
    private JTable table;
-   private Team team;
+   private String team_id = null;
    private JList<String> list;
 
    private ClientApp client;
@@ -53,12 +53,13 @@ public class TeamsView extends Viewer implements MouseListener {
    private List<Team> teamList; 
    private String selectedTeamName;
    
-   public TeamsView(ClientApp client, Team team, List<Team> teamList) {
+   public TeamsView(ClientApp client, String team_id, List<Team> teamList) {
       super(client);
       
       this.client = client;
       this.teamList = teamList;
-      this.team = team;		//user가 팀에 가입되있지 않은 상태면 null임을 가정(확인 필요)
+      this.team_id = team_id;		//user가 팀에 가입되있지 않은 상태면 null임을 가정(확인 필요)
+      if(this.team_id.equals("0")) this.team_id = null;
       init();
       
       // TODO Auto-generated constructor stub
@@ -82,8 +83,8 @@ public class TeamsView extends Viewer implements MouseListener {
       JLabel lb_team = new JLabel("(team name)");
       lb_team.setFont(new Font("굴림", Font.PLAIN, 16));
       lb_team.setBounds(125, 20, 212, 41);
-      if(team!=null)
-         lb_team.setText("팀 이름: "+team.getName());
+      if(team_id!=null)
+         lb_team.setText("팀 이름: "+team_id);
       else
          lb_team.setText("팀에 가입해주세요");
       panel_team.add(lb_team);
@@ -91,7 +92,7 @@ public class TeamsView extends Viewer implements MouseListener {
       /***팀 입장 또는 팀 생성 버튼****/
       JButton btn_team = new JButton("팀 생성");
       btn_team.setFont(new Font("굴림", Font.PLAIN, 20));
-      if(team!=null)
+      if(team_id!=null)
          btn_team.setText("팀 입장");
       btn_team.addActionListener(this);
       btn_team.setBounds(186, 71, 151, 33);
@@ -205,7 +206,7 @@ public class TeamsView extends Viewer implements MouseListener {
             client.ChangeView(new TeamCreateView(client));
             break;
          case "팀 입장":
-            client.requestMyTeam(String.valueOf(this.team.getId()));
+            client.requestMyTeam(String.valueOf(this.team_id));
             break;
          case "프로필 보기":	//id->email
             client.requestGetUser(client.user_id);
@@ -257,7 +258,7 @@ public class TeamsView extends Viewer implements MouseListener {
       table.setValueAt(cur_planner, 3, 1);      table.setValueAt(max_planner, 3, 2);
 
       table.setVisible(true);
-      if(team==null)      //소속 팀이 없으면 가입 버튼 보이기
+      if(team_id==null)      //소속 팀이 없으면 가입 버튼 보이기
          btn_reg.setVisible(true);
    }
 

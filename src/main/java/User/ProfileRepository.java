@@ -29,6 +29,7 @@ public class ProfileRepository {
 				String content = res.getString("content");
 				String photo = res.getString("photo");
 				String portforlio = res.getString("portforlio");
+				String originalPortforlio = res.getString("original_portforlio");
 				String fileName = res.getString("file_name");
 				String originalFileName = res.getString("original_file_name");
 				profile = new Profile.Builder()
@@ -38,6 +39,7 @@ public class ProfileRepository {
 						.content(content)
 						.photo(photo)
 						.portforlio(portforlio)
+                        .originalPortforlio(originalPortforlio)
 						.fileName(fileName)
 						.originalFileName(originalFileName)
 						.build();
@@ -63,13 +65,14 @@ public class ProfileRepository {
             statement = dbManager.getStatement();
             connection.setAutoCommit(false);
             String query =
-            		"insert into profile(user_id, role_id, content, photo, portforlio, file_name, original_file_name) values (" +
+            		"insert into profile(user_id, role_id, content, photo, portforlio, original_portforlio, file_name, original_file_name) values (" +
             				"'" + profile.getUser().getId() + "', " +
             				"'" + (profile.getRole().ordinal()+1) + "', " +
             				"'" + profile.getContent() + "', " +
             				"'" + profile.getPhoto() + "', " +
             				"'" + profile.getPortforlio() + "', " +
-            				"'" + profile.getFileName() + "', " +
+                            "'" + profile.getOriginalPortfolio() + "', " +
+                            "'" + profile.getFileName() + "', " +
             				"'" + profile.getOriginalFileName() + "');";
 
             int ret = statement.executeUpdate(query);

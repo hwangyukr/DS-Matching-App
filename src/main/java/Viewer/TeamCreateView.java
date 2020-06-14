@@ -17,13 +17,14 @@ import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
+import javax.swing.plaf.basic.BasicOptionPaneUI;
 import javax.swing.table.DefaultTableModel;
 
 import Team.Role;
 import User.User;
 
 
-public class TeamCreateView extends Viewer{/**
+public class TeamCreateView extends Viewer implements ActionListener {/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
@@ -51,6 +52,23 @@ public class TeamCreateView extends Viewer{/**
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		JButton b = (JButton) e.getSource();
+
+		switch(b.getText()) {
+			case "생성":
+				String teamName = lb_teamName.getText();
+				int[] limits = new int[9];
+				for(int i=0; i<9; i++)
+					limits[i] = (int) table.getValueAt(i, 1);
+				Role[] roles = Role.values();
+				for(int i=0; i<9; i++)
+					rolelimits.put(roles[i], limits[i]);
+				client.requestCreateTeam(rolelimits, teamName);
+
+			case "취소":
+				client.requestTeamList();		//TeamsView로 이동
+				break;
+		}
 	}
 
 	@Override
@@ -161,38 +179,15 @@ public class TeamCreateView extends Viewer{/**
 		contentPane.add(lb_planner);
 		
 		
-		ButtonActionListener listener = new ButtonActionListener();
 		btn_cancle = new JButton("취소");
 		btn_cancle.setBounds(283, 505, 91, 48);
-		btn_cancle.addActionListener(listener);
+		btn_cancle.addActionListener(this);
 		contentPane.add(btn_cancle);
 		
 		btn_create = new JButton("생성");
 		btn_create.setBounds(167, 505, 91, 48);
-		btn_create.addActionListener(listener);
+		btn_create.addActionListener(this);
 		contentPane.add(btn_create);
 	}
-	
-	private class ButtonActionListener implements ActionListener {
-		public void actionPerformed(ActionEvent e) {
-			JButton b = (JButton) e.getSource();
-			
-			switch(b.getText()) {
-			case "생성":
-				String teamName = lb_teamName.getText();
-				int[] limits = new int[9];
-				for(int i=0; i<9; i++)
-					limits[i] = (int) table.getValueAt(i, 1);
-				Role[] roles = Role.values();
-				for(int i=0; i<9; i++)
-					rolelimits.put(roles[i], limits[i]);
-				client.print("팀이 생성되었습니다.");
-				client.requestCreateTeam(rolelimits, teamName);
-				
-			case "취소":
-				client.requestTeamList();		//TeamsView로 이동
-				break;
-			}
-		}
-	}
+
 }
