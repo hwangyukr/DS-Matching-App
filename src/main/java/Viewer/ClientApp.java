@@ -123,9 +123,9 @@ public class ClientApp extends JFrame {
 		
 	}
 	
-	public void requestMyTeam(Long team_id) {
+	public void requestMyTeam(String team_id) {
 		CMUserEvent ue = GetUE("GET-TEAM");
-		ue.setEventField(CMInfo.CM_STR, "team_id", String.valueOf(team_id));
+		ue.setEventField(CMInfo.CM_STR, "team_id", team_id);
 		clientStub.send(ue, "SERVER");
 		this.print("GET TEAM REQEUSTED");
 	}

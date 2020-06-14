@@ -69,8 +69,9 @@ public class ClientEventHandler implements CMAppEventHandler {
             	if(success.equals("1")) {
             		client.print("Login Success");
             		String token = ue.getEventField(CMInfo.CM_STR, "token");
-            		client.token = token;
-            		client.requestMyTeam(client.use.getName());
+                    String team_id = ue.getEventField(CMInfo.CM_LONG, "team_id");
+                    client.token = token;
+            		client.requestMyTeam(team_id);
             	}
             	else {
             		client.print("Check your Email or Password !");
@@ -92,6 +93,7 @@ public class ClientEventHandler implements CMAppEventHandler {
                     String ret = ue.getEventField(CMInfo.CM_STR, "team");
                     Team team = null;
                     team = objectMapper.readValue(ret, Team.class);
+                    client.my_team = team;
                     client.ChangeView(new MyTeamView(client, team));
                 } catch (JsonProcessingException e) {
                     e.printStackTrace();
@@ -116,7 +118,7 @@ public class ClientEventHandler implements CMAppEventHandler {
                     String msg = ue.getEventField(CMInfo.CM_STR, "msg");
                     if(success.equals("1")) {
                         client.print("posted successfully");
-                        client.reqeustMyTeam(client.my_team.getName());
+                        client.reqeustMyTeam(String.valueOf(client.my_team.getId()));
 
                     }
                     else client.print("post failed" + msg);

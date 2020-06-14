@@ -8,8 +8,9 @@ import User.User;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
+
 public class Board {
 
     private Long id;

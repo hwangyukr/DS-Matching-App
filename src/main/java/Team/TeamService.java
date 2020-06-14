@@ -30,8 +30,8 @@ public class TeamService {
         return teamRepository.getTeams(result, cmInfo);
     }
 
-    public Team getTeam(String teamName, Result result) {
-        String query = teamRepository.getTeamQueryTeamName(teamName);
+    public Team getTeam(Long teamId, Result result) {
+        String query = teamRepository.getTeamQueryTeamId(teamId);
         Team team = teamRepository.getTeamByName(query, result, cmInfo);
         List<Board> boards = boardRepository.getBoards(team.getId(), result, cmInfo);
         team.setBoards(boards);
