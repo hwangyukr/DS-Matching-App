@@ -146,6 +146,7 @@ public class Client {
                     rolelimits.put(Role.앱개발, sc.nextInt());
 
                     String json = client.objectMapper.writeValueAsString(rolelimits);
+                    String fileNameWithOutLocation = "ss.jpg";
                     String fileNameThatWillBeInServer = "/" + myself.getName() + "/ss.jpg";
                     String fileNameInClientLocal = "/Users/jonghyun/Desktop/ss.jpg";
 
@@ -153,6 +154,7 @@ public class Client {
                     ue.setEventField(CMInfo.CM_STR, "token", client.token);
                     ue.setEventField(CMInfo.CM_STR, "teamlimit", json);
                     ue.setEventField(CMInfo.CM_STR, "file_name", fileNameThatWillBeInServer);
+                    ue.setEventField(CMInfo.CM_STR, "original_file_name",fileNameWithOutLocation);
 
                     cmClientStub.send(ue, "SERVER");
 
@@ -167,9 +169,10 @@ public class Client {
                 case 4:
                     ue.setStringID("GET-TEAM");
                     teamName = sc.next();
-                    ue.setEventField(CMInfo.CM_STR, "team_name", teamName);
+                    ue.setEventField(CMInfo.CM_LONG, "team_id", teamName);
                     ue.setEventField(CMInfo.CM_STR, "token", client.token);
                     cmClientStub.send(ue, "SERVER");
+
                     break;
                 case 5:
                     ue.setStringID("GET-TEAMS");

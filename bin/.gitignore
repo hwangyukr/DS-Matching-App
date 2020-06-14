@@ -1,1 +1,47 @@
-/main/
+*.conf
+*.iml
+*.jar
+.zshrc
+
+HELP.md
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**
+!**/src/test/**
+!**/material-ui-swing.jar
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+
+### VS Code ###
+.vscode/
+/.gitignore
+/MySQL-dump/
+/README.md
+/client-file-path/
+/material-ui-swing.jar
+/pom.xml
+/server-file-path/
+
+bin/src/
+*.class
