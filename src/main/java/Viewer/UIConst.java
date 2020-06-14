@@ -1,7 +1,11 @@
 package Viewer;
 
 import java.awt.Color;
+import java.awt.Font;
+
 import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.SwingConstants;
 
 import mdlaf.animation.MaterialUIMovement;
 import mdlaf.utils.MaterialColors;
@@ -47,5 +51,11 @@ public class UIConst {
 		MaterialUIMovement.add (button, hover, 5, 1000 / 30);
 		
 		return button;
+	}
+	
+	static JLabel LABEL(String txt) {
+		JLabel label = new JLabel(txt, SwingConstants.LEFT);
+		label.setFont(new Font("Verdana", Font.PLAIN, 16));
+		return label;
 	}
 }

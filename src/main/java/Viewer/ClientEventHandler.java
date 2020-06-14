@@ -72,7 +72,9 @@ public class ClientEventHandler implements CMAppEventHandler {
             		String token = ue.getEventField(CMInfo.CM_STR, "token");
                     String team_id = ue.getEventField(CMInfo.CM_LONG, "team_id");
                     client.token = token;
-            		client.requestMyTeam(team_id);
+
+                    client.requestTeamList();
+            		//client.requestMyTeam(team_id);
             	}
             	else {
             		client.print("Check your Email or Password !");
@@ -101,10 +103,16 @@ public class ClientEventHandler implements CMAppEventHandler {
                 }
             }
             if(ue.getStringID().equals("GET-TEAMS-REPLY")) {
+                String success = ue.getEventField(CMInfo.CM_INT, "success");
+                client.print("GET-TEAMS-REPLY success : " + success);
+
                 try {
                     String ret = ue.getEventField(CMInfo.CM_STR, "team");
+                    client.print("GET-TEAMS-REPLY ret : " + ret);
                     List<Team> teams = objectMapper.readValue(ret, objectMapper.getTypeFactory().constructCollectionType(List.class, Team.class));
-                    ///TeamsView에 넘기기
+
+                    client.ChangeView(new TeamsView(client, client.my_team, teams));
+
 				
                 } catch (JsonProcessingException e) {
                     e.printStackTrace();
@@ -149,20 +157,34 @@ public class ClientEventHandler implements CMAppEventHandler {
             		client.print("Check you are team manager");
             	}
           	}
-            
+
+                ///리스트 업데이트하기
             if(ue.getStringID().equals("GET-PROFILE-REPLY")) {
-            	String success = ue.getEventField(CMInfo.CM_INT, "success");
-            	client.print("GET-PROFILE-REPLY Success :" + success);
-            	String profile = ue.getEventField(CMInfo.CM_STR, "profile");
-            	Profile profileObj = objectMapper.readValue(profile, objectMapper.getTypeFactory().constructType(Profile.class));
-            	client.ChangeView(new ProfileView(client, profileObj.getUser());	//userID 가져와야함
+
+                try {
+                    String success = ue.getEventField(CMInfo.CM_INT, "success");
+                    client.print("GET-PROFILE-REPLY : " + success);
+                    
+                    if(success.equals("1")) {
+                    	String profile = ue.getEventField(CMInfo.CM_STR, "profile");
+                    	Profile profileObj = objectMapper.readValue(profile, objectMapper.getTypeFactory().constructType(Profile.class));
+                    	client.ChangeView(new ProfileView(client, profileObj.getUser()));
+                    }
+                    else {
+                        client.print("Get User Failed");
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
-            break;
             
             if(ue.getStringID().equals("CREATE-TEAM-REPLY")) {
             	String team_id = ue.getEventField(CMInfo.CM_STR, "team_id");
             	client.requestMyTeam(team_id);
             }
+            break;
+            
         default:
             return;
         }
