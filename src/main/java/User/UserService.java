@@ -54,14 +54,18 @@ public class UserService {
         return profile;
     }
 
-    public String login(UserDTO.LoginReq dto, Result result) {
+    public User login(UserDTO.LoginReq dto, Result result) {
 
         User user = userRepository.findByEmail(dto.getEmail(), result, cmInfo);
 
         /*
             에러가 나면 에러 메시지 표출
          */
-        if(!result.isSuccess()) return null;
+        if(!result.isSuccess()) {
+            result.setMsg("실패 했습니다");
+            result.setSuccess(false);
+            return null;
+        }
 
         /*
             에러가 나지 않고 null이면 이메일이 없는거임
@@ -83,7 +87,7 @@ public class UserService {
 
         result.setMsg("성공하였습니다");
         result.setSuccess(true);
-        return TokenProvider.createToken(user.getEmail(), user.getId());
+        return user;
 
     }
 

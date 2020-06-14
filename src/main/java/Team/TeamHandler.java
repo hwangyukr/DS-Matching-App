@@ -103,14 +103,15 @@ public class TeamHandler<T> {
         TokenProvider.TokenResult validResult = getUserInfo(ue);
         if(validResult == null) return;
 
-        String teamName = ue.getEventField(CMInfo.CM_STR, "team_name");
-        if(teamName == null) {
+        Long teamId = Long.valueOf(ue.getEventField(CMInfo.CM_LONG, "team_id"));
+
+        if(teamId == null) {
             handleError(new Result("입력값을 확인하세요", false), ue);
             return;
         }
 
         Result result = new Result();
-        Team team = teamService.getTeam(teamName, result);
+        Team team = teamService.getTeam(teamId, result);
 
         /*
             result값이 false이면 그에 대한 에러 메시지 처리
@@ -143,7 +144,9 @@ public class TeamHandler<T> {
         String teamName = ue.getEventField(CMInfo.CM_STR, "team_name");
         String json = ue.getEventField(CMInfo.CM_STR, "teamlimit");
         String fileName = ue.getEventField(CMInfo.CM_STR, "file_name");
-        if(teamName == null || json == null) {
+        String originaFileName = ue.getEventField(CMInfo.CM_STR, "original_file_name");
+
+        if(teamName == null || json == null || originaFileName == null) {
             handleError(new Result("입력값을 확인하세요", false), ue);
             return;
         }
@@ -156,8 +159,15 @@ public class TeamHandler<T> {
             return;
         }
 
+        TeamDto dto = new TeamDto().builder()
+                .name(teamName)
+                .fileName(fileName)
+                .originalFileName(originaFileName)
+                .roleLimits(limit)
+                .build();
+
         Result result = new Result();
-        Team team = teamService.createTeam(validResult, result, teamName, fileName, limit);
+        Team team = teamService.createTeam(validResult, result, dto);
 
         /*
             teamService에 파라미터로 result를 넣어줘서 에러가 나면

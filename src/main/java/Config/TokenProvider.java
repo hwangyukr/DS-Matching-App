@@ -59,6 +59,10 @@ public class TokenProvider {
 
     public static String createToken(String email, Long id) {
 
+        if(email == null || id == null) {
+            return null;
+        }
+
         Map<String, Object> headers = new HashMap<>();
         headers.put("typ", "JWT");
         headers.put("alg", "HS256");

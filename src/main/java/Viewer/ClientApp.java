@@ -70,6 +70,7 @@ public class ClientApp extends JFrame {
 	}
 	
 	public void exit() {
+		clientStub.logoutCM();
 		clientStub.disconnectFromServer();
 		System.exit(0);
 	}
@@ -121,13 +122,7 @@ public class ClientApp extends JFrame {
 	public void requestSignUp(String name, String id, String pw, Role role, String introduce) {
 		
 	}
-	
-	public void requestMyTeam(String team_name) {
-		CMUserEvent ue = GetUE("GET-TEAM");
-		ue.setEventField(CMInfo.CM_STR, "team_name", team_name);
-		clientStub.send(ue, "SERVER");
-		this.print("GET TEAM REQEUSTED");
-	}
+
 	private CMUserEvent GetUE(String id) {
 		CMUserEvent ue = new CMUserEvent();
 		CMInteractionInfo info = clientStub.getCMInfo().getInteractionInfo();
@@ -196,6 +191,7 @@ public class ClientApp extends JFrame {
 		ue.setEventField(CMInfo.CM_LONG, "team_id", String.valueOf(team_id));
 		ue.setEventField(CMInfo.CM_STR, "content", content);
 		clientStub.send(ue, "SERVER");
+		print("New Post Requested");
 	}
 
 	public void requestApplications() {
@@ -212,11 +208,11 @@ public class ClientApp extends JFrame {
 		clientStub.send(ue, "SERVER");
 	}
 
-	public void reqeustMyTeam(String team_name) {
+	public void requestMyTeam(String team_id) {
 		CMUserEvent ue = GetUE("GET-TEAM");
-		ue.setEventField(CMInfo.CM_STR, "team_name", team_name);
+		ue.setEventField(CMInfo.CM_LONG, "team_id", team_id);
 		clientStub.send(ue, "SERVER");
-		this.print("GET TEAM REQEUSTED");
+		this.print("GET TEAM REQEUSTED : " + team_id);
 	}
 
 	public void requestGetTeams() {
