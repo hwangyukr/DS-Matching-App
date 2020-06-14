@@ -53,7 +53,8 @@ public class TeamsView extends Viewer {
    private ClientApp client;
    
    JButton btn_reg;     
-   private List<Team> teamList;     
+   private List<Team> teamList; 
+   private String selectedTeamName;
    
    public TeamsView(ClientApp client, Team team, List<Team> teamList) {
       super(client);
@@ -125,7 +126,7 @@ public class TeamsView extends Viewer {
          public void mouseClicked(MouseEvent e) {
         	Map<Role, Integer> currentRole = teamList.get(list.getSelectedIndex()).getCurrentRoles();
 			Map<Role, Integer> maximumRole = teamList.get(list.getSelectedIndex()).getRoleLimits();		//Team class에 getRoleLimits() 추가 필요
-			
+			selectedTeamName = teamList.get(list.getSelectedIndex()).getName();
 			/***팀 구성표 업데이트***/
             Role[] roles = Role.values();
             int cur_designer = 0, cur_developer = 0, cur_planner = 0;
@@ -138,6 +139,8 @@ public class TeamsView extends Viewer {
            
             for(int i=0; i<=3; i++) {
                if(i<=2) {
+                  Role trole = roles[i];
+                  int cnt = currentRole.get(trole);
                   cur_designer += currentRole.get(roles[i]);      max_designer += maximumRole.get(roles[i]);
                }
                cur_developer += currentRole.get(roles[i+3]);      max_designer += maximumRole.get(roles[i+3]);
@@ -236,37 +239,19 @@ public class TeamsView extends Viewer {
 
       switch(b.getText()) {
          case "팀 생성":
-            //client.ChangeView(new TeamCreateView(client, user));
+            client.ChangeView(new TeamCreateView(client));
             break;
          case "팀 입장":
             //client.ChangeView(new MyTeamView(client, user.getTeam()));
             client.requestMyTeam(String.valueOf(this.team.getId()));
             break;
          case "프로필 보기":	//id->email
-            //client.ChangeView(new JoinProfileView(client, user.getName(), user.getEmail(), user.getPassword()));
+            client.requestGetUser(client.user_id);
             break;
          case "팀 가입":
-            client.applyTeam();
-            client.print("팀 가입 신청 완료");
-	            /*
-	            JPanel ApplyComplete = new JPanel();
-	            {
-	               JPanel buttonPane = new JPanel();
-	               buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
-	               contentPane.add(buttonPane, BorderLayout.SOUTH);
-	               {
-	                  JButton cancelButton = new JButton("OK");
-	                  cancelButton.addMouseListener(new MouseAdapter() {
-	                     @Override
-	                     public void mouseReleased(MouseEvent arg0) {
-	                        client.exit();// 창닫음
-	                     }
-	                  });
-	                  cancelButton.setActionCommand("OK");
-	                  buttonPane.add(cancelButton);
-	               }
-	            }
-	            */
+            client.applyTeam(selectedTeamName);
+            client.print("팀 가입 신청");
+	            
             break;
 
 

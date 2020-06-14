@@ -46,8 +46,7 @@ public class MyTeamView extends Viewer implements ListSelectionListener {
 		}
 		
 		else if(e.getSource() == exit_btn) {
-			client.exit();
-			// client.ChangeView(new JoinView(client)); Main View
+			client.requestTeamList();
 		}
 		else {
 			JButton button = (JButton)e.getSource();
