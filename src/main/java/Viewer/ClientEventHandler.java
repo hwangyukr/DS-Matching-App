@@ -37,12 +37,12 @@ public class ClientEventHandler implements CMAppEventHandler {
     	int id = event.getID();
     	switch(id) {
 		case CMSessionEvent.LOGIN_ACK:
-			if(event.isValidUser() > 0) {
+			if(event.isValidUser() != 0) {
 				client.print("Server Connected !");
 				JOptionPane.showMessageDialog(null, "Server Connected Successfully");
 				client.requestLogin();
 			}
-			else {
+			else { // 0 is login fail
 				client.print("Connection Refused");
 				JOptionPane.showMessageDialog(null, "Connection Failed ..");
 			}

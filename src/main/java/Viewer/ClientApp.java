@@ -87,7 +87,6 @@ public class ClientApp extends JFrame {
 			return;
 		}
 
-		clientStub.logoutCM();
 		clientStub.loginCM(this.email, this.pw);
 		System.out.println("requestConnection email : " + this.email);
 		System.out.println("requestConnection pw : " + this.pw);
