@@ -61,7 +61,11 @@ public class UserService {
         /*
             에러가 나면 에러 메시지 표출
          */
-        if(!result.isSuccess()) return null;
+        if(!result.isSuccess()) {
+            result.setMsg("실패 했습니다");
+            result.setSuccess(false);
+            return null;
+        }
 
         /*
             에러가 나지 않고 null이면 이메일이 없는거임

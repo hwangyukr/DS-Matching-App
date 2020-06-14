@@ -2,10 +2,7 @@ package Team;
 
 import Board.Board;
 import User.User;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.lang.reflect.Array;
 import java.util.*;
@@ -21,8 +18,17 @@ public class Team {
     private Map<Role, Integer> roleLimits = new HashMap<>();
     private List<Board> boards;
     private String fileName;
+    private String originalFileName;
 
     public Team() {
+    }
+
+    public String getOriginalFileName() {
+        return originalFileName;
+    }
+
+    public void setOriginalFileName(String originalFileName) {
+        this.originalFileName = originalFileName;
     }
 
     public Map<Role, Integer> getRoleLimits() {
@@ -51,6 +57,7 @@ public class Team {
         this.roleLimits = builder.roleLimits;
         this.boards = builder.boards;
         this.fileName = builder.fileName;
+        this.originalFileName = builder.originalFileName;
     }
 
 
@@ -65,8 +72,14 @@ public class Team {
         private Map<Role, Integer> roleLimits = new HashMap<>();
         private List<Board> boards = new ArrayList<Board>();
         private String fileName;
+        private String originalFileName;
 
         public Builder() {
+        }
+
+        public Builder originalFileName(String val) {
+            originalFileName = val;
+            return this;
         }
 
         public Builder boards(List<Board> val) {

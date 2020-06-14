@@ -38,18 +38,19 @@ public class TeamService {
         return team;
     }
 
-    public Team createTeam(TokenProvider.TokenResult validResult, Result result, String teamName, String fileName, Map<Role, Integer> limit) {
+    public Team createTeam(TokenProvider.TokenResult validResult, Result result, TeamDto dto) {
 
         User user = new User.Builder()
                 .id(validResult.getId())
                 .build();
 
         Team team = new Team.Builder()
-                .name(teamName)
+                .name(dto.getName())
                 .teamLeader(user)
                 .teamRoles(null)
-                .roleLimits(limit)
-                .fileName(fileName)
+                .roleLimits(dto.getRoleLimits())
+                .fileName(dto.getFileName())
+                .originalFileName(dto.getOriginalFileName())
                 .build();
 
         teamRepository.saveTeam(team, result, cmInfo);
