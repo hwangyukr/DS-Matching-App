@@ -134,7 +134,7 @@ public class TeamsView extends Viewer implements MouseListener {
       btn_reg = new JButton("팀 가입");
       btn_reg.setFont(new Font("굴림", Font.PLAIN, 16));
       btn_reg.addActionListener(this);
-      btn_reg.setBounds(30, 760, UIConst.WIDTH-60, 200);
+      btn_reg.setBounds(30, 560, UIConst.WIDTH-60, 75);
       btn_reg.setVisible(false);
       contentPane.add(btn_reg);
       
