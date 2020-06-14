@@ -181,7 +181,7 @@ public class TeamsView extends Viewer implements MouseListener {
       table.getColumnModel().getColumn(2).setResizable(false);
       table.setCellSelectionEnabled(true);
       table.setColumnSelectionAllowed(true);
-      table.setBounds(30, 520, UIConst.WIDTH-60, 75);
+      table.setBounds(30, 520, UIConst.WIDTH-60, 150);
       
    }
 
