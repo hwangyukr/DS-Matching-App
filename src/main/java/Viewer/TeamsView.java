@@ -9,8 +9,7 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JLabel;
 import javax.swing.JButton;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
+import java.awt.event.*;
 
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
@@ -34,15 +33,13 @@ import Team.Team;
 import User.User;
 import kr.ac.konkuk.ccslab.cm.info.CMInfo;
 
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 
-public class TeamsView extends Viewer {
+public class TeamsView extends Viewer implements MouseListener {
    private static final long serialVersionUID = 1L;
    
    private JPanel contentPane;
@@ -122,42 +119,7 @@ public class TeamsView extends Viewer {
       list = new JList<String>();
       updateTeamList();
       list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-      list.addMouseListener(new MouseAdapter() {
-         public void mouseClicked(MouseEvent e) {
-        	Map<Role, Integer> currentRole = teamList.get(list.getSelectedIndex()).getCurrentRoles();
-			Map<Role, Integer> maximumRole = teamList.get(list.getSelectedIndex()).getRoleLimits();		//Team class에 getRoleLimits() 추가 필요
-			selectedTeamName = teamList.get(list.getSelectedIndex()).getName();
-			/***팀 구성표 업데이트***/
-            Role[] roles = Role.values();
-            int cur_designer = 0, cur_developer = 0, cur_planner = 0;
-            int max_designer = 0, max_developer = 0, max_planner = 0;
-            
-            for(int i=0; i<9; i++) {
-            	if(currentRole.get(roles[i]) == null)
-            		currentRole.replace(roles[i], 0);
-            }
-           
-            for(int i=0; i<=3; i++) {
-               if(i<=2) {
-                  Role trole = roles[i];
-                  int cnt = currentRole.get(trole);
-                  cur_designer += currentRole.get(roles[i]);      max_designer += maximumRole.get(roles[i]);
-               }
-               cur_developer += currentRole.get(roles[i+3]);      max_designer += maximumRole.get(roles[i+3]);
-               if(i<=1) {
-                  cur_planner += currentRole.get(roles[i+7]);      max_planner += maximumRole.get(roles[i+7]);
-               }
-            }
-            //([개발자/기획자/디자인], [현재 인원], [모집 인원])
-            table.setValueAt(cur_designer, 1, 1);      table.setValueAt(max_designer, 1, 2);
-            table.setValueAt(cur_developer, 2, 1);      table.setValueAt(max_developer, 2, 2);
-            table.setValueAt(cur_planner, 3, 1);      table.setValueAt(max_planner, 3, 2);
-   
-            table.setVisible(true);
-            if(team==null)      //소속 팀이 없으면 가입 버튼 보이기
-               btn_reg.setVisible(true);
-         }
-      });
+      list.addMouseListener(this);
       scrollPane.setViewportView(list);
       
       JLabel lb_teamList = new JLabel("팀 목록");
@@ -217,7 +179,7 @@ public class TeamsView extends Viewer {
       table.getColumnModel().getColumn(2).setResizable(false);
       table.setCellSelectionEnabled(true);
       table.setColumnSelectionAllowed(true);
-      table.setBounds(22, 481, 238, 64);
+      table.setBounds(22, 481, 270, 200);
       
    }
 
@@ -256,5 +218,66 @@ public class TeamsView extends Viewer {
 
 
       }
+   }
+
+   @Override
+   public void mouseClicked(MouseEvent e) {
+      Map<Role, Integer> currentRole = teamList.get(list.getSelectedIndex()).getCurrentRoles();
+      Map<Role, Integer> maximumRole = teamList.get(list.getSelectedIndex()).getRoleLimits();		//Team class에 getRoleLimits() 추가 필요
+      selectedTeamName = teamList.get(list.getSelectedIndex()).getName();
+      /***팀 구성표 업데이트***/
+      Role[] roles = Role.values();
+      int cur_designer = 0, cur_developer = 0, cur_planner = 0;
+      int max_designer = 0, max_developer = 0, max_planner = 0;
+
+      for(int i=0; i<9; i++) {
+         if(currentRole.get(roles[i]) == null)
+            currentRole.put(roles[i], 0);
+      }
+
+      for(int i=0; i<9; i++) {
+         if(maximumRole.get(roles[i]) == null)
+            maximumRole.put(roles[i], 0);
+      }
+
+      for(int i=0; i<=3; i++) {
+         if(i<=2) {
+            Role trole = roles[i];
+            int cnt = currentRole.get(trole);
+            cur_designer += currentRole.get(roles[i]);      max_designer += maximumRole.get(roles[i]);
+         }
+         cur_developer += currentRole.get(roles[i+3]);      max_designer += maximumRole.get(roles[i+3]);
+         if(i<=1) {
+            cur_planner += currentRole.get(roles[i+7]);      max_planner += maximumRole.get(roles[i+7]);
+         }
+      }
+      //([개발자/기획자/디자인], [현재 인원], [모집 인원])
+      table.setValueAt(cur_designer, 1, 1);      table.setValueAt(max_designer, 1, 2);
+      table.setValueAt(cur_developer, 2, 1);      table.setValueAt(max_developer, 2, 2);
+      table.setValueAt(cur_planner, 3, 1);      table.setValueAt(max_planner, 3, 2);
+
+      table.setVisible(true);
+      if(team==null)      //소속 팀이 없으면 가입 버튼 보이기
+         btn_reg.setVisible(true);
+   }
+
+   @Override
+   public void mousePressed(MouseEvent e) {
+
+   }
+
+   @Override
+   public void mouseReleased(MouseEvent e) {
+
+   }
+
+   @Override
+   public void mouseEntered(MouseEvent e) {
+
+   }
+
+   @Override
+   public void mouseExited(MouseEvent e) {
+
    }
 }

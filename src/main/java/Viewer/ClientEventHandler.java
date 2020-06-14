@@ -41,7 +41,7 @@ public class ClientEventHandler implements CMAppEventHandler {
 			if(event.isValidUser() != 0) {
 				client.print("Server Connected !");
 				JOptionPane.showMessageDialog(null, "Server Connected Successfully");
-				client.requestLogin();
+				client.requestLogin("1");
 			}
 			else { // 0 is login fail
 				client.print("Connection Refused");
@@ -69,13 +69,15 @@ public class ClientEventHandler implements CMAppEventHandler {
             	
             	if(success.equals("1")) {
             		client.print("Login Success");
-            		String token = ue.getEventField(CMInfo.CM_STR, "token");
+                    String token = ue.getEventField(CMInfo.CM_STR, "token");
+                    String tag = ue.getEventField(CMInfo.CM_STR, "tag");
                     String user_id = ue.getEventField(CMInfo.CM_LONG, "user_id");
                     String team_id = ue.getEventField(CMInfo.CM_LONG, "team_id");
                     client.token = token;
                     client.user_id = user_id;
                     client.team_id = team_id;
-                    client.requestTeamList();
+                    if(tag.equals("1")) client.requestTeamList();
+
             		//client.requestMyTeam(team_id);
             	}
             	else {
