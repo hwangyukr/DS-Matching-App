@@ -1,6 +1,7 @@
 package Viewer;
 
 import java.util.List;
+import User.Profile;
 
 import javax.swing.JOptionPane;
 
@@ -103,9 +104,7 @@ public class ClientEventHandler implements CMAppEventHandler {
                 try {
                     String ret = ue.getEventField(CMInfo.CM_STR, "team");
                     List<Team> teams = objectMapper.readValue(ret, objectMapper.getTypeFactory().constructCollectionType(List.class, Team.class));
-                    
-                  //  for(Team team : teams)
-                 //       System.out.println(team.getTeamLeader() == null);
+                    ///TeamsView에 넘기기
 				
                 } catch (JsonProcessingException e) {
                     e.printStackTrace();
@@ -150,10 +149,20 @@ public class ClientEventHandler implements CMAppEventHandler {
             		client.print("Check you are team manager");
             	}
           	}
-                ///리스트 업데이트하기
             
-
+            if(ue.getStringID().equals("GET-PROFILE-REPLY")) {
+            	String success = ue.getEventField(CMInfo.CM_INT, "success");
+            	client.print("GET-PROFILE-REPLY Success :" + success);
+            	String profile = ue.getEventField(CMInfo.CM_STR, "profile");
+            	Profile profileObj = objectMapper.readValue(profile, objectMapper.getTypeFactory().constructType(Profile.class));
+            	client.ChangeView(new ProfileView(client, profileObj.getUser());	//userID 가져와야함
+            }
             break;
+            
+            if(ue.getStringID().equals("CREATE-TEAM-REPLY")) {
+            	String team_id = ue.getEventField(CMInfo.CM_STR, "team_id");
+            	client.requestMyTeam(team_id);
+            }
         default:
             return;
         }
