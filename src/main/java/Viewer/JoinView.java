@@ -1,14 +1,15 @@
 package Viewer;
 
-
 import java.awt.Button;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
@@ -17,11 +18,11 @@ public class JoinView extends Viewer {
 	private static final long serialVersionUID = 1L;
 
 	private JPanel contentPane;
-	private Button button;
-	private Button button_1;
-	private JTextField textField;
-	private JTextField textField_1;
-	private JTextField textField_2;
+	private JButton next_btn = null;
+	private JButton cancel_btn = null;
+	private JTextField name_fld = null;
+	private JTextField id_fld = null;
+	private JTextField pw_fld = null;
 	
 	public JoinView(ClientApp client) {
 		super(client);
@@ -31,18 +32,16 @@ public class JoinView extends Viewer {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		
-		if(e.getSource() == button) {
-
+		if(e.getSource() == next_btn) {
 			client.print("Write your profile");
-			String name = textField.getText();
-			String id = textField_1.getText();
-			String pw = textField_2.getText();
-			System.out.println(name + " " + id + " " + pw);
-			client.requestSignUp(name, id, pw);
+			String name = name_fld.getText();
+			String id = id_fld.getText();
+			String pw = pw_fld.getText();
+
 			client.ChangeView(new JoinProfileView(client, name, id, pw));
 		}
 		
-		if(e.getSource() == button_1) {
+		if(e.getSource() == cancel_btn) {
 			client.print("Come back to login view");
 			client.ChangeView(new LoginView(client));
 		}
@@ -56,54 +55,46 @@ public class JoinView extends Viewer {
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(null);
 		
-		JLabel lblNewJgoodiesTitle = new JLabel("Join Member");
-		lblNewJgoodiesTitle.setHorizontalAlignment(SwingConstants.CENTER);
-		lblNewJgoodiesTitle.setFont(new Font("Impact", Font.PLAIN, 30));
-		lblNewJgoodiesTitle.setBounds(70, 91, 244, 53);
-		contentPane.add(lblNewJgoodiesTitle);
+		JLabel title = new JLabel("<html><div style='color: #336644;'> Join Member </div></html>", SwingConstants.CENTER);
+		Font font = new Font("����", Font.PLAIN, 30);
+		title.setFont(font);
+		this.setSize(1000, 40);
+		title.setBounds(0, 300, UIConst.WIDTH, 40);
+		this.add(title);
+
+		JLabel labelname = new JLabel("Name");
+		labelname.setBounds(80, 365, 40, 30);
+		this.add (labelname);
 		
-		button = new Button("Next");
-		button.setBackground(new Color(255, 160, 122));
-		button.setBounds(155, 375, 76, 23);
-		contentPane.add(button);
+		JLabel labelid = new JLabel("ID");
+		labelid.setBounds(90, 395, 30, 30);
+		this.add (labelid);
 		
-		button_1 = new Button("Cancel");
-		button_1.setBackground(new Color(211, 211, 211));
-		button_1.setBounds(155, 430, 76, 23);
-		contentPane.add(button_1);
+		JLabel labelpw = new JLabel("PW");
+		labelpw.setBounds(90, 425, 30, 30);
+		this.add (labelpw);
 		
-		JLabel lb_userName = new JLabel("Name");
-		lb_userName.setHorizontalAlignment(SwingConstants.RIGHT);
-		lb_userName.setBounds(74, 190, 57, 15);
-		contentPane.add(lb_userName);
+		name_fld = new JTextField();
+		name_fld.grabFocus();
+		name_fld.setBounds(125, 365, 300, 30);
+		this.add (name_fld);
 		
-		textField = new JTextField();
-		textField.setBounds(175, 187, 116, 21);
-		contentPane.add(textField);
-		textField.setColumns(10);
+		id_fld = new JPasswordField();
+		id_fld.setBounds(125, 400, 300, 30);
+		this.add (id_fld);
 		
-		JLabel lb_userID = new JLabel("ID");
-		lb_userID.setHorizontalAlignment(SwingConstants.RIGHT);
-		lb_userID.setBounds(74, 235, 57, 15);
-		contentPane.add(lb_userID);
+		pw_fld = new JPasswordField();
+		pw_fld.setBounds(125, 435, 300, 30);
+		this.add (pw_fld);
 		
-		textField_1 = new JTextField();
-		textField_1.setBounds(175, 232, 116, 21);
-		contentPane.add(textField_1);
-		textField_1.setColumns(10);
+		next_btn = UIConst.BUTTON("Next", UIConst.BUTTON_SIGNUP);
+		next_btn.setBounds(210, 465, 100, 50);
+		next_btn.addActionListener(this);
+		this.add (next_btn);
 		
-		JLabel lb_userPW = new JLabel("PW");
-		lb_userPW.setHorizontalAlignment(SwingConstants.RIGHT);
-		lb_userPW.setBounds(74, 283, 57, 15);
-		contentPane.add(lb_userPW);
-		
-		textField_2 = new JTextField();
-		textField_2.setBounds(175, 280, 116, 21);
-		contentPane.add(textField_2);
-		textField_2.setColumns(10);
-		setSize(UIConst.WIDTH, UIConst.HEIGHT);
-		
-		button.addActionListener(this);
-		button_1.addActionListener(this);
+		cancel_btn = UIConst.BUTTON("Cancel", UIConst.BUTTON_EXIT);
+		cancel_btn.setBounds(320, 465, 100, 50);
+		cancel_btn.addActionListener(this);
+		this.add (cancel_btn);
 	}
 }
