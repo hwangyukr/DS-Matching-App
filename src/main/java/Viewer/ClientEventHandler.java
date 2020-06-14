@@ -113,10 +113,11 @@ public class ClientEventHandler implements CMAppEventHandler {
 
                 try {
                     String ret = ue.getEventField(CMInfo.CM_STR, "team");
+                    String team_id = ue.getEventField(CMInfo.CM_LONG, "team_id");;
                     client.print("GET-TEAMS-REPLY ret : " + ret);
                     List<Team> teams = objectMapper.readValue(ret, objectMapper.getTypeFactory().constructCollectionType(List.class, Team.class));
 
-                    client.ChangeView(new TeamsView(client, client.my_team, teams));
+                    client.ChangeView(new TeamsView(client, client.team_id, teams));
 
 				
                 } catch (JsonProcessingException e) {
