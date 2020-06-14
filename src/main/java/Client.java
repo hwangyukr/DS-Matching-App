@@ -208,7 +208,7 @@ public class Client {
                 case 20:
                     ue.setStringID("GET-PROFILE");
                     ue.setEventField(CMInfo.CM_STR, "token", client.token);
-                    ue.setEventField(CMInfo.CM_LONG, "user_id", "15");
+                    ue.setEventField(CMInfo.CM_LONG, "user_id", "14");
                     cmClientStub.send(ue, "SERVER");
                     break;
                 case 0:
