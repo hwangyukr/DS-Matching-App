@@ -121,6 +121,7 @@ public class UserHandler {
         ue.setEventField(CMInfo.CM_INT,"success", "1");
         ue.setEventField(CMInfo.CM_STR, "msg", result.getMsg());
         ue.setEventField(CMInfo.CM_LONG, "team_id", String.valueOf(user.getTeam().getId()));
+        ue.setEventField(CMInfo.CM_LONG, "user_id", String.valueOf(user.getId()));
         ue.setEventField(CMInfo.CM_STR, "token", token);
         cmServerStub.send(ue, ue.getSender());
     }

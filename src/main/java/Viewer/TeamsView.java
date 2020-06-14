@@ -132,6 +132,8 @@ public class TeamsView extends Viewer {
             
             for(int i=0; i<=3; i++) {
                if(i<=2) {
+                  Role trole = roles[i];
+                  int cnt = currentRole.get(trole);
                   cur_designer += currentRole.get(roles[i]);      max_designer += maximumRole.get(roles[i]);
                }
                cur_developer += currentRole.get(roles[i+3]);      max_designer += maximumRole.get(roles[i+3]);
@@ -230,18 +232,18 @@ public class TeamsView extends Viewer {
 
       switch(b.getText()) {
          case "팀 생성":
-            //client.ChangeView(new TeamCreateView(client, user));
+            client.ChangeView(new TeamCreateView(client));
             break;
          case "팀 입장":
             //client.ChangeView(new MyTeamView(client, user.getTeam()));
             client.requestMyTeam(String.valueOf(this.team.getId()));
             break;
          case "프로필 보기":	//id->email
-            //client.ChangeView(new JoinProfileView(client, user.getName(), user.getEmail(), user.getPassword()));
+            client.requestGetUser(client.user_id);
             break;
          case "팀 가입":
             client.applyTeam();
-            client.print("팀 가입 신청 완료");
+            client.print("팀 가입 신청");
 	            /*
 	            JPanel ApplyComplete = new JPanel();
 	            {

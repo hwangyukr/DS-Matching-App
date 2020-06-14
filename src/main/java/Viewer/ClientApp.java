@@ -29,7 +29,9 @@ public class ClientApp extends JFrame {
 	private static final long serialVersionUID = 1L;
 
 	public CMClientStub clientStub;
-    private ClientEventHandler clientEventHandler;
+	public String user_id;
+	public String team_id;
+	private ClientEventHandler clientEventHandler;
 	public JLabel message = new JLabel("message will print here");
     public String token = null;
 	

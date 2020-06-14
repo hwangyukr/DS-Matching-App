@@ -39,13 +39,11 @@ public class TeamCreateView extends Viewer{/**
 	private JLabel lb_planner;
 	private JButton btn_cancle;
 	private JButton btn_create;
-	private User user;
 	private Map<Role, Integer> rolelimits;
 
-	public TeamCreateView(ClientApp client, User user) {
+	public TeamCreateView(ClientApp client) {
 		super(client);
 		rolelimits = new HashMap<Role, Integer>();
-		this.user = user;
 		init();
 	}
 	
@@ -57,6 +55,8 @@ public class TeamCreateView extends Viewer{/**
 	@Override
 	public void init() {
 		// TODO Auto-generated method stub
+		contentPane = this;
+
 		setBounds(100, 100, 450, 300);
 		this.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setSize(400,600);
@@ -92,8 +92,7 @@ public class TeamCreateView extends Viewer{/**
 		edit_subject.setBounds(196, 36, 166, 94);
 		edit_subject.setLineWrap( true );
 		panel.add(edit_subject);
-		
-		
+
 		table = new JTable();
 		table.setFont(new Font("굴림", Font.PLAIN, 16));
 		table.setRowHeight(35);
@@ -127,10 +126,12 @@ public class TeamCreateView extends Viewer{/**
 				return columnEditables[column];
 			}
 		});
+
+
 		table.getColumnModel().getColumn(0).setResizable(false);
 		table.getColumnModel().getColumn(0).setPreferredWidth(200);
 		table.getColumnModel().getColumn(0).setMinWidth(20);
-		table.getColumnModel().getColumn(1).setPreferredWidth(40);
+		table.getColumnModel().getColumn(0).setPreferredWidth(40);
 		table.setBounds(137, 179, 237, 316);
 		contentPane.add(table);
 		
