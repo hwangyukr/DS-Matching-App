@@ -118,7 +118,7 @@ public class ClientApp extends JFrame {
 		pack ();
 	}
 	
-	public void requestSignUp(String name, String id, String pw, String role, String introduce) {
+	public void requestSignUp(String name, String id, String pw, Role role, String introduce) {
 		
 	}
 	
