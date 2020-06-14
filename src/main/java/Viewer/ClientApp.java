@@ -218,7 +218,7 @@ public class ClientApp extends JFrame {
 	      
 	      clientStub.send(ue, "SERVER");
 	      this.print("Successfully applied ...");
-	   }
+    }
 	
 	public static void main (String[] args) {
 		/*
@@ -311,8 +311,8 @@ public class ClientApp extends JFrame {
 		CMUser user = info.getMyself();
 		ue.setStringID("POST-PROFIE");
 		
-		String portfolioInServer = "/" + user.getName() + "/" + portfolio_originalFileName;
-		String imageInServer = "/" + user.getName() + "/" + photo_originalFileName;
+		String portfolioInServer =  user.getName() + "/" + portfolio_originalFileName;
+		String imageInServer =  user.getName() + "/" + photo_originalFileName;
 		
 		ue.setEventField(CMInfo.CM_STR, "role", role.toString());
 		ue.setEventField(CMInfo.CM_STR, "content", introduce);
