@@ -59,6 +59,7 @@ public class ProfileView extends Viewer {
 		}
 		
 		String imgOriginalFileName = profile.getOriginalFileName();
+		System.out.println(imgFileName);
 		System.out.println(imgOriginalFileName);
 
 	}

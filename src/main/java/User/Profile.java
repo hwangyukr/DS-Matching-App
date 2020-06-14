@@ -13,6 +13,21 @@ public class Profile {
     private String fileName;
     private String originalFileName;
 
+    @Override
+    public String toString() {
+        return "Profile{" +
+                "id=" + id +
+                ", user=" + user +
+                ", role=" + role +
+                ", content='" + content + '\'' +
+                ", photo='" + photo + '\'' +
+                ", portforlio='" + portforlio + '\'' +
+                ", originalPortfolio='" + originalPortfolio + '\'' +
+                ", fileName='" + fileName + '\'' +
+                ", originalFileName='" + originalFileName + '\'' +
+                '}';
+    }
+
     public String getOriginalPortfolio() {
         return originalPortfolio;
     }
