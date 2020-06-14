@@ -51,6 +51,7 @@ public class ProfileView extends Viewer {
 		client.clientStub.requestFile(pfFileName, "SERVER");
 
 		String imgOriginalFileName = profile.getOriginalFileName();
+		System.out.println(imgFileName);
 		System.out.println(imgOriginalFileName);
 
 	}

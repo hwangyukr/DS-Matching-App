@@ -55,7 +55,7 @@ public class ProfileHandler {
         
         Result result = new Result();
         Profile profile = profileService.getProfile(userId, result);
-        
+
         if (!result.isSuccess()) {
             handleError(result, ue);
             return;

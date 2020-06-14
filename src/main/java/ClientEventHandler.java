@@ -143,6 +143,8 @@ public class ClientEventHandler implements CMAppEventHandler {
                             e.printStackTrace();
                         }
                         System.out.println(profile);
+                        String fileName = profile.getFileName();
+                        clientStub.requestFile("kongee/ss.jpg", "SERVER");
                     }
                     String msg = ue.getEventField(CMInfo.CM_STR, "msg");
                     System.out.println();
