@@ -89,7 +89,10 @@ private void processSessionEvent(CMSessionEvent event) {
                     client.user_id = user_id;
                     client.team_id = team_id;
                     System.out.println(tag.equals("1") + " " + tag);
-                    if(tag.equals("1")) client.requestTeamList();
+                    if(tag.equals("1")) {
+                        if(client.state != 2)
+                            client.requestTeamList();
+                    }
             	}
             	else {
             		client.print("Check your Email or Password !");
