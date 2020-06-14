@@ -4,11 +4,12 @@ import Common.Result;
 import Common.DBManager;
 import Config.Transactional;
 import Team.Role;
+import Team.Team;
 import kr.ac.konkuk.ccslab.cm.info.CMInfo;
 import kr.ac.konkuk.ccslab.cm.manager.CMDBManager;
+import lombok.Builder;
 
 import java.sql.*;
-
 public class UserRepository {
 
     /*
@@ -71,12 +72,20 @@ public class UserRepository {
         String getQuery = "select * from user where user_email = '" + email + "';";
         ResultSet resultSet = CMDBManager.sendSelectQuery(getQuery, cmInfo);
         User user = null;
+        Team team = null;
+
         try {
             while(resultSet.next()) {
                 Long id = resultSet.getLong("user_id");
+                Long teamId = resultSet.getLong("team_id");
                 String password = resultSet.getString("password");
+                team = new Team.Builder()
+                        .id(teamId)
+                        .build();
+
                 user = new User.Builder()
                         .id(id)
+                        .team(team)
                         .password(password)
                         .email(email)
                         .build();
@@ -117,7 +126,7 @@ public class UserRepository {
                         .email(email)
                         .name(name)
                         .role(role)
-                        .team(new Team.Team.Builder().id(team_id).build())
+                        .team(new Team.Builder().id(team_id).build())
                         .build();
             }
         } catch (SQLException e) {
