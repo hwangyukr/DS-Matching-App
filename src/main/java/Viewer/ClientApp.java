@@ -264,7 +264,7 @@ public class ClientApp extends JFrame {
 		this.print("Request Login ...");
 	}
 
-	public void createProfileRequest(Role role, String introduce, String photo_pathFileName,
+	public void createProfileRequest(String role, String introduce, String photo_pathFileName,
 			String photo_originalFileName, String portfolio_pathFileName, String portfolio_originalFileName) {
 		
 		CMUserEvent ue = new CMUserEvent();
