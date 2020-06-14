@@ -54,7 +54,7 @@ public class UserService {
         return profile;
     }
 
-    public String login(UserDTO.LoginReq dto, Result result) {
+    public User login(UserDTO.LoginReq dto, Result result) {
 
         User user = userRepository.findByEmail(dto.getEmail(), result, cmInfo);
 
@@ -83,7 +83,7 @@ public class UserService {
 
         result.setMsg("성공하였습니다");
         result.setSuccess(true);
-        return TokenProvider.createToken(user.getEmail(), user.getId());
+        return user;
 
     }
 
