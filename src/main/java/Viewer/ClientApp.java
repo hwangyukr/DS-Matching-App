@@ -270,8 +270,8 @@ public class ClientApp extends JFrame {
 		CMUserEvent ue = new CMUserEvent();
 		CMInteractionInfo info = clientStub.getCMInfo().getInteractionInfo();
 		CMUser user = info.getMyself();
-		ue.setStringID("POST-PROFIE");
-		
+		ue.setStringID("POST-PROFILE");
+		// WTF!!!
 		String portfolioInServer = "/" + user.getName() + "/" + portfolio_originalFileName;
 		String imageInServer = "/" + user.getName() + "/" + photo_originalFileName;
 		
