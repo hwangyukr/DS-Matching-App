@@ -133,8 +133,31 @@ public class ClientApp extends JFrame {
 		pack ();
 	}
 	
-	public void requestSignUp(String name, String id, String pw, Role role, String introduce) {
+	public void requestSignUp(String name, String id, String pw) {
+		CMUserEvent ue = new CMUserEvent();
+		CMInteractionInfo info = clientStub.getCMInfo().getInteractionInfo();
+		CMUser user = info.getMyself();
+
+		clientStub.loginCM("kongee", "0000");
+		ue.setStringID("SIGN-UP");
 		
+		System.out.println("name : " + name);
+		System.out.println("id : " + id);
+		System.out.println("id : " + pw);
+		
+		ue.setEventField(CMInfo.CM_STR, "email", id);
+		ue.setEventField(CMInfo.CM_STR, "password", pw);
+		ue.setEventField(CMInfo.CM_STR, "name", name);
+
+		this.email = id;
+		this.pw = pw;
+
+		ue.setSender(user.getName());
+		ue.setDistributionGroup(user.getCurrentGroup());
+		ue.setDistributionSession(user.getCurrentSession());
+		
+		clientStub.send(ue, "SERVER");
+		this.print("Requesting SignUp ...");
 	}
 
 	private CMUserEvent GetUE(String id) {
@@ -169,6 +192,7 @@ public class ClientApp extends JFrame {
 		CMUserEvent ue = new CMUserEvent();
 		ue.setStringID("CREATE-TEAM");
 		Map<Role, Integer> rolelimits = limits;
+
 		String json = null;
 		try {
 			json = objectMapper.writeValueAsString(rolelimits);
@@ -242,6 +266,7 @@ public class ClientApp extends JFrame {
 		clientStub.send(ue, "SERVER");
 		this.print("GET-PROFILE : " + user_id);
 	}
+
 	
 	public ImageIcon getProfileImg(String originalFileName) {
 		Image img = null;
@@ -253,6 +278,62 @@ public class ClientApp extends JFrame {
 			e.printStackTrace();
 		}
 		return new ImageIcon(img);
+	}
+
+	public void requestLoginWithParam(String email, String pw) {
+		// TODO Auto-generated method stub
+		CMUserEvent ue = new CMUserEvent();
+		CMInteractionInfo info = clientStub.getCMInfo().getInteractionInfo();
+		CMUser user = info.getMyself();
+
+		clientStub.loginCM("kongee", "0000");
+		ue.setStringID("SIGN-IN");
+
+		ue.setEventField(CMInfo.CM_STR, "email", email);
+		ue.setEventField(CMInfo.CM_STR, "password", pw);
+
+		System.out.println(email + " " + pw);
+
+		ue.setSender(user.getName());
+		ue.setDistributionGroup(user.getCurrentGroup());
+		ue.setDistributionSession(user.getCurrentSession());
+		
+		clientStub.send(ue, "SERVER");
+		this.print("Request Login ...");
+	}
+
+	public void createProfileRequest(Role role, String introduce, String photo_pathFileName,
+			String photo_originalFileName, String portfolio_pathFileName, String portfolio_originalFileName) {
+		
+		CMUserEvent ue = new CMUserEvent();
+		CMInteractionInfo info = clientStub.getCMInfo().getInteractionInfo();
+		CMUser user = info.getMyself();
+		ue.setStringID("POST-PROFIE");
+		
+		String portfolioInServer = "/" + user.getName() + "/" + portfolio_originalFileName;
+		String imageInServer = "/" + user.getName() + "/" + photo_originalFileName;
+		
+		ue.setEventField(CMInfo.CM_STR, "role", role.toString());
+		ue.setEventField(CMInfo.CM_STR, "content", introduce);
+		ue.setEventField(CMInfo.CM_STR, "token", this.token);
+		
+		ue.setEventField(CMInfo.CM_STR, "file_name", imageInServer);
+		ue.setEventField(CMInfo.CM_STR, "original_file_name", photo_originalFileName);
+		ue.setEventField(CMInfo.CM_STR, "portfolio",portfolioInServer);
+		ue.setEventField(CMInfo.CM_STR, "original_portfolio", portfolio_originalFileName);
+
+		ue.setSender(user.getName());
+		ue.setDistributionGroup(user.getCurrentGroup());
+		ue.setDistributionSession(user.getCurrentSession());
+		
+		clientStub.send(ue, "SERVER");
+		this.print("Request Login ...");
+		
+
+		CMFileTransferManager.pushFile(photo_pathFileName, "SERVER", clientStub.getCMInfo());
+		CMFileTransferManager.pushFile(photo_pathFileName, "SERVER", clientStub.getCMInfo());
+		
+		
 	}
 
 }
