@@ -45,6 +45,7 @@ public class ProfileHandler {
         
         Long userId;
         String userId_str = ue.getEventField(CMInfo.CM_LONG, "user_id");
+
         if (userId_str == null) {
         	userId = validResult.getId();
         }
@@ -81,6 +82,7 @@ public class ProfileHandler {
         String content = ue.getEventField(CMInfo.CM_STR, "content");
         String photo = ue.getEventField(CMInfo.CM_STR, "photo");
         String portforlio = ue.getEventField(CMInfo.CM_STR, "portforlio");
+        String originalPortfolio = ue.getEventField(CMInfo.CM_STR, "original_portfolio");
         String fileName = ue.getEventField(CMInfo.CM_STR, "file_name");
         String originalFileName = ue.getEventField(CMInfo.CM_STR, "original_file_name");
         if (roleName == null) {
@@ -97,7 +99,7 @@ public class ProfileHandler {
         }
         
         Result result = new Result();
-        Profile profile = profileService.postProfile(validResult, result, role, content, photo, portforlio, fileName, originalFileName);
+        Profile profile = profileService.postProfile(validResult, result, role, content, photo, portforlio, originalPortfolio, fileName, originalFileName);
         
         if (!result.isSuccess()) {
             handleError(result, ue);
