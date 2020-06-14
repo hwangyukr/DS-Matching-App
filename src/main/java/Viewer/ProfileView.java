@@ -2,6 +2,7 @@ package Viewer;
 
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
+import java.awt.FileDialog;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -16,6 +17,7 @@ import java.awt.TextArea;
 import java.awt.Choice;
 import javax.swing.SwingConstants;
 import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JFileChooser;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -25,6 +27,8 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
+
 import User.*;
 import Viewer.MyTeamView;
 import Viewer.UIConst;
@@ -37,18 +41,21 @@ public class ProfileView extends Viewer {
 	private JTextField txt_role;
 	private JTextField txt_subrole;
 	private JButton btn_pf;
-
+	private JFileChooser jfc;
+	File pf_src;
+	
 	public ProfileView(ClientApp client, Profile profile) {
 		super(client);
 		this.profile = profile;
 		this.client = client;
-		
-		//download img file from server
+		//download files from server
 		String imgFileName = profile.getFileName();
 		client.clientStub.requestFile(imgFileName, "SERVER");
 		
 		String pfFileName = profile.getPortforlio();
 		client.clientStub.requestFile(pfFileName, "SERVER");
+		
+		pf_src = new File("./client-file-path/"+ profile.getOriginalPortfolio());	//server에서 구현필요
 
 	}
 
@@ -56,7 +63,8 @@ public class ProfileView extends Viewer {
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
 		if(e.getSource().equals(btn_pf)) {
-			
+			jfc = new JFileChooser(pf_src);
+			jfc.showSaveDialog(this);
 		}
 
 	}
@@ -155,6 +163,7 @@ public class ProfileView extends Viewer {
 		btn_pf = UIConst.BUTTON("Portfolio", UIConst.BUTTON_LOGIN);
 		btn_pf.setBounds(300, 80, 170, 40);
 		btn_pf.setFont(new Font("Verdana", Font.PLAIN, 16));
+		btn_pf.addActionListener(this);
 		
 		contentPane.add(btn_pf);
 		setSize(UIConst.WIDTH, UIConst.HEIGHT);
