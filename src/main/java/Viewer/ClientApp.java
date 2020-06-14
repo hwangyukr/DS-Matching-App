@@ -2,9 +2,15 @@ package Viewer;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.Image;
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.imageio.ImageIO;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -263,6 +269,19 @@ public class ClientApp extends JFrame {
 		this.print("GET-PROFILE : " + user_id);
 	}
 
+	
+	public ImageIcon getProfileImg(String originalFileName) {
+		Image img = null;
+		File srcimg = new File("./client-file-path/"+originalFileName);
+		try {
+			img = ImageIO.read(srcimg);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return new ImageIcon(img);
+	}
+
 	public void requestLoginWithParam(String email, String pw) {
 		// TODO Auto-generated method stub
 		CMUserEvent ue = new CMUserEvent();
@@ -318,4 +337,5 @@ public class ClientApp extends JFrame {
 		
 		
 	}
+
 }
