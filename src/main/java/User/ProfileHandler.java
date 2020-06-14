@@ -181,6 +181,7 @@ public class ProfileHandler {
         
         ue.setEventField(CMInfo.CM_INT,"success", "1");
         ue.setEventField(CMInfo.CM_STR, "msg", "성공하였습니다");
+      
         ue.setEventField(CMInfo.CM_STR, "profile", String.valueOf(id));
         cmServerStub.send(ue, ue.getSender());
 	}

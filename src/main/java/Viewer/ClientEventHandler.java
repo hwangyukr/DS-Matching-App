@@ -12,6 +12,7 @@ import Team.Application;
 import Team.Team;
 
 import kr.ac.konkuk.ccslab.cm.event.CMEvent;
+import kr.ac.konkuk.ccslab.cm.event.CMFileEvent;
 import kr.ac.konkuk.ccslab.cm.event.CMSessionEvent;
 import kr.ac.konkuk.ccslab.cm.event.CMUserEvent;
 import kr.ac.konkuk.ccslab.cm.event.CMUserEventField;
@@ -19,22 +20,20 @@ import kr.ac.konkuk.ccslab.cm.event.handler.CMAppEventHandler;
 import kr.ac.konkuk.ccslab.cm.info.CMInfo;
 import kr.ac.konkuk.ccslab.cm.stub.CMClientStub;
 
-
 public class ClientEventHandler implements CMAppEventHandler {
 
 	private ClientApp client;
-    private CMClientStub clientStub;
-    private ObjectMapper objectMapper;
+	private CMClientStub clientStub;
+	private ObjectMapper objectMapper;
 
-    
-    public ClientEventHandler(ClientApp client) {
-    	this.client = client;
-        this.clientStub = client.clientStub;
-        this.objectMapper = new ObjectMapper();
-   
-    }
+	public ClientEventHandler(ClientApp client) {
+		this.client = client;
+		this.clientStub = client.clientStub;
+		this.objectMapper = new ObjectMapper();
 
-    private void processSessionEvent(CMSessionEvent event) {
+	}
+
+private void processSessionEvent(CMSessionEvent event) {
     	int id = event.getID();
     	client.print("Login Completed");
     	switch(id) {
@@ -51,8 +50,8 @@ public class ClientEventHandler implements CMAppEventHandler {
 			break;
 		}
     }
-    
-    @Override
+
+	@Override
     public void processEvent(CMEvent cmEvent)  {
 
         switch (cmEvent.getType()) {
@@ -213,9 +212,25 @@ public class ClientEventHandler implements CMAppEventHandler {
                     JOptionPane.showMessageDialog(null, "팀 가입 요청 Fail");
                 }
             }
+            
+            if(ue.getStringID().equals("POST-PROFILE-REPLY")) {
+            	
+                       String success = ue.getEventField(CMInfo.CM_INT, "success");
+                       client.print("GET-PROFILE-REPLY : " + success);
+                       
+                       if(success.equals("1")) {
+                            client.requestTeamList();
+                       }
+                       else {
+                            client.print("Get User Failed");
+                       }
+                }
+            
             break;
             
-        default:
+            
+            
+        	default:
             return;
         }
     }
