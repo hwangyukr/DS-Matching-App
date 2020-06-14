@@ -8,6 +8,7 @@ import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import Board.Board;
 import Team.Team;
 import User.User;
 import Team.Role;
@@ -40,13 +41,21 @@ public class MyTeamView extends Viewer implements ListSelectionListener {
 			client.reqeustNewPost(team_id, post_txt.getText());
 		}
 		
-		if(e.getSource() == confirm_btn) {
+		else if(e.getSource() == confirm_btn) {
 			client.requestApplications();
 		}
 		
-		if(e.getSource() == exit_btn) {
-			client.exit();
-			// client.ChangeView(new JoinView(client)); Main View
+		else if(e.getSource() == exit_btn) {
+			client.requestTeamList();
+		}
+		else {
+			JButton button = (JButton)e.getSource();
+			String action = button.getText();
+			if(action == "show") {
+				String uid = button.getName();
+				client.print("view -> user id : " + uid);
+				client.requestGetUser(uid);
+			}
 		}
 	}
 	
@@ -68,8 +77,8 @@ public class MyTeamView extends Viewer implements ListSelectionListener {
 		pn_member.setAutoscrolls(true);
 		pn_posts.setAutoscrolls(true);
 
-		tp.addTab ("Member", spn_member);
 		tp.addTab ("Posts", spn_posts);
+		tp.addTab ("Member", spn_member);
 		this.add(tp);
 
 		JLabel title = new JLabel("<html><div style='color: #336644;'> Team </div></html>", SwingConstants.CENTER);
@@ -80,7 +89,6 @@ public class MyTeamView extends Viewer implements ListSelectionListener {
 		this.add(title);
 
 		int mem_num = team.getUsers().size() + 1;
-		
 		for(int i=0; i<mem_num; i++) {
 			User member = null;
 			if(i==0) member = team.getTeamLeader();
@@ -94,37 +102,38 @@ public class MyTeamView extends Viewer implements ListSelectionListener {
 			String name = member.getName();
 			String email = member.getEmail();
 			//String role = member.getRole().name();
-			String role = "temp";
+			String role = "role";
 
 			JLabel lbl_id = new JLabel(id); lbl_id.setSize(50,50);
 			JLabel lbl_name = new JLabel(name); lbl_name.setSize(100,50);
 			JLabel lbl_email = new JLabel(email); lbl_email.setSize(150,50);
-			JLabel lbl_role = new JLabel(id); lbl_role.setSize(100,50);
+			JLabel lbl_role = new JLabel(role); lbl_role.setSize(100,50);
 			row.add(lbl_id);
 			row.add(lbl_name);
-			row.add(lbl_email);
+			//row.add(lbl_email);
 			row.add(lbl_role);
+			JButton btn_show = new JButton("show"); lbl_role.setSize(75,50);
+			btn_show.addActionListener(this);
+			btn_show.setName(id);
+			row.add(btn_show);
 			pn_member.add(row);
 		}
-		/*
-		JList<String> member_list = new JList<String>(members);
-		member_list.setVisibleRowCount(25);
-		member_list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		member_list.addListSelectionListener(this);
-		//member_list.setBounds(30, 150, 200, 300);
-		member_list.setBackground(new Color(224,224,224));
-		pn_member.add(member_list);
-		*/
 
-		String temp[] = new String[1]; temp[0] = "test";
-		JList<String> post_list = new JList<String>();
-		post_list.setVisibleRowCount(25);
-		post_list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		post_list.addListSelectionListener(this);
-		post_list.setBounds(300, 150, 200, 300);
-		post_list.setBackground(new Color(224,224,224));
-		//this.add(post_list);
 
+		int post_num = team.getBoards().size();
+		for(int i=0; i<post_num; i++) {
+			Board board = team.getBoards().get(i);
+			JPanel row = new JPanel();
+			row.setLayout(new GridLayout(1, 2));
+			String uname = board.getUser().getName();
+			String content = board.getContent();
+
+			JLabel lbl_id = new JLabel(uname); lbl_id.setSize(100,50);
+			JLabel lbl_name = new JLabel(content); lbl_name.setSize(UIConst.WIDTH - 50,50);
+			row.add(lbl_id);
+			row.add(lbl_name);
+			pn_posts.add(row);
+		}
 
 		JLabel post_label = new JLabel("Your Post");
 		post_label.setBounds(30, 450, 150, 40);

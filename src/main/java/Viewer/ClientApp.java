@@ -13,6 +13,9 @@ import javax.swing.JPanel;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import Team.Role;
 import Team.Team;
 import kr.ac.konkuk.ccslab.cm.entity.CMUser;
@@ -30,7 +33,9 @@ public class ClientApp extends JFrame {
 	private static final long serialVersionUID = 1L;
 
 	public CMClientStub clientStub;
-    private ClientEventHandler clientEventHandler;
+	public String user_id;
+	public String team_id;
+	private ClientEventHandler clientEventHandler;
 	public JLabel message = new JLabel("message will print here");
     public String token = null;
 	
@@ -39,7 +44,8 @@ public class ClientApp extends JFrame {
     private TeamsView mainView = null;
     
     public Team my_team = null;
-    private TeamCreateView teamCreateView;
+    public ObjectMapper objectMapper = new ObjectMapper();
+    
     
 	public ClientApp() {
 		super("Team No3 - Matching System");
@@ -71,6 +77,7 @@ public class ClientApp extends JFrame {
 	}
 	
 	public void exit() {
+		clientStub.logoutCM();
 		clientStub.disconnectFromServer();
 		System.exit(0);
 	}
@@ -92,8 +99,8 @@ public class ClientApp extends JFrame {
 		System.out.println("requestConnection email : " + this.email);
 		System.out.println("requestConnection pw : " + this.pw);
 	}
-	
-	public void requestLogin() {
+
+	public void requestLogin(String tag) {
 		CMUserEvent ue = new CMUserEvent();
 		CMInteractionInfo info = clientStub.getCMInfo().getInteractionInfo();
 		CMUser user = info.getMyself();
@@ -103,7 +110,8 @@ public class ClientApp extends JFrame {
 		System.out.println("requestLogin pw : " + pw);
 		ue.setEventField(CMInfo.CM_STR, "email", email);
 		ue.setEventField(CMInfo.CM_STR, "password", pw);
-		
+		ue.setEventField(CMInfo.CM_STR, "tag", tag);
+
 		ue.setSender(user.getName());
 		ue.setDistributionGroup(user.getCurrentGroup());
 		ue.setDistributionSession(user.getCurrentSession());
@@ -145,13 +153,7 @@ public class ClientApp extends JFrame {
 		clientStub.send(ue, "SERVER");
 		this.print("Requesting SignUp ...");
 	}
-	
-	public void requestMyTeam(String team_name) {
-		CMUserEvent ue = GetUE("GET-TEAM");
-		ue.setEventField(CMInfo.CM_STR, "team_name", team_name);
-		clientStub.send(ue, "SERVER");
-		this.print("GET TEAM REQEUSTED");
-	}
+
 	private CMUserEvent GetUE(String id) {
 		CMUserEvent ue = new CMUserEvent();
 		CMInteractionInfo info = clientStub.getCMInfo().getInteractionInfo();
@@ -180,26 +182,32 @@ public class ClientApp extends JFrame {
 		this.print("GET TEAM LIST (GET-TEAMS) REQEUSTED");
 	}
 	
-	public void requestCreateTeam(Map<Role, Integer> limits) {
+	public void requestCreateTeam(Map<Role, Integer> limits, String teamName) {
 		CMUserEvent ue = new CMUserEvent();
 		ue.setStringID("CREATE-TEAM");
 		Map<Role, Integer> rolelimits = limits;
-		//String json = client.objectMapper.writeValueAsString(rolelimits);
 
-		//ue.setEventField(CMInfo.CM_STR, "team_name", "留뚮굹�꽌 諛섍��썙�슂 ^^");
-		//ue.setEventField(CMInfo.CM_STR, "token", token);
-		//ue.setEventField(CMInfo.CM_STR, "teamlimit", json);
+		String json = null;
+		try {
+			json = objectMapper.writeValueAsString(rolelimits);
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		ue.setEventField(CMInfo.CM_STR, "team_name", teamName);
+		ue.setEventField(CMInfo.CM_STR, "token", token);
+		ue.setEventField(CMInfo.CM_STR, "teamlimit", json);
 	}
 	
-	public void applyTeam() {
+	public void applyTeam(String teamName) {
 	      CMUserEvent ue = new CMUserEvent();
 	      CMInteractionInfo info = clientStub.getCMInfo().getInteractionInfo();
 	      CMUser user = info.getMyself();
-	      ue.setStringID("APPLY-TEAM");
 	      
-	      ue.setSender(user.getName());
-	      ue.setDistributionGroup(user.getCurrentGroup());
-	      ue.setDistributionSession(user.getCurrentSession());
+	      ue.setStringID("APPLY-TEAM");
+	      ue.setEventField(CMInfo.CM_STR, "team_name", teamName);
+	      ue.setEventField(CMInfo.CM_STR, "token", token);
 	      
 	      clientStub.send(ue, "SERVER");
 	      this.print("Successfully applied ...");
@@ -220,6 +228,7 @@ public class ClientApp extends JFrame {
 		ue.setEventField(CMInfo.CM_LONG, "team_id", String.valueOf(team_id));
 		ue.setEventField(CMInfo.CM_STR, "content", content);
 		clientStub.send(ue, "SERVER");
+		print("New Post Requested");
 	}
 
 	public void requestApplications() {
@@ -236,16 +245,20 @@ public class ClientApp extends JFrame {
 		clientStub.send(ue, "SERVER");
 	}
 
-	public void reqeustMyTeam(String team_name) {
+	public void requestMyTeam(String team_id) {
 		CMUserEvent ue = GetUE("GET-TEAM");
-		ue.setEventField(CMInfo.CM_STR, "team_name", team_name);
+		ue.setEventField(CMInfo.CM_LONG, "team_id", team_id);
 		clientStub.send(ue, "SERVER");
-		this.print("GET TEAM REQEUSTED");
+		this.print("GET TEAM REQEUSTED : " + team_id);
 	}
 
-	public void requestGetTeams() {
-		// TODO Auto-generated method stub
-		
+	
+
+	public void requestGetUser(String user_id) {
+		CMUserEvent ue = GetUE("GET-PROFILE");
+		ue.setEventField(CMInfo.CM_LONG, "user_id", user_id);
+		clientStub.send(ue, "SERVER");
+		this.print("GET-PROFILE : " + user_id);
 	}
 
 	public void requestLoginWithParam(String email, String pw) {

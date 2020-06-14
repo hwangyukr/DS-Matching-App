@@ -1,6 +1,7 @@
 package Viewer;
 
 import java.util.List;
+import User.Profile;
 
 import javax.swing.JOptionPane;
 
@@ -40,7 +41,7 @@ public class ClientEventHandler implements CMAppEventHandler {
 			if(event.isValidUser() != 0) {
 				client.print("Server Connected !");
 				JOptionPane.showMessageDialog(null, "Server Connected Successfully");
-				client.requestLogin();
+				client.requestLogin("1");
 			}
 			else { // 0 is login fail
 				client.print("Connection Refused");
@@ -75,11 +76,15 @@ public class ClientEventHandler implements CMAppEventHandler {
             	String success = ue.getEventField(CMInfo.CM_INT, "success");
             	
             	if(success.equals("1")) {
-            		client.print("Login Success");
-            		String token = ue.getEventField(CMInfo.CM_STR, "token");
-                    System.out.println(token);
-            		client.token = token;
-            		//client.reqeustMyTeam("hihiroo");
+            		    client.print("Login Success");
+                    String token = ue.getEventField(CMInfo.CM_STR, "token");
+                    String tag = ue.getEventField(CMInfo.CM_STR, "tag");
+                    String user_id = ue.getEventField(CMInfo.CM_LONG, "user_id");
+                    String team_id = ue.getEventField(CMInfo.CM_LONG, "team_id");
+                    client.token = token;
+                    client.user_id = user_id;
+                    client.team_id = team_id;
+                    if(tag.equals("1")) client.requestTeamList();
             	}
             	else {
             		client.print("Check your Email or Password !");
@@ -101,18 +106,23 @@ public class ClientEventHandler implements CMAppEventHandler {
                     String ret = ue.getEventField(CMInfo.CM_STR, "team");
                     Team team = null;
                     team = objectMapper.readValue(ret, Team.class);
+                    client.my_team = team;
                     client.ChangeView(new MyTeamView(client, team));
                 } catch (JsonProcessingException e) {
                     e.printStackTrace();
                 }
             }
             if(ue.getStringID().equals("GET-TEAMS-REPLY")) {
+                String success = ue.getEventField(CMInfo.CM_INT, "success");
+                client.print("GET-TEAMS-REPLY success : " + success);
+
                 try {
                     String ret = ue.getEventField(CMInfo.CM_STR, "team");
+                    client.print("GET-TEAMS-REPLY ret : " + ret);
                     List<Team> teams = objectMapper.readValue(ret, objectMapper.getTypeFactory().constructCollectionType(List.class, Team.class));
-                    
-                  //  for(Team team : teams)
-                 //       System.out.println(team.getTeamLeader() == null);
+
+                    client.ChangeView(new TeamsView(client, client.my_team, teams));
+
 				
                 } catch (JsonProcessingException e) {
                     e.printStackTrace();
@@ -121,8 +131,13 @@ public class ClientEventHandler implements CMAppEventHandler {
             if(ue.getStringID().equals("POST-BOARD-REPLY")) {
                 try {
                     String success = ue.getEventField(CMInfo.CM_INT, "success");
+                    client.print("New Post success : " + success);
                     String msg = ue.getEventField(CMInfo.CM_STR, "msg");
-                    if(success.equals("1")) client.print("posted successfully");
+                    if(success.equals("1")) {
+                        client.print("posted successfully");
+                        client.requestMyTeam(String.valueOf(client.my_team.getId()));
+
+                    }
                     else client.print("post failed" + msg);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -152,10 +167,34 @@ public class ClientEventHandler implements CMAppEventHandler {
             		client.print("Check you are team manager");
             	}
           	}
-                ///리스트 업데이트하기
-            
 
+                ///리스트 업데이트하기
+            if(ue.getStringID().equals("GET-PROFILE-REPLY")) {
+
+                try {
+                    String success = ue.getEventField(CMInfo.CM_INT, "success");
+                    client.print("GET-PROFILE-REPLY : " + success);
+                    
+                    if(success.equals("1")) {
+                    	String profile = ue.getEventField(CMInfo.CM_STR, "profile");
+                    	Profile profileObj = objectMapper.readValue(profile, Profile.class);
+                    	client.ChangeView(new ProfileView(client, profileObj.getUser()));
+                    }
+                    else {
+                        client.print("Get User Failed");
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            
+            if(ue.getStringID().equals("CREATE-TEAM-REPLY")) {
+            	String team_id = ue.getEventField(CMInfo.CM_STR, "team_id");
+            	client.requestMyTeam(team_id);
+            }
             break;
+            
         default:
             return;
         }

@@ -103,6 +103,7 @@ public class JoinProfileView extends Viewer {
 					role = planSub[i];
 				}
 			}
+
 		}
 
 		if (e.getSource() == done_btn) {

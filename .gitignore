@@ -2,6 +2,7 @@
 *.iml
 *.jar
 .zshrc
+*.class
 
 HELP.md
 target/
@@ -35,3 +36,5 @@ build/
 
 ### VS Code ###
 .vscode/
+
+bin/

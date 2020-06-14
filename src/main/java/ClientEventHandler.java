@@ -102,7 +102,7 @@ public class ClientEventHandler implements CMAppEventHandler {
                         e.printStackTrace();
                     }
                     String fileName = team.getFileName();
-                    clientStub.requestFile("/1kongee/ss.jpg", "SERVER");
+                    clientStub.requestFile("/kongee/ss.jpg", "SERVER");
                     //clientStub.requestFile(fileName, "SERVER");
                 }
                 if(ue.getStringID().equals("GET-TEAMS-REPLY")) {

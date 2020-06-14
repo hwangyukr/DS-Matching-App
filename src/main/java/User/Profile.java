@@ -13,6 +13,22 @@ public class Profile {
     private String fileName;
     private String originalFileName;
 
+    public String getOriginalPortfolio() {
+        return originalPortfolio;
+    }
+
+    public void setOriginalPortfolio(String originalPortfolio) {
+        this.originalPortfolio = originalPortfolio;
+    }
+
+    public String getOriginalFileName() {
+        return originalFileName;
+    }
+
+    public void setOriginalFileName(String originalFileName) {
+        this.originalFileName = originalFileName;
+    }
+
     public String getFileName() {
         return fileName;
     }
@@ -80,11 +96,21 @@ public class Profile {
         private String content;
         private String photo;
         private String portforlio;
+        private String originalPortforlio;
+        private String originalFileName;
         private String fileName;
 
         public Builder() {
         }
-
+        
+        public Builder originalPortforlio(String val) {
+            originalPortforlio = val;
+            return this;
+        }
+        public Builder originalFileName(String val) {
+            originalFileName = val;
+            return this;
+        }
         public Builder id(Long id) {
             this.id = id;
             return this;
@@ -135,5 +161,7 @@ public class Profile {
         this.photo = builder.photo;
         this.portforlio = builder.portforlio;
         this.fileName = builder.fileName;
+        this.originalFileName = builder.originalFileName;
+        this.originalPortfolio = builder.originalPortforlio;
     }
 }
