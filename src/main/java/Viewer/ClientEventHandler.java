@@ -191,8 +191,11 @@ public class ClientEventHandler implements CMAppEventHandler {
             }
             
             if(ue.getStringID().equals("CREATE-TEAM-REPLY")) {
-            	String team_id = ue.getEventField(CMInfo.CM_STR, "team_id");
-            	client.requestMyTeam(team_id);
+                String success = ue.getEventField(CMInfo.CM_INT, "success");
+                String team_id = ue.getEventField(CMInfo.CM_STR, "team_id");
+                String msg = ue.getEventField(CMInfo.CM_STR, "msg");
+            	client.print(msg);
+                client.requestMyTeam(team_id);
             }
             break;
             

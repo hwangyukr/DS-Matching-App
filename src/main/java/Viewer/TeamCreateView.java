@@ -56,7 +56,7 @@ public class TeamCreateView extends Viewer implements ActionListener {/**
 
 		switch(b.getText()) {
 			case "생성":
-				String teamName = lb_teamName.getText();
+				String teamName = edit_teamName.getText();
 				int[] limits = new int[9];
 				for(int i=0; i<9; i++)
 					limits[i] = (int) table.getValueAt(i, 1);
