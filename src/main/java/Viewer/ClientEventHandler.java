@@ -71,7 +71,9 @@ public class ClientEventHandler implements CMAppEventHandler {
             		String token = ue.getEventField(CMInfo.CM_STR, "token");
                     String team_id = ue.getEventField(CMInfo.CM_LONG, "team_id");
                     client.token = token;
-            		client.requestMyTeam(team_id);
+
+                    client.requestTeamList();
+            		//client.requestMyTeam(team_id);
             	}
             	else {
             		client.print("Check your Email or Password !");
@@ -100,10 +102,15 @@ public class ClientEventHandler implements CMAppEventHandler {
                 }
             }
             if(ue.getStringID().equals("GET-TEAMS-REPLY")) {
+                String success = ue.getEventField(CMInfo.CM_INT, "success");
+                client.print("GET-TEAMS-REPLY success : " + success);
+
                 try {
                     String ret = ue.getEventField(CMInfo.CM_STR, "team");
+                    client.print("GET-TEAMS-REPLY ret : " + ret);
                     List<Team> teams = objectMapper.readValue(ret, objectMapper.getTypeFactory().constructCollectionType(List.class, Team.class));
-                    
+
+                    client.ChangeView(new TeamsView(client, client.my_team, teams));
                   //  for(Team team : teams)
                  //       System.out.println(team.getTeamLeader() == null);
 				
@@ -151,7 +158,26 @@ public class ClientEventHandler implements CMAppEventHandler {
             	}
           	}
                 ///리스트 업데이트하기
-            
+            if(ue.getStringID().equals("GET-PROFILE-REPLY")) {
+
+                try {
+                    String success = ue.getEventField(CMInfo.CM_INT, "success");
+                    client.print("GET-PROFILE-REPLY : " + success);
+                    String ret = ue.getEventField(CMInfo.CM_STR, "profile");
+                    client.print("GET-PROFILE-REPLY : " + ret);
+                    if(success.equals("1")) {
+
+                    }
+                    else {
+                        client.print("Get User Failed");
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+
+            }
 
             break;
         default:

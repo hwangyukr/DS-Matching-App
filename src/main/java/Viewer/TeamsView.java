@@ -48,20 +48,18 @@ public class TeamsView extends Viewer {
    private JTable table;
    private Team team;
    private JList<String> list;
-   private User user;
+
    private ClientApp client;
    
    JButton btn_reg;     
    private List<Team> teamList;     
    
-   public TeamsView(ClientApp client, User user, List<Team> teamList) {
+   public TeamsView(ClientApp client, Team team, List<Team> teamList) {
       super(client);
       
       this.client = client;
-      this.user = user;
       this.teamList = teamList;
-      team = user.getTeam();		//user가 팀에 가입되있지 않은 상태면 null임을 가정(확인 필요)
-      client.print("MainView");
+      this.team = team;		//user가 팀에 가입되있지 않은 상태면 null임을 가정(확인 필요)
       init();
       
       // TODO Auto-generated constructor stub
@@ -80,9 +78,7 @@ public class TeamsView extends Viewer {
       panel_team.setBounds(12, 10, 362, 176);
       contentPane.add(panel_team);
       panel_team.setLayout(null);
-      
-      ButtonActionListener listener = new ButtonActionListener();
-      
+
       /***속한 팀이름 또는 팀에 가입해달라는 라벨****/
       JLabel lb_team = new JLabel("(team name)");
       lb_team.setFont(new Font("굴림", Font.PLAIN, 16));
@@ -98,7 +94,7 @@ public class TeamsView extends Viewer {
       btn_team.setFont(new Font("굴림", Font.PLAIN, 20));
       if(team!=null)
          btn_team.setText("팀 입장");
-      btn_team.addActionListener(listener);
+      btn_team.addActionListener(this);
       btn_team.setBounds(186, 71, 151, 33);
       panel_team.add(btn_team);
       
@@ -106,7 +102,7 @@ public class TeamsView extends Viewer {
       JButton btn_profile = new JButton("프로필 보기");
       btn_profile.setFont(new Font("굴림", Font.PLAIN, 20));
       btn_profile.setBounds(186, 114, 151, 33);
-      btn_profile.addActionListener(listener);
+      btn_profile.addActionListener(this);
       panel_team.add(btn_profile);
       
       /***프로필 이미지****/
@@ -121,6 +117,7 @@ public class TeamsView extends Viewer {
       scrollPane.setBounds(12, 227, 362, 244);
       contentPane.add(scrollPane);
 
+      list = new JList<String>();
       updateTeamList();
       list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
       list.addMouseListener(new MouseAdapter() {
@@ -163,7 +160,7 @@ public class TeamsView extends Viewer {
       /****리스트에서 선택한 팀에 가입신청 버튼*****/
       btn_reg = new JButton("팀 가입");
       btn_reg.setFont(new Font("굴림", Font.PLAIN, 16));
-      btn_reg.addActionListener(listener);
+      btn_reg.addActionListener(this);
       btn_reg.setBounds(267, 494, 107, 37);
       btn_reg.setVisible(false);
       contentPane.add(btn_reg);
@@ -184,10 +181,10 @@ public class TeamsView extends Viewer {
       table = new JTable();
       table.setModel(new DefaultTableModel(
          new Object[][] {
-            {null, "\uD604\uC7AC \uC778\uC6D0", "\uBAA8\uC9D1 \uC778\uC6D0"},
-            {"\uAC1C\uBC1C\uC790", null, null},
-            {"\uAE30\uD68D\uC790", null, null},
-            {"\uB514\uC790\uC778", null, null},
+            {null, "디자인", "개발"},
+            {"일단", null, null},
+            {"아무거나", null, null},
+            {"넣을게요", null, null},
          },
          new String[] {
             " ", "current", "maximum"
@@ -215,23 +212,36 @@ public class TeamsView extends Viewer {
       
    }
 
-   private class ButtonActionListener implements ActionListener {
-      public void actionPerformed(ActionEvent e) {
-         JButton b = (JButton) e.getSource();
+   
+   private void updateTeamList() {
          
-         switch(b.getText()) {
-			case "팀 생성":
-				client.ChangeView(new TeamCreateView(client, user));
-				break;
-			case "팀 입장":
-				client.ChangeView(new MyTeamView(client, user.getTeam()));
-				break;
-			case "프로필 보기":	//id->email
-				client.ChangeView(new JoinProfileView(client, user.getName(), user.getEmail(), user.getPassword()));
-				break;
-			case "팀 가입":
-	            client.applyTeam();
-	            client.print("팀 가입 신청 완료");
+      DefaultListModel<String> listModel = new DefaultListModel<String>();
+      
+      for(int i=0; i<teamList.size(); i++) {
+    	  listModel.addElement(teamList.get(i).getName());
+      }
+      list.setModel(listModel);
+   }
+
+   @Override
+   public void actionPerformed(ActionEvent e) {
+      // TODO Auto-generated method stub
+      JButton b = (JButton) e.getSource();
+
+      switch(b.getText()) {
+         case "팀 생성":
+            //client.ChangeView(new TeamCreateView(client, user));
+            break;
+         case "팀 입장":
+            //client.ChangeView(new MyTeamView(client, user.getTeam()));
+            client.requestMyTeam(String.valueOf(this.team.getId()));
+            break;
+         case "프로필 보기":	//id->email
+            //client.ChangeView(new JoinProfileView(client, user.getName(), user.getEmail(), user.getPassword()));
+            break;
+         case "팀 가입":
+            client.applyTeam();
+            client.print("팀 가입 신청 완료");
 	            /*
 	            JPanel ApplyComplete = new JPanel();
 	            {
@@ -251,32 +261,9 @@ public class TeamsView extends Viewer {
 	               }
 	            }
 	            */
-               break;
-            
+            break;
 
-         }
+
       }
    }
-   
-   private void updateTeamList() {
-         
-      DefaultListModel<String> listModel = new DefaultListModel<String>();
-      
-      for(int i=0; i<teamList.size(); i++) {
-    	  listModel.addElement(teamList.get(i).getName());
-      }
-      list.setModel(listModel);
-   }
-
-
-   @Override
-   public void actionPerformed(ActionEvent e) {
-      // TODO Auto-generated method stub
-      
-   }
-
-
-   
-
-
 }

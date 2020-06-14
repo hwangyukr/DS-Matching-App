@@ -219,4 +219,11 @@ public class ClientApp extends JFrame {
 		// TODO Auto-generated method stub
 		
 	}
+
+	public void requestGetUser(String user_id) {
+		CMUserEvent ue = GetUE("GET-PROFILE");
+		ue.setEventField(CMInfo.CM_LONG, "user_id", user_id);
+		clientStub.send(ue, "SERVER");
+		this.print("GET-PROFILE : " + user_id);
+	}
 }

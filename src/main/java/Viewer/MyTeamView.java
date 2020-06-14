@@ -41,13 +41,22 @@ public class MyTeamView extends Viewer implements ListSelectionListener {
 			client.reqeustNewPost(team_id, post_txt.getText());
 		}
 		
-		if(e.getSource() == confirm_btn) {
+		else if(e.getSource() == confirm_btn) {
 			client.requestApplications();
 		}
 		
-		if(e.getSource() == exit_btn) {
+		else if(e.getSource() == exit_btn) {
 			client.exit();
 			// client.ChangeView(new JoinView(client)); Main View
+		}
+		else {
+			JButton button = (JButton)e.getSource();
+			String action = button.getText();
+			if(action == "show") {
+				String uid = button.getName();
+				client.print("view -> user id : " + uid);
+				client.requestGetUser(uid);
+			}
 		}
 	}
 	
@@ -105,6 +114,7 @@ public class MyTeamView extends Viewer implements ListSelectionListener {
 			//row.add(lbl_email);
 			row.add(lbl_role);
 			JButton btn_show = new JButton("show"); lbl_role.setSize(75,50);
+			btn_show.addActionListener(this);
 			btn_show.setName(id);
 			row.add(btn_show);
 			pn_member.add(row);
