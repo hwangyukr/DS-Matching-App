@@ -7,20 +7,6 @@
 201714152 박종현    
 201714157 이종완    
 
-클라이언트
-```
-
-```
-
-서버
-```
-
-```
-
-# 협분산 팀플
-
-[쿼리](https://www.notion.so/fe278c2376034f33884578d562d3c541)
-
 ## 토큰(로그인) 필요없는 resources
 
 ```java
@@ -88,4 +74,5 @@ cmServerStub.send(ue, ue.getSender());
 [PUT-BOARD](https://www.notion.so/PUT-BOARD-030c46379c924e34b1d14172fe36a28d)
 
 [DELETE-BOARD](https://www.notion.so/DELETE-BOARD-9c14e430a21147c3b572cc902ebbe227)
-dddd
+
+[쿼리](https://www.notion.so/fe278c2376034f33884578d562d3c541)
