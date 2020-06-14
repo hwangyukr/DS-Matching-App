@@ -5,7 +5,11 @@ import java.util.List;
 import Team.Application;
 import Team.Team;
 import User.User;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
+@AllArgsConstructor
+@NoArgsConstructor
 public class Board {
 
     private Long id;

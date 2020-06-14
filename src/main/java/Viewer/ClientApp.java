@@ -70,6 +70,7 @@ public class ClientApp extends JFrame {
 	}
 	
 	public void exit() {
+		clientStub.logoutCM();
 		clientStub.disconnectFromServer();
 		System.exit(0);
 	}
@@ -122,9 +123,9 @@ public class ClientApp extends JFrame {
 		
 	}
 	
-	public void requestMyTeam(String team_name) {
+	public void requestMyTeam(Long team_id) {
 		CMUserEvent ue = GetUE("GET-TEAM");
-		ue.setEventField(CMInfo.CM_STR, "team_name", team_name);
+		ue.setEventField(CMInfo.CM_STR, "team_id", String.valueOf(team_id));
 		clientStub.send(ue, "SERVER");
 		this.print("GET TEAM REQEUSTED");
 	}
@@ -196,6 +197,7 @@ public class ClientApp extends JFrame {
 		ue.setEventField(CMInfo.CM_LONG, "team_id", String.valueOf(team_id));
 		ue.setEventField(CMInfo.CM_STR, "content", content);
 		clientStub.send(ue, "SERVER");
+		print("New Post Requested");
 	}
 
 	public void requestApplications() {

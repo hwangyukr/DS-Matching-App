@@ -70,7 +70,7 @@ public class ClientEventHandler implements CMAppEventHandler {
             		client.print("Login Success");
             		String token = ue.getEventField(CMInfo.CM_STR, "token");
             		client.token = token;
-            		client.reqeustMyTeam("hihiroo");
+            		client.requestMyTeam(client.use.getName());
             	}
             	else {
             		client.print("Check your Email or Password !");
@@ -112,8 +112,13 @@ public class ClientEventHandler implements CMAppEventHandler {
             if(ue.getStringID().equals("POST-BOARD-REPLY")) {
                 try {
                     String success = ue.getEventField(CMInfo.CM_INT, "success");
+                    client.print("New Post success : " + success);
                     String msg = ue.getEventField(CMInfo.CM_STR, "msg");
-                    if(success.equals("1")) client.print("posted successfully");
+                    if(success.equals("1")) {
+                        client.print("posted successfully");
+                        client.reqeustMyTeam(client.my_team.getName());
+
+                    }
                     else client.print("post failed" + msg);
                 } catch (Exception e) {
                     e.printStackTrace();
