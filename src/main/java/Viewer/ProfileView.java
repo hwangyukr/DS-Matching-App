@@ -42,21 +42,22 @@ public class ProfileView extends Viewer {
 	private JTextField txt_subrole;
 	private JButton btn_pf;
 	private JFileChooser jfc;
-	File pf_src;
+	File pf_src = null;
 	
 	public ProfileView(ClientApp client, Profile profile) {
 		super(client);
 		this.profile = profile;
 		this.client = client;
+		
 		//download files from server
 		String imgFileName = profile.getFileName();
 		client.clientStub.requestFile(imgFileName, "SERVER");
-		
+			
 		String pfFileName = profile.getPortforlio();
-		client.clientStub.requestFile(pfFileName, "SERVER");
+		if((pfFileName!=null) && !client.clientStub.requestFile(pfFileName, "SERVER")) {
+			pf_src = new File("./client-file-path/"+ profile.getOriginalPortfolio());
+		}
 		
-		pf_src = new File("./client-file-path/"+ profile.getOriginalPortfolio());	//server에서 구현필요
-
 		String imgOriginalFileName = profile.getOriginalFileName();
 		System.out.println(imgOriginalFileName);
 
@@ -66,8 +67,12 @@ public class ProfileView extends Viewer {
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
 		if(e.getSource().equals(btn_pf)) {
-			jfc = new JFileChooser(pf_src);
-			jfc.showSaveDialog(this);
+			if(jfc!= null) {
+				jfc = new JFileChooser(pf_src);
+				jfc.showSaveDialog(this);
+			}
+			else
+				client.print("no uploaded portfolio");
 		}
 
 	}
