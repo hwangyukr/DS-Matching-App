@@ -71,6 +71,8 @@ public class TeamRepository {
                 resultSet = CMDBManager.sendSelectQuery(query, cmInfo);
                 while(resultSet.next()) {
                     Long teamId = resultSet.getLong("team_id");
+                    System.out.println(teamId);
+                    if (teams.get(teamId) == null) continue;
                     Role role = Role.valueOf(resultSet.getString("role"));
                     int limit = resultSet.getInt("role_limit");
                     Map<Role, Integer> roleLimits = teams.get(teamId).getRoleLimits();

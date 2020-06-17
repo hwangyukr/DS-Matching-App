@@ -64,7 +64,7 @@ public class ClientApp extends JFrame {
 		clientStub = new CMClientStub();
 		clientEventHandler = new ClientEventHandler(this);
 		clientStub.setAppEventHandler(clientEventHandler);
-		//clientStub.loginCM("kongee", "0000");
+		clientStub.loginCM("kongee", "0000");
 		this.addWindowListener(new java.awt.event.WindowAdapter() {
 		    @Override
 		    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
@@ -102,8 +102,9 @@ public class ClientApp extends JFrame {
 			this.print("password is null");
 			return;
 		}
+		requestLogin("1");
+		//clientStub.loginCM(this.email, this.pw);
 
-		clientStub.loginCM(this.email, this.pw);
 		System.out.println("requestConnection email : " + this.email);
 		System.out.println("requestConnection pw : " + this.pw);
 	}

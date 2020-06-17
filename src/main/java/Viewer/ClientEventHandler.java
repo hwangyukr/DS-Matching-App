@@ -80,7 +80,7 @@ private void processSessionEvent(CMSessionEvent event) {
             	String success = ue.getEventField(CMInfo.CM_INT, "success");
             	
             	if(success.equals("1")) {
-            		    client.print("Login Success");
+                    client.print("Login Success");
                     String token = ue.getEventField(CMInfo.CM_STR, "token");
                     String tag = ue.getEventField(CMInfo.CM_STR, "tag");
                     String user_id = ue.getEventField(CMInfo.CM_LONG, "user_id");
@@ -129,7 +129,8 @@ private void processSessionEvent(CMSessionEvent event) {
                     String team_id = ue.getEventField(CMInfo.CM_LONG, "team_id");;
                     client.print("GET-TEAMS-REPLY ret : " + ret);
                     List<Team> teams = objectMapper.readValue(ret, objectMapper.getTypeFactory().constructCollectionType(List.class, Team.class));
-
+                    System.out.println(teams);
+                    System.out.println(client.team_id);
                     client.ChangeView(new TeamsView(client, client.team_id, teams));
 
 				

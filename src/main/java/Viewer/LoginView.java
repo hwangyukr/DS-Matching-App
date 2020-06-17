@@ -39,8 +39,7 @@ public class LoginView extends Viewer {
 			client.state = 1;
 			client.requestConnection(id, pw);
 			client.print("Trying Login ...");
-			
-			//TeamsView로 변환하는 메쏘드 필요 (파라미터: <ClientApp> <User>) 
+			//TeamsView로 변환하는 메쏘드 필요 (파라미터: <ClientApp> <User>)
 		}
 		
 		if(e.getSource() == join_btn) {

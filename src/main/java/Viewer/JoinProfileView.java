@@ -119,7 +119,7 @@ public class JoinProfileView extends Viewer {
 		}
 
 		if (e.getSource() == portfolioUpload) {
-			if (jfc.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
+			if (jfc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
 				// showSaveDialog 저장 창을 열고 확인 버튼을 눌렀는지 확인
 				portfolio_pathFileName = jfc.getSelectedFile().getAbsoluteFile().toString();
 				portfolio_originalFileName = jfc.getSelectedFile().getName();
@@ -160,6 +160,7 @@ public class JoinProfileView extends Viewer {
 		if (e.getSource() == done_btn) {
 			String introduce = intro.getText();
 			client.print("your Role : " + role);
+			if(role == null) role = "광고디자인";
 			client.createProfileRequest(role, introduce, photo_pathFileName, photo_originalFileName, portfolio_pathFileName, portfolio_originalFileName);
 		}
 

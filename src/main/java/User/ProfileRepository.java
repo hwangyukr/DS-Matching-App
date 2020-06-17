@@ -77,8 +77,14 @@ public class ProfileRepository {
 
             int ret = statement.executeUpdate(query);
             if(ret != 1) throw new SQLException();
-            connection.commit();
-            
+
+            query =
+                    "update user set role_id = '" + (profile.getRole().ordinal()+1) +
+                            "' where user_id = '" + profile.getUser().getId() + "';";
+
+            ret = statement.executeUpdate(query);
+            if(ret == -1) throw new SQLException();
+
             String getQuery = 
             		"select profile_id " + 
             		"from profile " +
@@ -91,6 +97,8 @@ public class ProfileRepository {
             }
             
             profile.setId(id);
+            connection.commit();
+
         } catch (SQLIntegrityConstraintViolationException e) {
             try {
                 connection.rollback();

@@ -111,7 +111,6 @@ public class UserHandler {
         UserDTO.LoginReq dto = new UserDTO.LoginReq(email, password);
         Result result = new Result();
         User user = userService.login(dto,result);
-        System.out.println(user.getId());
         String token = TokenProvider.createToken(email, user.getId());
 
         if(!result.isSuccess()) {
